@@ -1,0 +1,64 @@
+
+
+app:
+  kafka:
+    producer:
+      topic: YellowTripOutbound
+      client-id-config: my-app-readYellowTrip
+      data-file-location: data
+      data-file-name: yellow_tripdata_2021-01.csv
+spring:
+  main:
+    allow-circular-references: true
+  kafka:
+    bootstrap-servers: 206.189.130.216:9092
+    properties:
+      producer:
+        retries: 0
+        acks: all
+        key-serializer: org.apache.kafka.common.serialization.StringSerializer
+        value-serializer: in.governance.samagra.apps.kafka.producer.config.JsonSerializer
+
+  jpa:
+    generate-ddl: true
+    open-in-view: false
+    show-sql: true
+    properties:
+      hibernate:
+        ddl-auto: update
+        jdbc:
+          lob:
+            non_contextual_creation: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        show-sql: true
+  datasource:
+    url: jdbc:postgresql://localhost:5432/rtl
+    username: postgres
+    password:
+
+jwt:
+  secret: javainuse
+  get:
+    token:
+      uri: /authenticate
+
+# for slide url
+slide:
+  url: https://drive.google.com/open?id=1i2qruJERgojKNFRmMnIyVI-VdpFxwPbk
+
+
+username: InventoriesApp
+userpass: Password
+
+# admin
+useradmin: admin
+adminpass: admin
+
+# slide
+userslide: slide
+slidepass: slide
+
+server:
+  port: 8081
+
+
