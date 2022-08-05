@@ -1,8 +1,6 @@
 package com.roms.api.repository;
 
-
-
-
+import com.roms.api.model.Roles;
 import com.roms.api.model.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -12,8 +10,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface UsersRepository extends JpaRepository<Users, String> {
+public interface RoleRepository extends JpaRepository<Roles, String> {
 
-    @Query("select  p from Users as p where p.userName=?1")
-    public Optional<Users> findByUsername(String username);
+    @Query("select  p from Roles as p where p.roleName=?1")
+    public Optional<Roles> findByRolename(String roleName);
 }

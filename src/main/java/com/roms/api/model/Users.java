@@ -8,18 +8,18 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 
 @Entity
 @Table(name ="users")
-public class Users  {
+public class Users  extends CommonFields implements Serializable {
 
-    @Id
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")
-    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "uuid2")
-    @Column(length = 36, nullable = false, updatable = false)
-    private String id;
+    @Serial
+    private static final long serialVersionUID = -5534811223511068706L;
 
     @Column(name="first_name")
     private String firstName;
@@ -37,22 +37,16 @@ public class Users  {
     private boolean enabled;
 
 
-   /* @OneToOne()
+    @OneToOne()
     @JoinColumn(name = "role_id",referencedColumnName = "id")
     @Fetch(FetchMode.SELECT)
     private Roles role;
-*/
+
     public Users(){
 
     }
 
-    public String getId() {
-        return id;
-    }
 
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public String getFirstName() {
         return firstName;
@@ -94,4 +88,11 @@ public class Users  {
         this.enabled = enabled;
     }
 
+    public Roles getRole() {
+        return role;
+    }
+
+    public void setRole(Roles role) {
+        this.role = role;
+    }
 }
