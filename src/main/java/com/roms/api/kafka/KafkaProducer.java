@@ -1,5 +1,6 @@
 package com.roms.api.kafka;
 
+import com.roms.api.model.Employe;
 import com.roms.api.model.Users;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
@@ -21,6 +22,16 @@ public class KafkaProducer {
             logger.info("Sending data to kafka = '{}' with topic '{}'", userModel.getId(), topic);
             ObjectMapper mapper = new ObjectMapper();
             kafkaTemplates.send(topic, groupId, mapper.writeValueAsString(userModel));
+        } catch (Exception e) {
+            logger.error("An error occurred! '{}'", e.getMessage());
+        }
+    }
+
+    public void postBrand(String topic, String groupId, Employe employeeModel){
+        try {
+            logger.info("Sending data to kafka = '{}' with topic '{}'", employeeModel.getId(), topic);
+            ObjectMapper mapper = new ObjectMapper();
+            kafkaTemplates.send(topic, groupId, mapper.writeValueAsString(employeeModel));
         } catch (Exception e) {
             logger.error("An error occurred! '{}'", e.getMessage());
         }

@@ -21,6 +21,8 @@ public class JwtUserDetailsService implements UserDetailsService {
      @Autowired
      private UserService userService;
 
+
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
@@ -29,7 +31,7 @@ public class JwtUserDetailsService implements UserDetailsService {
         if (!userDetails.isEmpty()) {
             Users  user = userDetails.get();
            // return  new  User(user.getUserName(), user.getPassword(), boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority > authorities)
-            return new User(user.getUserName(), user.getPassword(),  Collections.singletonList(new SimpleGrantedAuthority(user.getRole().getRoleName())));
+            return new User(user.getUserId(), user.getApppassword(),  Collections.singletonList(new SimpleGrantedAuthority(user.getRole().getName())));
 
         }else {
             throw new UsernameNotFoundException("User not found with username: " + username);

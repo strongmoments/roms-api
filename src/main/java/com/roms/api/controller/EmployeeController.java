@@ -1,8 +1,9 @@
 package com.roms.api.controller;
 
 import com.roms.api.kafka.KafkaProducer;
+import com.roms.api.model.Employe;
 import com.roms.api.model.Users;
-import com.roms.api.service.UserService;
+import com.roms.api.service.EmployeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +20,9 @@ import java.util.Map;
 
 @RestController
 @CrossOrigin
-@RequestMapping(value = "/v1/user")
-@Secured("ROLE_ADMIN")
-public class UserController {
+@RequestMapping(value = "/v1/employe")
+
+public class EmployeeController {
 
     @Autowired
     private KafkaProducer kafkaProducer;
@@ -30,22 +31,22 @@ public class UserController {
     @Value("rtl")
     String kafkaGroupId;
 
-    @Value("user-rtl.kafka.data.save")
+    @Value("employee-rtl.kafka.data.save")
     String postBrandTopic;
 
     @Autowired
-    private UserService userService;
+    private EmployeService employeService;
+
 
 
     @Secured("ROLE_ADMIN")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PostMapping(value = "/add", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public ResponseEntity<?> addLayeredBrand(@RequestBody Users userModel){
+    @GetMapping(value = "/load", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ResponseEntity<?> addLayeredBrand(){
         logger.info(("Process add new brand"));
         Map<String, Object> response = new HashMap<>();
         try {
-            userService.save(userModel);
-            //kafkaProducer.postBrand(postBrandTopic, kafkaGroupId, userModel);
+           response.put("data",employeService.findAll());
         } catch (Exception e){
             logger.error("An error occurred! {}", e.getMessage());
             response.put("status","error");

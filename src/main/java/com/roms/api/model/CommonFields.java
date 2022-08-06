@@ -1,5 +1,7 @@
 package com.roms.api.model;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -15,34 +17,16 @@ public abstract  class CommonFields {
     @Column(length = 36, nullable = false, updatable = false)
     public String id;
 
+    @OneToOne()
+    @JoinColumn(name = "org_idx",referencedColumnName = "id")
+    @Fetch(FetchMode.SELECT)
+    private Organisation organisation;
+
     @Column(name = "create_date")
     public Instant createDate;
 
-    @Column(name = "org_idx")
-    public String orgIdx;
-
-    /*@OneToOne()
-    @JoinColumn(name = "role_id",referencedColumnName = "id")
-    @Fetch(FetchMode.SELECT)
-    public Roles role;*/
 
     public CommonFields() {
-    }
-
-    public Instant getCreateDate() {
-        return createDate;
-    }
-
-    public void setCreateDate(Instant createDate) {
-        this.createDate = createDate;
-    }
-
-    public String getOrgIdx() {
-        return orgIdx;
-    }
-
-    public void setOrgIdx(String orgIdx) {
-        this.orgIdx = orgIdx;
     }
 
     public String getId() {
@@ -51,5 +35,21 @@ public abstract  class CommonFields {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public Organisation getOrganisation() {
+        return organisation;
+    }
+
+    public void setOrganisation(Organisation organisation) {
+        this.organisation = organisation;
+    }
+
+    public Instant getCreateDate() {
+        return createDate == null ? Instant.now() : createDate;
+    }
+
+    public void setCreateDate(Instant createDate) {
+        this.createDate = createDate;
     }
 }

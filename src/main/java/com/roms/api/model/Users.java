@@ -11,8 +11,9 @@ import javax.persistence.*;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.Collection;
-import java.util.Collections;
+
 
 @Entity
 @Table(name ="users")
@@ -21,24 +22,43 @@ public class Users  extends CommonFields implements Serializable {
     @Serial
     private static final long serialVersionUID = -5534811223511068706L;
 
-    @Column(name="first_name")
-    private String firstName;
 
-    @Column(name="last_name")
-    private String lastName;
+    @Column(name="userid",nullable=false)
+    private String userId;
 
-    @Column(name="password")
-    private String password;
+    @Column(name="authentication_type",nullable=false)
+    private String authenticatonType;
 
-    @Column(name="user_name")
-    private String userName;
-
-    @Column(name="enabled")
-    private boolean enabled;
-
+    @Column(name="apppassword",nullable=false)
+    private String apppassword;
 
     @OneToOne()
-    @JoinColumn(name = "role_id",referencedColumnName = "id")
+    @JoinColumn(name = "employee_idx",referencedColumnName = "id")
+    @Fetch(FetchMode.SELECT)
+    private Employe employeId;
+
+    @Column(name="disable_flag",nullable=false)
+    private boolean disableFlag;
+
+    @Column(name="end_date")
+    private Instant endDate;
+
+    @Column(name="password_expiry_flag")
+    private boolean passwordExpiryFlag;
+
+    @OneToOne()
+    @JoinColumn(name = "create_by",referencedColumnName = "id")
+    @Fetch(FetchMode.SELECT)
+    private Users createBy;
+
+    @OneToOne()
+    @JoinColumn(name = "update_by",referencedColumnName = "id")
+    @Fetch(FetchMode.SELECT)
+    private Users updateBy;
+
+
+    @OneToOne(cascade = CascadeType.ALL,fetch =FetchType.EAGER )
+    @JoinColumn(referencedColumnName = "id")
     @Fetch(FetchMode.SELECT)
     private Roles role;
 
@@ -46,46 +66,69 @@ public class Users  extends CommonFields implements Serializable {
 
     }
 
-
-
-    public String getFirstName() {
-        return firstName;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
-    public String getLastName() {
-        return lastName;
+    public String getAuthenticatonType() {
+        return authenticatonType;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setAuthenticatonType(String authenticatonType) {
+        this.authenticatonType = authenticatonType;
     }
 
-    public String getPassword() {
-        return password;
+    public String getApppassword() {
+        return apppassword;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setApppassword(String apppassword) {
+        this.apppassword = apppassword;
     }
 
-    public String getUserName() {
-        return userName;
+
+    public boolean isDisableFlag() {
+        return disableFlag;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setDisableFlag(boolean disableFlag) {
+        this.disableFlag = disableFlag;
     }
 
-    public boolean isEnabled() {
-        return enabled;
+    public Instant getEndDate() {
+        return endDate;
     }
 
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
+    public void setEndDate(Instant endDate) {
+        this.endDate = endDate;
+    }
+
+    public boolean isPasswordExpiryFlag() {
+        return passwordExpiryFlag;
+    }
+
+    public void setPasswordExpiryFlag(boolean passwordExpiryFlag) {
+        this.passwordExpiryFlag = passwordExpiryFlag;
+    }
+
+    public Users getCreateBy() {
+        return createBy;
+    }
+
+    public void setCreateBy(Users createBy) {
+        this.createBy = createBy;
+    }
+
+    public Users getUpdateBy() {
+        return updateBy;
+    }
+
+    public void setUpdateBy(Users updateBy) {
+        this.updateBy = updateBy;
     }
 
     public Roles getRole() {
@@ -94,5 +137,13 @@ public class Users  extends CommonFields implements Serializable {
 
     public void setRole(Roles role) {
         this.role = role;
+    }
+
+    public Employe getEmployeId() {
+        return employeId;
+    }
+
+    public void setEmployeId(Employe employeId) {
+        this.employeId = employeId;
     }
 }

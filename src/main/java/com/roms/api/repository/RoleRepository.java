@@ -12,6 +12,6 @@ import java.util.UUID;
 @Repository
 public interface RoleRepository extends JpaRepository<Roles, String> {
 
-    @Query("select  p from Roles as p where p.roleName=?1")
+    @Query("select  p from Roles as p where p.name=?1")
     public Optional<Roles> findByRolename(String roleName);
 }
