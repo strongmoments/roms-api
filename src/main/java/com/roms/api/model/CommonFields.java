@@ -1,11 +1,14 @@
 package com.roms.api.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import javax.persistence.*;
 import java.time.Instant;
+import java.util.Map;
 import java.util.UUID;
 
 @MappedSuperclass
@@ -17,6 +20,7 @@ public abstract  class CommonFields {
     @Column(length = 36, nullable = false, updatable = false)
     public String id;
 
+    @JsonIgnore
     @OneToOne()
     @JoinColumn(name = "org_idx",referencedColumnName = "id")
     @Fetch(FetchMode.SELECT)
@@ -24,6 +28,19 @@ public abstract  class CommonFields {
 
     @Column(name = "create_date")
     public Instant createDate;
+
+    @OneToOne()
+    @JoinColumn(name = "create_by",referencedColumnName = "id")
+    @Fetch(FetchMode.SELECT)
+    private Users createBy;
+
+    @Column(name = "last_update_date")
+    private Instant lastUpdateDate;
+
+    @OneToOne()
+    @JoinColumn(name = "update_by",referencedColumnName = "id")
+    @Fetch(FetchMode.SELECT)
+    private Users updateBy;
 
 
     public CommonFields() {
@@ -37,13 +54,25 @@ public abstract  class CommonFields {
         this.id = id;
     }
 
+    @JsonIgnore
     public Organisation getOrganisation() {
+
+        if(organisation == null){
+            Map<String,String> loggedInUserDetails =(Map<String,String>) SecurityContextHolder.getContext().getAuthentication().getDetails();
+            return new Organisation(loggedInUserDetails.get("orgId"));
+        }
         return organisation;
     }
 
     public void setOrganisation(Organisation organisation) {
+
+        if(organisation == null){
+            Map<String,String> loggedInUserDetails =(Map<String,String>) SecurityContextHolder.getContext().getAuthentication().getDetails();
+            organisation = new Organisation((loggedInUserDetails.get("orgId")));
+        }
         this.organisation = organisation;
     }
+
 
     public Instant getCreateDate() {
         return createDate == null ? Instant.now() : createDate;
@@ -51,5 +80,29 @@ public abstract  class CommonFields {
 
     public void setCreateDate(Instant createDate) {
         this.createDate = createDate;
+    }
+
+    public Users getCreateBy() {
+        return createBy;
+    }
+
+    public void setCreateBy(Users createBy) {
+        this.createBy = createBy;
+    }
+
+    public Instant getLastUpdateDate() {
+        return lastUpdateDate;
+    }
+
+    public void setLastUpdateDate(Instant lastUpdateDate) {
+        this.lastUpdateDate = lastUpdateDate;
+    }
+
+    public Users getUpdateBy() {
+        return updateBy;
+    }
+
+    public void setUpdateBy(Users updateBy) {
+        this.updateBy = updateBy;
     }
 }

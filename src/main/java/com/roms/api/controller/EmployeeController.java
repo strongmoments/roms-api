@@ -1,5 +1,7 @@
 package com.roms.api.controller;
 
+
+
 import com.roms.api.kafka.KafkaProducer;
 import com.roms.api.model.Employe;
 import com.roms.api.model.Users;
@@ -13,6 +15,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -39,9 +43,7 @@ public class EmployeeController {
 
 
 
-    @Secured("ROLE_ADMIN")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping(value = "/load", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @GetMapping(value = "/load", consumes = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<?> addLayeredBrand(){
         logger.info(("Process add new brand"));
         Map<String, Object> response = new HashMap<>();

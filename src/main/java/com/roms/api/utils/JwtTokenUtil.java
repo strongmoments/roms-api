@@ -29,6 +29,9 @@ public class JwtTokenUtil implements Serializable {
     public String getUsernameFromToken(String token) {
         return getClaimFromToken(token, Claims::getSubject);
     }
+    public  String getOrganisationIdFromToken(String token) {
+        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getHeader().get("orgId").toString();
+    }
 
     //retrieve expiration date from jwt token
     public Date getExpirationDateFromToken(String token) {
@@ -51,9 +54,9 @@ public class JwtTokenUtil implements Serializable {
     }
 
     //generate token for user
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(UserDetails userDetails,String orgId) {
         Map<String, Object> claims = new HashMap<>();
-        return doGenerateToken(claims, userDetails.getUsername());
+        return doGenerateToken(claims, userDetails.getUsername(),orgId);
     }
 
     //while creating the token -
@@ -61,9 +64,10 @@ public class JwtTokenUtil implements Serializable {
     //2. Sign the JWT using the HS512 algorithm and secret key.
     //3. According to JWS Compact Serialization(https://tools.ietf.org/html/draft-ietf-jose-json-web-signature-41#section-3.1)
     //   compaction of the JWT to a URL-safe string
-    private String doGenerateToken(Map<String, Object> claims, String subject) {
-
-        return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
+    private String doGenerateToken(Map<String, Object> claims, String subject,String orgId) {
+            Map<String,Object> header = new HashMap<>();
+            header.put("orgId",orgId);
+        return Jwts.builder().setClaims(claims).setSubject(subject).setHeader(header).setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
                 .signWith(SignatureAlgorithm.HS512, secret).compact();
     }

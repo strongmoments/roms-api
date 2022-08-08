@@ -32,19 +32,6 @@ public class RolePermission extends CommonFields implements Serializable {
     @Column(name = "permissions")
     private String permissions;
 
-    @Column(name = "update_date")
-    private Instant updateDate;
-
-    @OneToOne()
-    @JoinColumn(name = "create_by",referencedColumnName = "id")
-    @Fetch(FetchMode.SELECT)
-    private Users createBy;
-
-    @OneToOne()
-    @JoinColumn(name = "update_by",referencedColumnName = "id")
-    @Fetch(FetchMode.SELECT)
-    private Users updateBy;
-
     public String getRoleIdx() {
         return roleIdx;
     }
@@ -77,28 +64,5 @@ public class RolePermission extends CommonFields implements Serializable {
         this.createDate = createDate;
     }
 
-    public Instant getUpdateDate() {
-        return updateDate;
-    }
-
-    public void setUpdateDate(Instant updateDate) {
-        this.updateDate = updateDate;
-    }
-
-    public Users getCreateBy() {
-        return createBy;
-    }
-
-    public void setCreateBy(Users createBy) {
-        this.createBy = createBy;
-    }
-
-    public Users getUpdateBy() {
-        return updateBy;
-    }
-
-    public void setUpdateBy(Users updateBy) {
-        this.updateBy = updateBy;
-    }
 }
 

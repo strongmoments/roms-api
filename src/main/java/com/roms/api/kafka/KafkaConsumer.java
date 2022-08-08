@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import javax.transaction.Transactional;
+import java.util.Arrays;
 
 @Component
 @Transactional
@@ -31,11 +32,13 @@ public class KafkaConsumer {
             ObjectMapper mapper = new ObjectMapper();
             Users userModel = mapper.readValue(userJSON, Users.class);
             Users brand = userService.save(userModel);
-            logger.info("Success process brand '{}' with topic '{}'", userModel.getId(), "rtl.kafka.data.save");
+            logger.info("Success process user '{}' with topic '{}'", userModel.getId(), "rtl.kafka.data.save");
         } catch (Exception e){
             logger.error("An error occurred! '{}'", e.getMessage());
         }
     }
+
+
 
     @KafkaListener(topics = "employee-rtl.kafka.data.save", groupId = "rtl")
     public void processEmployee(String userJSON){

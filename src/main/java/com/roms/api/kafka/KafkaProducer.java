@@ -17,7 +17,7 @@ public class KafkaProducer {
     @Autowired
     private KafkaTemplate<String, String> kafkaTemplates;
 
-    public void postBrand(String topic, String groupId, Users userModel){
+    public void postUser(String topic, String groupId, Users userModel){
         try {
             logger.info("Sending data to kafka = '{}' with topic '{}'", userModel.getId(), topic);
             ObjectMapper mapper = new ObjectMapper();
@@ -27,14 +27,5 @@ public class KafkaProducer {
         }
     }
 
-    public void postBrand(String topic, String groupId, Employe employeeModel){
-        try {
-            logger.info("Sending data to kafka = '{}' with topic '{}'", employeeModel.getId(), topic);
-            ObjectMapper mapper = new ObjectMapper();
-            kafkaTemplates.send(topic, groupId, mapper.writeValueAsString(employeeModel));
-        } catch (Exception e) {
-            logger.error("An error occurred! '{}'", e.getMessage());
-        }
-    }
 
 }

@@ -25,7 +25,7 @@ spring:
     show-sql: true
     properties:
       hibernate:
-        ddl-auto: update
+        ddl-auto: create
         jdbc:
           lob:
             non_contextual_creation: true
@@ -62,3 +62,5 @@ server:
   port: 8081
 
 
+common:
+  password: roms@123

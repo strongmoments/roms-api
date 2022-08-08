@@ -17,7 +17,7 @@ import java.util.Collection;
 
 @Entity
 @Table(name ="users")
-public class Users  extends CommonFields implements Serializable {
+public class Users  extends CommonFields implements Serializable, UserDetails {
 
     @Serial
     private static final long serialVersionUID = -5534811223511068706L;
@@ -46,24 +46,16 @@ public class Users  extends CommonFields implements Serializable {
     @Column(name="password_expiry_flag")
     private boolean passwordExpiryFlag;
 
-    @OneToOne()
-    @JoinColumn(name = "create_by",referencedColumnName = "id")
-    @Fetch(FetchMode.SELECT)
-    private Users createBy;
 
-    @OneToOne()
-    @JoinColumn(name = "update_by",referencedColumnName = "id")
-    @Fetch(FetchMode.SELECT)
-    private Users updateBy;
-
-
-    @OneToOne(cascade = CascadeType.ALL,fetch =FetchType.EAGER )
-    @JoinColumn(referencedColumnName = "id")
-    @Fetch(FetchMode.SELECT)
+    @Transient
     private Roles role;
 
     public Users(){
 
+    }
+
+    public Users(String userId) {
+        this.userId = userId;
     }
 
     public String getUserId() {
@@ -115,21 +107,6 @@ public class Users  extends CommonFields implements Serializable {
         this.passwordExpiryFlag = passwordExpiryFlag;
     }
 
-    public Users getCreateBy() {
-        return createBy;
-    }
-
-    public void setCreateBy(Users createBy) {
-        this.createBy = createBy;
-    }
-
-    public Users getUpdateBy() {
-        return updateBy;
-    }
-
-    public void setUpdateBy(Users updateBy) {
-        this.updateBy = updateBy;
-    }
 
     public Roles getRole() {
         return role;
@@ -145,5 +122,40 @@ public class Users  extends CommonFields implements Serializable {
 
     public void setEmployeId(Employe employeId) {
         this.employeId = employeId;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return null;
+    }
+
+    @Override
+    public String getPassword() {
+        return apppassword;
+    }
+
+    @Override
+    public String getUsername() {
+        return userId;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return disableFlag == false ? true : false;
     }
 }

@@ -31,17 +31,6 @@ public class UserRolesMap extends CommonFields implements Serializable {
     @Fetch(FetchMode.SELECT)
     private Roles roleId;
 
-
-    @OneToOne()
-    @JoinColumn(name = "create_by",referencedColumnName = "id")
-    @Fetch(FetchMode.SELECT)
-    private Users createBy;
-
-    @OneToOne()
-    @JoinColumn(name = "update_by",referencedColumnName = "id")
-    @Fetch(FetchMode.SELECT)
-    private Users updateBy;
-
     public Users getUserId() {
         return userId;
     }
@@ -56,21 +45,5 @@ public class UserRolesMap extends CommonFields implements Serializable {
 
     public void setRoleId(Roles roleId) {
         this.roleId = roleId;
-    }
-
-    public Users getCreateBy() {
-        return createBy;
-    }
-
-    public void setCreateBy(Users createBy) {
-        this.createBy = createBy;
-    }
-
-    public Users getUpdateBy() {
-        return updateBy;
-    }
-
-    public void setUpdateBy(Users updateBy) {
-        this.updateBy = updateBy;
     }
 }

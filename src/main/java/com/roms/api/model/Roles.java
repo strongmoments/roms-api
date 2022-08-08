@@ -10,7 +10,7 @@ import java.io.Serializable;
 import java.time.Instant;
 
 @Entity
-@Table(name = "roles")
+@Table(name = "app_access_roles")
 public class Roles extends CommonFields implements Serializable {
     @Serial
     private static final long serialVersionUID = -6041223701968440703L;
@@ -18,15 +18,6 @@ public class Roles extends CommonFields implements Serializable {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @OneToOne()
-    @JoinColumn(name = "create_by",referencedColumnName = "id")
-    @Fetch(FetchMode.SELECT)
-    private Users createBy;
-
-    @OneToOne()
-    @JoinColumn(name = "update_by",referencedColumnName = "id")
-    @Fetch(FetchMode.SELECT)
-    private Users updateBy;
 
     public String getName() {
         return name;
@@ -36,19 +27,4 @@ public class Roles extends CommonFields implements Serializable {
         this.name = name;
     }
 
-    public Users getCreateBy() {
-        return createBy;
-    }
-
-    public void setCreateBy(Users createBy) {
-        this.createBy = createBy;
-    }
-
-    public Users getUpdateBy() {
-        return updateBy;
-    }
-
-    public void setUpdateBy(Users updateBy) {
-        this.updateBy = updateBy;
-    }
 }

@@ -39,7 +39,7 @@ public class Employe extends CommonFields implements Serializable {
     private String pronoun;
 
     @Column(name = "phone")
-    private long phone;
+    private String  phone;
 
     @Column(name = "email")
     private String email;
@@ -48,7 +48,7 @@ public class Employe extends CommonFields implements Serializable {
     private Instant birthdate;
 
     @Column(name = "gender", nullable = false)
-    private char gender;
+    private String gender;
 
     @Column(name = "start_date")
     private Instant startDate;
@@ -57,29 +57,20 @@ public class Employe extends CommonFields implements Serializable {
     private Instant endDate;
 
     @Column(name = "indigenous_flag", nullable = false)
-    private char indigenousFlag;
+    private String indigenousFlag;
 
     @Column(name = "staff_type_idx")
     private String staffTypeIdx;
 
     @Column(name = "department_idx")
-    private int departmentIdx;
+    private String departmentIdx;
 
     @Column(name = "profile_image")
     private byte[] profileImage;
 
-   @Column(name = "last_update_date")
-    private Instant lastUpdateDate;
 
-    @OneToOne()
-    @JoinColumn(name = "create_by",referencedColumnName = "id")
-    @Fetch(FetchMode.SELECT)
-    private Users createBy;
 
-    @OneToOne()
-    @JoinColumn(name = "update_by",referencedColumnName = "id")
-    @Fetch(FetchMode.SELECT)
-    private Users updateBy;
+
 
     public String getFirstName() {
         return firstName;
@@ -137,11 +128,11 @@ public class Employe extends CommonFields implements Serializable {
         this.pronoun = pronoun;
     }
 
-    public long getPhone() {
+    public String getPhone() {
         return phone;
     }
 
-    public void setPhone(long phone) {
+    public void setPhone(String phone) {
         this.phone = phone;
     }
 
@@ -161,11 +152,11 @@ public class Employe extends CommonFields implements Serializable {
         this.birthdate = birthdate;
     }
 
-    public char getGender() {
+    public String getGender() {
         return gender;
     }
 
-    public void setGender(char gender) {
+    public void setGender(String gender) {
         this.gender = gender;
     }
 
@@ -185,11 +176,11 @@ public class Employe extends CommonFields implements Serializable {
         this.endDate = endDate;
     }
 
-    public char getIndigenousFlag() {
+    public String getIndigenousFlag() {
         return indigenousFlag;
     }
 
-    public void setIndigenousFlag(char indigenousFlag) {
+    public void setIndigenousFlag(String indigenousFlag) {
         this.indigenousFlag = indigenousFlag;
     }
 
@@ -201,15 +192,13 @@ public class Employe extends CommonFields implements Serializable {
         this.staffTypeIdx = staffTypeIdx;
     }
 
-    public int getDepartmentIdx() {
+    public String getDepartmentIdx() {
         return departmentIdx;
     }
 
-    public void setDepartmentIdx(int departmentIdx) {
+    public void setDepartmentIdx(String departmentIdx) {
         this.departmentIdx = departmentIdx;
     }
-
-
     public byte[] getProfileImage() {
         return profileImage;
     }
@@ -217,9 +206,6 @@ public class Employe extends CommonFields implements Serializable {
     public void setProfileImage(byte[] profileImage) {
         this.profileImage = profileImage;
     }
-
-
-
     public Instant getCreateDate() {
         return createDate;
     }
@@ -228,29 +214,6 @@ public class Employe extends CommonFields implements Serializable {
         this.createDate = createDate;
     }
 
-    public Instant getLastUpdateDate() {
-        return lastUpdateDate;
-    }
-
-    public void setLastUpdateDate(Instant lastUpdateDate) {
-        this.lastUpdateDate = lastUpdateDate;
-    }
-
-    public Users getCreateBy() {
-        return createBy;
-    }
-
-    public void setCreateBy(Users createBy) {
-        this.createBy = createBy;
-    }
-
-    public Users getUpdateBy() {
-        return updateBy;
-    }
-
-    public void setUpdateBy(Users updateBy) {
-        this.updateBy = updateBy;
-    }
 }
 
 
