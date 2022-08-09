@@ -86,6 +86,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 userModel.setRole(userRolesMap.getRoleId());
                 loggedInUserDetails.put("userId",userModel);
                 loggedInUserDetails.put("orgId",orgId);
+                loggedInUserDetails.put("role",userRolesMap.getRoleId().getName());
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());
                 usernamePasswordAuthenticationToken.setDetails(loggedInUserDetails);

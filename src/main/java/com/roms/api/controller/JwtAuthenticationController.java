@@ -1,16 +1,28 @@
 package com.roms.api.controller;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.roms.api.model.JwtRequest;
 import com.roms.api.model.JwtResponse;
+import com.roms.api.model.UserRolesMap;
+import com.roms.api.model.Users;
 import com.roms.api.service.JwtUserDetailsService;
+import com.roms.api.service.UserRolesMapService;
+import com.roms.api.service.UserService;
 import com.roms.api.utils.JwtTokenUtil;
+import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,7 +30,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -29,7 +43,19 @@ public class JwtAuthenticationController {
     private AuthenticationManager authenticationManager;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
+    private UserRolesMapService userRolesMapService;
+
+    @Autowired
     private JwtTokenUtil jwtTokenUtil;
+
+    @Value("${ROLE_ADMIN}")
+    private String adminMenu;
+
+    @Value("${ROLE_EMPLOYEE}")
+    private String employeeMenu;
 
     @Autowired
     private JwtUserDetailsService userDetailsService;
@@ -39,11 +65,22 @@ public class JwtAuthenticationController {
         String userNameWithOrgid = authenticationRequest.getUsername()+":"+authenticationRequest.getOrgId();
         authenticate(userNameWithOrgid, authenticationRequest.getPassword());
 
+        Map<String,Object> response = new HashMap<>();
+
         final UserDetails userDetails = userDetailsService.loadUserByUsername(userNameWithOrgid);
-
+        Users userModel = userService.findByUsername(authenticationRequest.getUsername(), authenticationRequest.getOrgId()).get();
+        UserRolesMap userRolesMap =  userRolesMapService.findAllByUserId(userModel.getId()).get(0);
+        Gson g = new Gson();
         final String token = jwtTokenUtil.generateToken(userDetails,authenticationRequest.getOrgId());
-
-        return ResponseEntity.ok(new JwtResponse(token));
+        response.put("token", token);
+        if("ROLE_ADMIN".equalsIgnoreCase(userRolesMap.getRoleId().getName())){
+            response.put("menus",g.fromJson(adminMenu,Map.class) );
+        }
+        if("ROLE_EMPLOYEE".equalsIgnoreCase(userRolesMap.getRoleId().getName())){
+            response.put("menus",g.fromJson(employeeMenu,Map.class)  );
+        }
+        response.put("userDetail", userModel.getEmployeId());
+        return ResponseEntity.ok(response);
     }
 
     private void authenticate(String username, String password) throws Exception {
