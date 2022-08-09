@@ -1,11 +1,15 @@
 package com.roms.api.model;
 import javax.persistence.*;
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.Instant;
 @Entity
 @Table(name="Leave_Type")
-public class LeaveType {
-    @Column(name="leave_type_id",nullable=false,updatable=false)
-    private long leaveTypeId;
+public class LeaveType extends CommonFields implements Serializable {
+
+
+    @Serial
+    private static final long serialVersionUID = -6954215984133786384L;
 
     @Column(name="leave_name",nullable=false,updatable=false)
     private String name;
@@ -15,14 +19,6 @@ public class LeaveType {
 
     @Column(name="number_days_allowed",nullable=false,updatable=false)
     private int numberDaysAllowed;
-
-    public long getLeaveTypeId() {
-        return leaveTypeId;
-    }
-
-    public void setLeaveTypeId(long leaveTypeId) {
-        this.leaveTypeId = leaveTypeId;
-    }
 
     public String getName() {
         return name;

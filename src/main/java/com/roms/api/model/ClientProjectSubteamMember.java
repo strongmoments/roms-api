@@ -15,13 +15,21 @@ import java.time.Instant;
 import java.util.Collection;
 @Entity
 @Table(name="Client_project_subteam_members")
-public class ClientProjectSubteamMember extends CommonFields {
+public class ClientProjectSubteamMember extends CommonFields implements Serializable {
 
-    @Column(name="emp_idx",nullable=false,updatable=false)
-    private String empIdx;
+    @Serial
+    private static final long serialVersionUID = -7936996574004918347L;
+    @OneToOne()
+    @JoinColumn(name = "user_idx",referencedColumnName = "id")
+    @Fetch(FetchMode.SELECT)
+    private Users user;
 
-    @Column(name="subteam_idx",nullable=false)
-    private String subteamIdx;
+
+    @OneToOne()
+    @JoinColumn(name = "subteam_idx",referencedColumnName = "id")
+    @Fetch(FetchMode.SELECT)
+    private ClientProjectSubteam clientProjectSubteam;
+
 
     @Column(name="start_date",nullable=false,updatable=false)
     private Instant startDate;
@@ -32,21 +40,7 @@ public class ClientProjectSubteamMember extends CommonFields {
     @Column(name="manager_flag",nullable=false)
     private boolean managerFlag;
 
-    public String getEmpIdx() {
-        return empIdx;
-    }
 
-    public void setEmpIdx(String empIdx) {
-        this.empIdx = empIdx;
-    }
-
-    public String getSubteamIdx() {
-        return subteamIdx;
-    }
-
-    public void setSubteamIdx(String subteamIdx) {
-        this.subteamIdx = subteamIdx;
-    }
 
     public Instant getStartDate() {
         return startDate;
@@ -70,5 +64,17 @@ public class ClientProjectSubteamMember extends CommonFields {
 
     public void setManagerFlag(boolean managerFlag) {
         this.managerFlag = managerFlag;
+    }
+
+    public Users getUser() {   return user;  }
+
+    public void setUser(Users user) {  this.user = user;  }
+
+    public ClientProjectSubteam getClientProjectSubteam() {
+        return clientProjectSubteam;
+    }
+
+    public void setClientProjectSubteam(ClientProjectSubteam clientProjectSubteam) {
+        this.clientProjectSubteam = clientProjectSubteam;
     }
 }

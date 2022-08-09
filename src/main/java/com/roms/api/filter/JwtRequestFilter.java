@@ -9,6 +9,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.roms.api.constant.Constant;
 import com.roms.api.model.UserRolesMap;
 import com.roms.api.model.Users;
 import com.roms.api.service.UserRolesMapService;
@@ -84,8 +85,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                UserRolesMap userRolesMap =  userRolesMapService.findAllByUserId(userModel.getId()).get(0);
                 Map<String, Object> loggedInUserDetails  = new HashMap<>();
                 userModel.setRole(userRolesMap.getRoleId());
-                loggedInUserDetails.put("userId",userModel);
-                loggedInUserDetails.put("orgId",orgId);
+                loggedInUserDetails.put(Constant.USER_ID,userModel);
+                loggedInUserDetails.put(Constant.ORG_ID,orgId);
                 loggedInUserDetails.put("role",userRolesMap.getRoleId().getName());
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());

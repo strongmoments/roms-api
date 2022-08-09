@@ -41,7 +41,7 @@ public class Users  extends CommonFields implements Serializable, UserDetails {
     private boolean disableFlag;
 
     @Column(name="end_date")
-    private Instant endDate;
+    public Instant endDate;
 
     @Column(name="password_expiry_flag")
     private boolean passwordExpiryFlag;

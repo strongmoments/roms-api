@@ -3,14 +3,19 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.Instant;
 @Entity
 @Table(name="Leave_Details")
-public class LeaveDetails {
+public class LeaveDetails extends CommonFields implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = -5516740790649965530L;
     @OneToOne()
-    @JoinColumn(name="leave_type_idx",referencedColumnName="leave_type")
+    @JoinColumn(name="leave_type_idx",referencedColumnName="id")
     @Fetch(FetchMode.SELECT)
-    private Users leaveType;
+    private LeaveType leaveType;
 
     @Column(name="used_leave",nullable=false,updatable=false)
     private String usedLeave;
@@ -23,13 +28,6 @@ public class LeaveDetails {
     @Fetch(FetchMode.SELECT)
     private Users userId;
 
-    public Users getLeaveType() {
-        return leaveType;
-    }
-
-    public void setLeaveType(Users leaveType) {
-        this.leaveType = leaveType;
-    }
 
     public String getUsedLeave() {
         return usedLeave;

@@ -14,8 +14,11 @@ import java.time.Instant;
 import java.util.Collection;
 @Entity
 @Table(name="Client_project_roles")
-public class ClientProjectRole {
+public class ClientProjectRole extends  CommonFields implements  Serializable {
 
+    @Serial
+    private static final long serialVersionUID = 5510848026981634698L;
+    
     @Column(name="role_name",nullable=false,updatable=true)
     private String roleName;
 

@@ -1,5 +1,6 @@
 package com.roms.api.kafka;
 
+import com.google.gson.*;
 import com.roms.api.model.Employe;
 import com.roms.api.model.Users;
 import com.roms.api.service.EmployeService;
@@ -9,9 +10,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration;
+import org.springframework.kafka.annotation.KafkaHandler;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import javax.transaction.Transactional;
+import java.lang.reflect.Type;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Arrays;
 
 @Component
@@ -25,12 +32,17 @@ public class KafkaConsumer {
     @Autowired
     private EmployeService employeService;
 
-    @KafkaListener(topics = "user-rtl.kafka.data.save", groupId = "rtl")
+    @KafkaListener(topics = "usermodel-rtl.kafka.data.save", groupId = "user")
     public void processUser(String userJSON){
         logger.info("received content = '{}'", userJSON);
         try{
-            ObjectMapper mapper = new ObjectMapper();
-            Users userModel = mapper.readValue(userJSON, Users.class);
+            Gson mapper =   new GsonBuilder().registerTypeAdapter(Instant.class, new JsonDeserializer<Instant>() {
+                @Override
+                public Instant deserialize(JsonElement json, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+                    return Instant.parse((CharSequence) json);
+                }
+            }).create();
+            Users userModel = mapper.fromJson(userJSON, Users.class);
             Users brand = userService.save(userModel);
             logger.info("Success process user '{}' with topic '{}'", userModel.getId(), "rtl.kafka.data.save");
         } catch (Exception e){

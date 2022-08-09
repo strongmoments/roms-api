@@ -84,8 +84,9 @@ public class UserController {
                 Row currentRow = rows.next();
 
                     String emailId = currentRow.getCell(4) == null ? "" :currentRow.getCell(4).getStringCellValue();
+                emailId = emailId+"1";
                     if(existingUserIds.contains(emailId)){
-                        continue;
+                      //  continue;
                     }
                     String surName = currentRow.getCell(0) == null ? "" :currentRow.getCell(0).getStringCellValue();
                     String firstName = currentRow.getCell(1) == null ? "" :currentRow.getCell(1).getStringCellValue();
@@ -131,7 +132,7 @@ public class UserController {
             try {
 
                 for(Users userModel : users){
-                   // kafkaProducer.postUser(postBrandTopic, kafkaGroupId, userModel);
+                    //kafkaProducer.postUser("usermodel-rtl.kafka.data.save", "user", userModel);
                     userService.save(userModel);
                 }
 

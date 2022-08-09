@@ -3,18 +3,23 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.Instant;
 @Entity
 @Table(name="Leave_Request")
-public class LeaveRequest {
+public class LeaveRequest extends CommonFields implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1935968838537925917L;
 
     @OneToOne()
-    @JoinColumn(name="leave_type_idx",referencedColumnName="leave_type")
+    @JoinColumn(name="leave_type_idx",referencedColumnName="id")
     @Fetch(FetchMode.SELECT)
-    private Users leaveType;
+    private LeaveType leaveType;
 
-    @Column(name="date_of_request",nullable=false,updatable=false)
-    private Instant dateOfRequest;
+    @Column(name="apply_date",nullable=false,updatable=false)
+    private Instant applyDate;
 
     @Column(name="leave_status")
     private int leaveStatus;
@@ -28,31 +33,32 @@ public class LeaveRequest {
     @Column(name="total_hour")
     private double totalHour;
 
-    @Column(name="remarks")
-    private String remarks;
+    @Column(name="leave_reason")
+    private String leaveReason;
+
+    @Column(name = "denied_reason", columnDefinition = "TEXT")
+    private String deniedReason;
 
     @Column(name="date_of_approval")
     private Instant dateOfApproval;
 
     @OneToOne()
-    @JoinColumn(name="user_idx",referencedColumnName="user")
+    @JoinColumn(name="user_idx",referencedColumnName="id")
     @Fetch(FetchMode.SELECT)
     private Users userId;
 
-    public Users getLeaveType() {
-        return leaveType;
+    @OneToOne()
+    @JoinColumn(name="approver_idx",referencedColumnName="id")
+    @Fetch(FetchMode.SELECT)
+    private Users approver;
+
+
+    public Instant getApplyDate() {
+        return applyDate;
     }
 
-    public void setLeaveType(Users leaveType) {
-        this.leaveType = leaveType;
-    }
-
-    public Instant getDateOfRequest() {
-        return dateOfRequest;
-    }
-
-    public void setDateOfRequest(Instant dateOfRequest) {
-        this.dateOfRequest = dateOfRequest;
+    public void setApplyDate(Instant applyDate) {
+        this.applyDate = applyDate;
     }
 
     public int getLeaveStatus() {
@@ -87,14 +93,6 @@ public class LeaveRequest {
         this.totalHour = totalHour;
     }
 
-    public String getRemarks() {
-        return remarks;
-    }
-
-    public void setRemarks(String remarks) {
-        this.remarks = remarks;
-    }
-
     public Instant getDateOfApproval() {
         return dateOfApproval;
     }
@@ -109,5 +107,37 @@ public class LeaveRequest {
 
     public void setUserId(Users userId) {
         this.userId = userId;
+    }
+
+    public LeaveType getLeaveType() {
+        return leaveType;
+    }
+
+    public void setLeaveType(LeaveType leaveType) {
+        this.leaveType = leaveType;
+    }
+
+    public String getDeniedReason() {
+        return deniedReason;
+    }
+
+    public void setDeniedReason(String deniedReason) {
+        this.deniedReason = deniedReason;
+    }
+
+    public String getLeaveReason() {
+        return leaveReason;
+    }
+
+    public void setLeaveReason(String leaveReason) {
+        this.leaveReason = leaveReason;
+    }
+
+    public Users getApprover() {
+        return approver;
+    }
+
+    public void setApprover(Users approver) {
+        this.approver = approver;
     }
 }

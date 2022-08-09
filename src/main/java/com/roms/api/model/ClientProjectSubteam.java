@@ -14,26 +14,28 @@ import java.time.Instant;
 import java.util.Collection;
 @Entity
 @Table(name="Client_project_subteams")
-public class ClientProjectSubteam extends CommonFields{
+public class ClientProjectSubteam extends CommonFields implements  Serializable{
 
-    @Column(name="guid",nullable=false,updatable=false)
-    private String guid;
-
-    @Column(name="client_idx",nullable=false)
-    private String clientIdx;
-
-    @Column(name="project_idx",nullable=false)
-    private String projectIdx;
+    @Serial
+    private static final long serialVersionUID = 5786444043436593238L;
 
     @Column(name="team_name",nullable=false)
     private String teamName;
 
-    public String getGuid() {
-        return guid;
+    @Column(name="client_idx",nullable=false)
+    private String clientIdx;
+
+    @OneToOne()
+    @JoinColumn(name = "project_idx",referencedColumnName = "id")
+    @Fetch(FetchMode.SELECT)
+    private ClientProject clientProject;
+
+    public ClientProjectSubteam() {
     }
 
-    public void setGuid(String guid) {
-        this.guid = guid;
+    public ClientProjectSubteam(String clientProjectSubTeamId) {
+        super(clientProjectSubTeamId);
+
     }
 
     public String getClientIdx() {
@@ -44,13 +46,6 @@ public class ClientProjectSubteam extends CommonFields{
         this.clientIdx = clientIdx;
     }
 
-    public String getProjectIdx() {
-        return projectIdx;
-    }
-
-    public void setProjectIdx(String projectIdx) {
-        this.projectIdx = projectIdx;
-    }
 
     public String getTeamName() {
         return teamName;
@@ -60,6 +55,13 @@ public class ClientProjectSubteam extends CommonFields{
         this.teamName = teamName;
     }
 
-    public void save(ClientProjectSubteam model) {
+    public ClientProject getClientProject() {
+        return clientProject;
     }
+
+    public void setClientProject(ClientProject clientProject) {
+        this.clientProject = clientProject;
+    }
+
+
 }
