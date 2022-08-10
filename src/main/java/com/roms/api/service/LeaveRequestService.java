@@ -1,14 +1,14 @@
 package com.roms.api.service;
 
 import com.roms.api.constant.Constant;
-import com.roms.api.model.LeaveRequest;
-import com.roms.api.model.LeaveType;
-import com.roms.api.model.Organisation;
-import com.roms.api.model.Users;
+import com.roms.api.model.*;
 import com.roms.api.repository.LeaveRequestRepository;
 import com.roms.api.utils.LoggedInUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.core.Constants;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +25,8 @@ public class LeaveRequestService {
     @Autowired
     private  ClientProjectSubteamMemberService clientProjectSubteamMemberService;
 
+
+
     @Autowired
     private LoggedInUserDetails loggedIn;
 
@@ -34,44 +36,61 @@ public class LeaveRequestService {
         leaveRequestRepository.save(model);
     }
 
-    public List<LeaveRequest> findAllByApprover(String approverId){
-       return leaveRequestRepository.findAllByApproverAndOrganisation(new Users(approverId), loggedIn.getOrg());
+    public Page<LeaveRequest> findAllRecievedRequest(String approverId,int page, int size){
+        PageRequest pageble  = PageRequest.of(page, size, Sort.by("applyDate").descending());
+       return leaveRequestRepository.findAllByApproverAndOrganisation(new Employe(approverId), loggedIn.getOrg(),pageble);
     }
 
-    public List<LeaveRequest> findAllByApproverAndLeaveStatus(String approverId,int leaveStatus){
-        return leaveRequestRepository.findAllByApproverAndLeaveStatusAndOrganisation(new Users(approverId), leaveStatus, loggedIn.getOrg());
+    public Page<LeaveRequest> findAllRecievedRequestByLeaveStatus(String approverId,int leaveStatus ,int page, int size){
+        PageRequest pageble  = PageRequest.of(page, size, Sort.by("applyDate").descending());
+        return leaveRequestRepository.findAllByApproverAndLeaveStatusAndOrganisation(new Employe(approverId), leaveStatus, loggedIn.getOrg(),pageble);
     }
 
-    public List<LeaveRequest> findAllByUserId(String userId){
-        return leaveRequestRepository.findAllByUserIdAndOrganisation(new Users(userId), loggedIn.getOrg());
+    public Page<LeaveRequest> findAllSentRequest(String employeeId, int page, int size){
+        PageRequest pageble  = PageRequest.of(page, size, Sort.by("applyDate").descending());
+        return leaveRequestRepository.findAllByEmployeAndOrganisation(new Employe(employeeId), loggedIn.getOrg(),pageble);
     }
 
-    public List<LeaveRequest> findAllByUserIdAndLeaveStatus(String userId,int leaveTatus){
-        return leaveRequestRepository.findAllByUserIdAndLeaveStatusAndOrganisation(new Users(userId), leaveTatus,loggedIn.getOrg());
+    public Page<LeaveRequest> findAllSentRequestByLeaveStatus(String employeeId,int leaveTatus,int page, int size){
+        PageRequest pageble  = PageRequest.of(page, size, Sort.by("applyDate").descending());
+        return leaveRequestRepository.findAllByEmployeAndLeaveStatusAndOrganisation(new Employe(employeeId), leaveTatus,loggedIn.getOrg(),pageble);
     }
 
-    public LeaveRequest applyLeave(LeaveRequest leaveRequest, String clientProjectSubTeamId){
+    public LeaveRequest applyLeave(LeaveRequest leaveRequest){
         leaveRequest.setOrganisation(leaveRequest.getOrganisation());
         leaveRequest.setCreateBy(loggedIn.getUser());
         leaveRequest.setCreateDate(Instant.now());
         leaveRequest.setApplyDate(Instant.now());
-        leaveRequest.setLeaveStatus(0);
-        Optional<Users> manage = clientProjectSubteamMemberService.findClientProjectSubTeamManager(clientProjectSubTeamId);
-                if(clientProjectSubTeamId.isEmpty()){
-                    // @todo throw exception manager not found
-                }else{
-                    leaveRequest.setApprover(manage.get());
-                }
-        leaveRequest = leaveRequestRepository.save(leaveRequest);
+        leaveRequest.setLeaveStatus(1);
+        // featching employee team or gang
+        Optional<ClientProjectSubteam>  clientProjectSubteam = clientProjectSubteamMemberService.findClientProjectSubTeamByEmployeeId(leaveRequest.getEmploye().getId());
+        if(!clientProjectSubteam.isEmpty()){
+            Optional<Employe> manager  = clientProjectSubteamMemberService.findClientProjectSubTeamManager(clientProjectSubteam.get().getId());
+            if(manager.isEmpty()){
+                // @todo throw exception manager not found
+            }else{
+                leaveRequest.setApprover(manager.get());
+            }
+            leaveRequest = leaveRequestRepository.save(leaveRequest);
+        }else{
+            // @todo throw exception employee is not associate with gang
+        }
 
         return  leaveRequest;
     }
-    public void approveLeave(String leaveRequestId){
-        Optional<LeaveRequest> leaveRequest =  leaveRequestRepository.findById(leaveRequestId);
-        if(!leaveRequest.isEmpty()){
-            LeaveRequest leaveRequestMole = leaveRequest.get();
-            leaveRequestMole.setLeaveStatus(1);
+
+    public void approveLeave(LeaveRequest leaveRequest){
+        Optional<LeaveRequest> leaveRequestModel =  leaveRequestRepository.findById(leaveRequest.getId());
+        if(!leaveRequestModel.isEmpty()){
+            LeaveRequest leaveRequestMole = leaveRequestModel.get();
+            leaveRequestMole.setLeaveStatus(2);
+            leaveRequestMole.setReviewerRemark(leaveRequest.getReviewerRemark());
+            leaveRequestMole.setDateOfApproval(Instant.now());
+            leaveRequestMole.setUpdateBy(loggedIn.getUser());
+            leaveRequestMole.setLastUpdateDate(Instant.now());
             leaveRequestRepository.save(leaveRequestMole);
+        }else{
+            //@todo throw exception leave request not found
         }
 
     }
@@ -80,8 +99,15 @@ public class LeaveRequestService {
         Optional<LeaveRequest> leaveRequest =  leaveRequestRepository.findById(request.getId());
         if(!leaveRequest.isEmpty()){
             LeaveRequest leaveRequestMole = leaveRequest.get();
-            leaveRequestMole.setLeaveStatus(2);
+            leaveRequestMole.setLeaveStatus(3);
+            leaveRequestMole.setReviewerRemark(request.getReviewerRemark());
+            leaveRequestMole.setDateOfApproval(Instant.now());
+            leaveRequestMole.setUpdateBy(loggedIn.getUser());
+            leaveRequestMole.setLastUpdateDate(Instant.now());
             leaveRequestRepository.save(leaveRequestMole);
+
+        }else{
+            //@todo throw exception leave request not found
         }
     }
 

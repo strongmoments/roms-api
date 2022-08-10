@@ -68,9 +68,13 @@ public class Employe extends CommonFields implements Serializable {
     @Column(name = "profile_image")
     private byte[] profileImage;
 
+    public  Employe(){
+        
+    }
 
-
-
+    public Employe(String id) {
+        super(id);
+    }
 
     public String getFirstName() {
         return firstName;

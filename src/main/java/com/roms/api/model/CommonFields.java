@@ -35,7 +35,7 @@ public abstract  class CommonFields {
     private Users createBy;
 
     @Column(name = "last_update_date")
-    private Instant lastUpdateDate;
+    public Instant lastUpdateDate;
 
     @OneToOne()
     @JoinColumn(name = "update_by",referencedColumnName = "id")
@@ -44,6 +44,9 @@ public abstract  class CommonFields {
 
 
     public CommonFields() {
+    }
+    public CommonFields(String id) {
+        this.id =id;
     }
 
     public String getId() {

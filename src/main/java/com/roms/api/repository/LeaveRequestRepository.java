@@ -1,8 +1,11 @@
 package com.roms.api.repository;
 
+import com.roms.api.model.Employe;
 import com.roms.api.model.LeaveRequest;
 import com.roms.api.model.Organisation;
 import com.roms.api.model.Users;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -11,13 +14,13 @@ import java.util.List;
 @Repository
 public interface LeaveRequestRepository extends JpaRepository<LeaveRequest,String> {
 
-    List<LeaveRequest> findAllByApproverAndOrganisation(Users approver, Organisation organisation);
+    Page<LeaveRequest> findAllByApproverAndOrganisation(Employe approver, Organisation organisation,PageRequest pageRequest);
 
-    List<LeaveRequest> findAllByApproverAndLeaveStatusAndOrganisation(Users approver, int leaveStatus, Organisation organisation);
+    Page<LeaveRequest> findAllByApproverAndLeaveStatusAndOrganisation(Employe approver, int leaveStatus, Organisation organisation,PageRequest pageRequest);
 
-    List<LeaveRequest> findAllByUserIdAndOrganisation(Users approver,Organisation organisation);
+    Page<LeaveRequest> findAllByEmployeAndOrganisation(Employe requester, Organisation organisation, PageRequest pageRequest);
 
-    List<LeaveRequest> findAllByUserIdAndLeaveStatusAndOrganisation(Users approver,int leaveStatus, Organisation organisation);
+    Page<LeaveRequest> findAllByEmployeAndLeaveStatusAndOrganisation(Employe requester,int leaveStatus, Organisation organisation,PageRequest pageRequest);
 
 
 }

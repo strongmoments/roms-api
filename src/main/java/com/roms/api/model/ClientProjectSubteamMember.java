@@ -20,9 +20,9 @@ public class ClientProjectSubteamMember extends CommonFields implements Serializ
     @Serial
     private static final long serialVersionUID = -7936996574004918347L;
     @OneToOne()
-    @JoinColumn(name = "user_idx",referencedColumnName = "id")
+    @JoinColumn(name = "employee_idx",referencedColumnName = "id")
     @Fetch(FetchMode.SELECT)
-    private Users user;
+    private Employe employee;
 
 
     @OneToOne()
@@ -66,9 +66,9 @@ public class ClientProjectSubteamMember extends CommonFields implements Serializ
         this.managerFlag = managerFlag;
     }
 
-    public Users getUser() {   return user;  }
+    public Employe getEmployee() {      return employee;  }
 
-    public void setUser(Users user) {  this.user = user;  }
+    public void setEmployee(Employe employee) {     this.employee = employee;   }
 
     public ClientProjectSubteam getClientProjectSubteam() {
         return clientProjectSubteam;

@@ -28,13 +28,17 @@ public class LeaveRequest extends CommonFields implements Serializable {
     @Column(name="leave_status")
     private int leaveStatus;
 
-    @JsonDeserialize(as = InstantConverter.class)
     @Column(name="start_date_time",nullable=false)
     private Instant startDateTime;
 
-    @JsonDeserialize(as = InstantConverter.class)
     @Column(name="end_date_time",nullable=false)
     private Instant endDateTime;
+
+    @Transient
+    private String strStartDateTime;
+    @Transient
+    private String strEndDateTime;
+
 
     @Column(name="total_hour")
     private double totalHour;
@@ -49,14 +53,14 @@ public class LeaveRequest extends CommonFields implements Serializable {
     private Instant dateOfApproval;
 
     @OneToOne()
-    @JoinColumn(name="user_idx",referencedColumnName="id")
+    @JoinColumn(name="employe_idx",referencedColumnName="id")
     @Fetch(FetchMode.SELECT)
-    private Users userId;
+    private Employe employe;
 
     @OneToOne()
     @JoinColumn(name="approver_idx",referencedColumnName="id")
     @Fetch(FetchMode.SELECT)
-    private Users approver;
+    private Employe approver;
 
 
     public Instant getApplyDate() {
@@ -107,13 +111,6 @@ public class LeaveRequest extends CommonFields implements Serializable {
         this.dateOfApproval = dateOfApproval;
     }
 
-    public Users getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Users userId) {
-        this.userId = userId;
-    }
 
     public LeaveType getLeaveType() {
         return leaveType;
@@ -139,11 +136,35 @@ public class LeaveRequest extends CommonFields implements Serializable {
         this.leaveReason = leaveReason;
     }
 
-    public Users getApprover() {
+    public String getStrStartDateTime() {
+        return strStartDateTime;
+    }
+
+    public void setStrStartDateTime(String strStartDateTime) {
+        this.strStartDateTime = strStartDateTime;
+    }
+
+    public String getStrEndDateTime() {
+        return strEndDateTime;
+    }
+
+    public void setStrEndDateTime(String strEndDateTime) {
+        this.strEndDateTime = strEndDateTime;
+    }
+
+    public Employe getEmploye() {
+        return employe;
+    }
+
+    public void setEmploye(Employe employe) {
+        this.employe = employe;
+    }
+
+    public Employe getApprover() {
         return approver;
     }
 
-    public void setApprover(Users approver) {
+    public void setApprover(Employe approver) {
         this.approver = approver;
     }
 }

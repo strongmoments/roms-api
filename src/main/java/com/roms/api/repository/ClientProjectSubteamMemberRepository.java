@@ -3,6 +3,7 @@ import com.roms.api.model.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -10,4 +11,6 @@ import java.util.Optional;
 public interface ClientProjectSubteamMemberRepository extends JpaRepository<ClientProjectSubteamMember,String>{
 
     Optional<ClientProjectSubteamMember> findByClientProjectSubteamAndManagerFlagAndOrganisation(ClientProjectSubteam clientProjectSubteam, boolean isManager, Organisation organisation);
+
+    List<ClientProjectSubteamMember> findByEmployeeAndOrganisation(Employe empId, Organisation organisation);
 }
