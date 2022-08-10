@@ -6,6 +6,7 @@ import com.roms.api.model.LeaveType;
 import com.roms.api.model.Organisation;
 import com.roms.api.model.Users;
 import com.roms.api.repository.LeaveRequestRepository;
+import com.roms.api.utils.LoggedInUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.core.Constants;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,31 +24,35 @@ public class LeaveRequestService {
 
     @Autowired
     private  ClientProjectSubteamMemberService clientProjectSubteamMemberService;
-    Map<String,Object> loggedInUser = (Map<String, Object>) SecurityContextHolder.getContext().getAuthentication().getDetails();
+
+    @Autowired
+    private LoggedInUserDetails loggedIn;
+
+
 
     public void LeaveRequestRepository(LeaveRequest model) {
         leaveRequestRepository.save(model);
     }
 
     public List<LeaveRequest> findAllByApprover(String approverId){
-       return leaveRequestRepository.findAllByApproverAndOrganisation(new Users(approverId), new Organisation((String) loggedInUser.get(Constant.ORG_ID)));
+       return leaveRequestRepository.findAllByApproverAndOrganisation(new Users(approverId), loggedIn.getOrg());
     }
 
     public List<LeaveRequest> findAllByApproverAndLeaveStatus(String approverId,int leaveStatus){
-        return leaveRequestRepository.findAllByApproverAndLeaveStatusAndOrganisation(new Users(approverId), leaveStatus, new Organisation((String) loggedInUser.get(Constant.ORG_ID)));
+        return leaveRequestRepository.findAllByApproverAndLeaveStatusAndOrganisation(new Users(approverId), leaveStatus, loggedIn.getOrg());
     }
 
     public List<LeaveRequest> findAllByUserId(String userId){
-        return leaveRequestRepository.findAllByUserIdAndOrganisation(new Users(userId), new Organisation((String) loggedInUser.get(Constant.ORG_ID)));
+        return leaveRequestRepository.findAllByUserIdAndOrganisation(new Users(userId), loggedIn.getOrg());
     }
 
     public List<LeaveRequest> findAllByUserIdAndLeaveStatus(String userId,int leaveTatus){
-        return leaveRequestRepository.findAllByUserIdAndLeaveStatusAndOrganisation(new Users(userId), leaveTatus, new Organisation((String) loggedInUser.get(Constant.ORG_ID)));
+        return leaveRequestRepository.findAllByUserIdAndLeaveStatusAndOrganisation(new Users(userId), leaveTatus,loggedIn.getOrg());
     }
 
     public LeaveRequest applyLeave(LeaveRequest leaveRequest, String clientProjectSubTeamId){
         leaveRequest.setOrganisation(leaveRequest.getOrganisation());
-        leaveRequest.setCreateBy((Users) loggedInUser.get(Constant.USER_ID));
+        leaveRequest.setCreateBy(loggedIn.getUser());
         leaveRequest.setCreateDate(Instant.now());
         leaveRequest.setApplyDate(Instant.now());
         leaveRequest.setLeaveStatus(0);
@@ -76,7 +81,6 @@ public class LeaveRequestService {
         if(!leaveRequest.isEmpty()){
             LeaveRequest leaveRequestMole = leaveRequest.get();
             leaveRequestMole.setLeaveStatus(2);
-            leaveRequestMole.setDeniedReason(request.getDeniedReason());
             leaveRequestRepository.save(leaveRequestMole);
         }
     }

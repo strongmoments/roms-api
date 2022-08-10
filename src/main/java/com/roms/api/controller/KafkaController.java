@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 public final class KafkaController {
     private final ProducerService producerService;
 
+
     public KafkaController(ProducerService producerService) {
         this.producerService = producerService;
     }

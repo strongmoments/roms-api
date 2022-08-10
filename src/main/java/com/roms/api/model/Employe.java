@@ -57,7 +57,7 @@ public class Employe extends CommonFields implements Serializable {
     private Instant endDate;
 
     @Column(name = "indigenous_flag", nullable = false)
-    private String indigenousFlag;
+    private boolean indigenousFlag;
 
     @Column(name = "staff_type_idx")
     private String staffTypeIdx;
@@ -176,11 +176,11 @@ public class Employe extends CommonFields implements Serializable {
         this.endDate = endDate;
     }
 
-    public String getIndigenousFlag() {
+    public boolean isIndigenousFlag() {
         return indigenousFlag;
     }
 
-    public void setIndigenousFlag(String indigenousFlag) {
+    public void setIndigenousFlag(boolean indigenousFlag) {
         this.indigenousFlag = indigenousFlag;
     }
 

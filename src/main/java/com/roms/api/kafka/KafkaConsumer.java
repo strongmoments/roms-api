@@ -7,6 +7,7 @@ import com.roms.api.service.EmployeService;
 import com.roms.api.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.apache.kafka.common.errors.GroupSubscribedToTopicException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,7 @@ public class KafkaConsumer {
     private EmployeService employeService;
 
     @KafkaListener(topics = "usermodel-rtl.kafka.data.save", groupId = "user")
+
     public void processUser(String userJSON){
         logger.info("received content = '{}'", userJSON);
         try{

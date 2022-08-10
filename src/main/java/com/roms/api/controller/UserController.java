@@ -116,7 +116,7 @@ public class UserController {
                     employeModel.setJobTitle(positionTitle);
                     employeModel.setGender(gender);
                     employeModel.setDepartmentIdx("2f67b643-18e1-11ed-861d-0242ac120002");
-                    employeModel.setIndigenousFlag(indigenousFlag);
+                    employeModel.setIndigenousFlag(false);
 
                     rolesModel.setName(roleName.toUpperCase());
 

@@ -18,6 +18,7 @@ import java.time.ZoneId;
 @Service
 public class KafkaProducer {
 
+
     private static final Logger logger = LoggerFactory.getLogger(KafkaProducer.class);
 
     @Autowired
@@ -32,7 +33,8 @@ public class KafkaProducer {
                     return new JsonPrimitive(src.toString());
                 }
             }).create();
-kafkaTemplates.send(topic, groupId, mappers.toJson(userModel));
+            kafkaTemplates.send(topic, groupId, mappers.toJson(userModel));
+            //kafkaTemplates.sent
         } catch (Exception e) {
             logger.error("An error occurred! '{}'", e.getMessage());
         }
