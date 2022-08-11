@@ -12,13 +12,15 @@ import javax.persistence.*;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.Collection;
+
 @Entity
 @Table(name="Client_project_subteam_members")
 public class ClientProjectSubteamMember extends CommonFields implements Serializable {
 
     @Serial
     private static final long serialVersionUID = -7936996574004918347L;
+
+
     @OneToOne()
     @JoinColumn(name = "employee_idx",referencedColumnName = "id")
     @Fetch(FetchMode.SELECT)
@@ -31,16 +33,30 @@ public class ClientProjectSubteamMember extends CommonFields implements Serializ
     private ClientProjectSubteam clientProjectSubteam;
 
 
-    @Column(name="start_date",nullable=false,updatable=false)
+    @Column(name="start_date")
     private Instant startDate;
 
-    @Column(name="end-Date",nullable = false,updatable=false)
+    @Column(name="end_Date")
     private Instant endDate;
 
-    @Column(name="manager_flag",nullable=false)
+    @Column(name="manager_flag")
     private boolean managerFlag;
 
+    public Employe getEmployee() {
+        return employee;
+    }
 
+    public void setEmployee(Employe employee) {
+        this.employee = employee;
+    }
+
+    public ClientProjectSubteam getClientProjectSubteam() {
+        return clientProjectSubteam;
+    }
+
+    public void setClientProjectSubteam(ClientProjectSubteam clientProjectSubteam) {
+        this.clientProjectSubteam = clientProjectSubteam;
+    }
 
     public Instant getStartDate() {
         return startDate;
@@ -64,17 +80,5 @@ public class ClientProjectSubteamMember extends CommonFields implements Serializ
 
     public void setManagerFlag(boolean managerFlag) {
         this.managerFlag = managerFlag;
-    }
-
-    public Employe getEmployee() {      return employee;  }
-
-    public void setEmployee(Employe employee) {     this.employee = employee;   }
-
-    public ClientProjectSubteam getClientProjectSubteam() {
-        return clientProjectSubteam;
-    }
-
-    public void setClientProjectSubteam(ClientProjectSubteam clientProjectSubteam) {
-        this.clientProjectSubteam = clientProjectSubteam;
     }
 }

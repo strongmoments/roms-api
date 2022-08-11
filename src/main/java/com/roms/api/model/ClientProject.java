@@ -22,10 +22,10 @@ public class ClientProject extends CommonFields implements Serializable{
     @Column(name="name",nullable = false,updatable=false)
     private String name;
 
-    @Column(name="start_date",nullable=false,updatable=false)
+    @Column(name="start_date")
     private Instant startDate;
 
-    @Column(name="end_Date",nullable=false,updatable=false)
+    @Column(name="end_Date")
     private Instant endDate;
 
     public String getName() {

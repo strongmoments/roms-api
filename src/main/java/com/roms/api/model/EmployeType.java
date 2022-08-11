@@ -3,13 +3,16 @@ package com.roms.api.model;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import java.io.Serializable;
 
 @Entity
-@Table(name="EmployeType")
+@Table(name="employee_type")
 
-public class EmployeType {
-    @Column(name="name",nullable=false,updatable=false)
-    private String name;
+public class EmployeType extends CommonFields implements Serializable {
+    @Column(name="name",nullable=false)
+    private String name;  // type Operator Casual, Operator Permanent, Coperate Casual, Coprate Permanent
+
+
 
     public String getName() {
         return name;
@@ -18,4 +21,12 @@ public class EmployeType {
     public void setName(String name) {
         this.name = name;
     }
+
+    public EmployeType() {
+
+    }
+    public EmployeType(String id){
+        super(id);
+    }
+
 }

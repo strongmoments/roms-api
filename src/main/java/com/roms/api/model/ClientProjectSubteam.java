@@ -22,9 +22,6 @@ public class ClientProjectSubteam extends CommonFields implements  Serializable{
     @Column(name="team_name",nullable=false)
     private String teamName;
 
-    @Column(name="client_idx",nullable=false)
-    private String clientIdx;
-
     @OneToOne()
     @JoinColumn(name = "project_idx",referencedColumnName = "id")
     @Fetch(FetchMode.SELECT)
@@ -37,15 +34,6 @@ public class ClientProjectSubteam extends CommonFields implements  Serializable{
         super(clientProjectSubTeamId);
 
     }
-
-    public String getClientIdx() {
-        return clientIdx;
-    }
-
-    public void setClientIdx(String clientIdx) {
-        this.clientIdx = clientIdx;
-    }
-
 
     public String getTeamName() {
         return teamName;

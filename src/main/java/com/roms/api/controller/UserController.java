@@ -1,15 +1,15 @@
 package com.roms.api.controller;
 
 
-import com.roms.api.model.Employe;
-import com.roms.api.model.Roles;
+import com.roms.api.model.*;
+import com.roms.api.service.ClientProjectSubteamMemberService;
+import com.roms.api.service.ClientProjectSubteamService;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.roms.api.kafka.KafkaProducer;
-import com.roms.api.model.Users;
 import com.roms.api.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +48,12 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private ClientProjectSubteamService clientProjectSubteamService;
+
+    @Autowired
+    private ClientProjectSubteamMemberService  clientProjectSubteamMemberService;
+
 
     @Secured("ROLE_ADMIN")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -72,6 +78,7 @@ public class UserController {
     public ResponseEntity<Map<String, Object>> submitInspection(@RequestParam(value = "file") MultipartFile filse) throws IOException {
 
         Map<String, Object> response = new HashMap();
+        String manageId ="";
         try {
             Workbook workbook = new XSSFWorkbook(filse.getInputStream());
             Sheet sheet  = workbook.getSheetAt(0);
@@ -80,7 +87,10 @@ public class UserController {
             List<Users> users = new ArrayList<>();
             Iterator<Row> rows = sheet.iterator();
             rows.next();
+            int counter =0;
             while (rows.hasNext()) {
+                counter = counter+1;
+
                 Row currentRow = rows.next();
 
                     String emailId = currentRow.getCell(4) == null ? "" :currentRow.getCell(4).getStringCellValue();
@@ -101,8 +111,11 @@ public class UserController {
                     String roleName = currentRow.getCell(8) == null ? "ROLE_EMPLOYEE" :currentRow.getCell(8).getStringCellValue().toLowerCase();
                     roleName = roleName.toUpperCase();
                     roleName = roleName.trim();
-                    String indigenousFlag = "T";
-                    String departmentIdx ="" ;
+
+                    if(counter ==2){
+                        manageId = emailId;
+                        roleName = "ROLE_ADMIN";
+                    }
 
                     Users userModel = new Users();
                     Employe employeModel = new Employe();
@@ -116,6 +129,7 @@ public class UserController {
                     employeModel.setJobTitle(positionTitle);
                     employeModel.setGender(gender);
                     employeModel.setDepartmentIdx("2f67b643-18e1-11ed-861d-0242ac120002");
+                    employeModel.setEmployeType(new EmployeType("374028ad-40c9-43c0-b5e5-907e21240a9e"));
                     employeModel.setIndigenousFlag(false);
 
                     rolesModel.setName(roleName.toUpperCase());
@@ -133,7 +147,20 @@ public class UserController {
 
                 for(Users userModel : users){
                     //kafkaProducer.postUser("usermodel-rtl.kafka.data.save", "user", userModel);
-                    userService.save(userModel);
+                    userModel = userService.save(userModel);
+                    List<ClientProjectSubteam> prjectTeams = clientProjectSubteamService.findAll();
+                    if(prjectTeams.isEmpty()){
+                        continue;
+                    }
+                    ClientProjectSubteamMember  teamMember = new ClientProjectSubteamMember();
+                    teamMember.setClientProjectSubteam(prjectTeams.get(0));
+                    teamMember.setEmployee(userModel.getEmployeId());
+                    if(manageId.equalsIgnoreCase(userModel.getEmployeId().getEmail())){
+                        teamMember.setManagerFlag(true);
+                    }else{
+                        teamMember.setManagerFlag(false);
+                    }
+                    clientProjectSubteamMemberService.save(teamMember);
                 }
 
             } catch (Exception e) {

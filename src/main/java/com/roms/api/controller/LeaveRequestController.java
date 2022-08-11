@@ -5,6 +5,7 @@ import com.roms.api.model.LeaveRequest;
 import com.roms.api.model.Users;
 import com.roms.api.service.LeaveRequestService;
 import com.roms.api.service.LeaveTypeService;
+import com.roms.api.utils.LoggedInUserDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,10 @@ public class LeaveRequestController {
 
     @Autowired
     private LeaveTypeService leaveTypeService;
+
+    @Autowired
+    private LoggedInUserDetails loggedIn;
+
 
     @PostMapping(value = "/request", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<?> requestLeave(@RequestBody LeaveRequest leaveRequest) throws ParseException {
@@ -86,12 +91,12 @@ public class LeaveRequestController {
     }
 
    // 0-pendint, 1-approved, 2-rejected
-    @GetMapping(value = "/applied/{employeeId}", consumes = {MediaType.APPLICATION_JSON_VALUE})
+    @GetMapping(value = "/applied", consumes = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<?> loadApliedLeaveByLeaveStatus(
-            @PathVariable("employeeId") String employeeId,
-            @RequestParam(value ="leaveStatus") int leaveStatus,
+            @RequestParam(value ="leaveStatus", defaultValue = "0") int leaveStatus,
             @RequestParam(value ="page", defaultValue = "0") int page,
             @RequestParam(value ="size", defaultValue = "3") int size){
+         String employeeId = loggedIn.getUser().getEmployeId().getId();
 
         Map<String, Object> response = new HashMap<>();
         try {
@@ -115,12 +120,13 @@ public class LeaveRequestController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/appliedToMe/{employeeId}", consumes = {MediaType.APPLICATION_JSON_VALUE})
+    @GetMapping(value = "/appliedToMe", consumes = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<?> loadApliedToMeLeaveByLeaveStatus(
-            @PathVariable("employeeId") String employeeId,
-            @RequestParam(value ="leaveStatus") int leaveStatus,
+            @RequestParam(value ="leaveStatus", defaultValue = "0") int leaveStatus,
             @RequestParam(value ="page", defaultValue = "0") int page,
             @RequestParam(value ="size", defaultValue = "3") int size){
+
+        String employeeId = loggedIn.getUser().getEmployeId().getId();
 
         Map<String, Object> response = new HashMap<>();
         try {
@@ -145,7 +151,7 @@ public class LeaveRequestController {
     }
 
 
-    @GetMapping(value = "/type", consumes = {MediaType.APPLICATION_JSON_VALUE})
+    @GetMapping(value = "/types", consumes = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<?> loadLeaveType() {
         Map<String, Object> response = new HashMap<>();
         try {

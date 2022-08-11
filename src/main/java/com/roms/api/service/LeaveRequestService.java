@@ -25,10 +25,9 @@ public class LeaveRequestService {
     @Autowired
     private  ClientProjectSubteamMemberService clientProjectSubteamMemberService;
 
-
-
     @Autowired
     private LoggedInUserDetails loggedIn;
+
 
 
 
@@ -57,7 +56,9 @@ public class LeaveRequestService {
     }
 
     public LeaveRequest applyLeave(LeaveRequest leaveRequest){
+
         leaveRequest.setOrganisation(leaveRequest.getOrganisation());
+        leaveRequest.setEmploye(loggedIn.getUser().getEmployeId());
         leaveRequest.setCreateBy(loggedIn.getUser());
         leaveRequest.setCreateDate(Instant.now());
         leaveRequest.setApplyDate(Instant.now());
@@ -69,7 +70,11 @@ public class LeaveRequestService {
             if(manager.isEmpty()){
                 // @todo throw exception manager not found
             }else{
-                leaveRequest.setApprover(manager.get());
+                // if requester and approver are not save
+                if(!leaveRequest.getEmploye().getId().equalsIgnoreCase(manager.get().getId())){
+                    leaveRequest.setApprover(manager.get());
+                }
+
             }
             leaveRequest = leaveRequestRepository.save(leaveRequest);
         }else{
@@ -81,14 +86,16 @@ public class LeaveRequestService {
 
     public void approveLeave(LeaveRequest leaveRequest){
         Optional<LeaveRequest> leaveRequestModel =  leaveRequestRepository.findById(leaveRequest.getId());
-        if(!leaveRequestModel.isEmpty()){
-            LeaveRequest leaveRequestMole = leaveRequestModel.get();
-            leaveRequestMole.setLeaveStatus(2);
-            leaveRequestMole.setReviewerRemark(leaveRequest.getReviewerRemark());
-            leaveRequestMole.setDateOfApproval(Instant.now());
-            leaveRequestMole.setUpdateBy(loggedIn.getUser());
-            leaveRequestMole.setLastUpdateDate(Instant.now());
-            leaveRequestRepository.save(leaveRequestMole);
+        if(!(leaveRequestModel.isEmpty()) ){
+            if(!(leaveRequestModel.get().getEmploye().getId().equalsIgnoreCase(loggedIn.getUser().getEmployeId().getId()))) {
+                LeaveRequest leaveRequestMole = leaveRequestModel.get();
+                leaveRequestMole.setLeaveStatus(2);
+                leaveRequestMole.setReviewerRemark(leaveRequest.getReviewerRemark());
+                leaveRequestMole.setDateOfApproval(Instant.now());
+                leaveRequestMole.setUpdateBy(loggedIn.getUser());
+                leaveRequestMole.setLastUpdateDate(Instant.now());
+                leaveRequestRepository.save(leaveRequestMole);
+            }
         }else{
             //@todo throw exception leave request not found
         }
@@ -98,14 +105,15 @@ public class LeaveRequestService {
     public void rejectLeave(LeaveRequest request){
         Optional<LeaveRequest> leaveRequest =  leaveRequestRepository.findById(request.getId());
         if(!leaveRequest.isEmpty()){
-            LeaveRequest leaveRequestMole = leaveRequest.get();
-            leaveRequestMole.setLeaveStatus(3);
-            leaveRequestMole.setReviewerRemark(request.getReviewerRemark());
-            leaveRequestMole.setDateOfApproval(Instant.now());
-            leaveRequestMole.setUpdateBy(loggedIn.getUser());
-            leaveRequestMole.setLastUpdateDate(Instant.now());
-            leaveRequestRepository.save(leaveRequestMole);
-
+            if(!(leaveRequest.get().getEmploye().getId().equalsIgnoreCase(loggedIn.getUser().getEmployeId().getId()))){
+                LeaveRequest leaveRequestMole = leaveRequest.get();
+                leaveRequestMole.setLeaveStatus(3);
+                leaveRequestMole.setReviewerRemark(request.getReviewerRemark());
+                leaveRequestMole.setDateOfApproval(Instant.now());
+                leaveRequestMole.setUpdateBy(loggedIn.getUser());
+                leaveRequestMole.setLastUpdateDate(Instant.now());
+                leaveRequestRepository.save(leaveRequestMole);
+            }
         }else{
             //@todo throw exception leave request not found
         }
