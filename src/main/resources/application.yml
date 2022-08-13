@@ -16,8 +16,6 @@ spring:
       producer:
         retries: 0
         acks: all
-        key-serializer: org.apache.kafka.common.serialization.StringSerializer
-        value-serializer: in.governance.samagra.apps.kafka.producer.config.JsonSerializer
 
   jpa:
     generate-ddl: true
@@ -33,8 +31,8 @@ spring:
         show-sql: true
   datasource:
     url: jdbc:postgresql://localhost:5432/roms
-    username: postgres
-    password:
+    username: teamsm
+    password: smproduct
 
 jwt:
   secret: javainuse
@@ -59,7 +57,8 @@ userslide: slide
 slidepass: slide
 
 server:
-  port: 8081
+  port: 80
+
 
 
 common:
@@ -67,3 +66,4 @@ common:
 
 ROLE_ADMIN: '{"dashboard":["mytask","mystaff","inspection"],"mytask":[],"mystaff":[],"timeoff":["applyleave", "history"],"operations":["assets","inspection"],"reports":[]}'
 ROLE_EMPLOYEE: '{"dashboard":["mytask","mystaff","inspection"],"mytask":[],"mystaff":[],"timeoff":["applyleave", "history"],"operations":["assets","inspection"]}'
+

@@ -91,7 +91,7 @@ public class LeaveRequestController {
     }
 
    // 0-pendint, 1-approved, 2-rejected
-    @GetMapping(value = "/applied", consumes = {MediaType.APPLICATION_JSON_VALUE})
+    @GetMapping(value = "/applied")
     public ResponseEntity<?> loadApliedLeaveByLeaveStatus(
             @RequestParam(value ="leaveStatus", defaultValue = "0") int leaveStatus,
             @RequestParam(value ="page", defaultValue = "0") int page,
@@ -120,7 +120,7 @@ public class LeaveRequestController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/appliedToMe", consumes = {MediaType.APPLICATION_JSON_VALUE})
+    @GetMapping(value = "/appliedToMe")
     public ResponseEntity<?> loadApliedToMeLeaveByLeaveStatus(
             @RequestParam(value ="leaveStatus", defaultValue = "0") int leaveStatus,
             @RequestParam(value ="page", defaultValue = "0") int page,
@@ -151,7 +151,7 @@ public class LeaveRequestController {
     }
 
 
-    @GetMapping(value = "/types", consumes = {MediaType.APPLICATION_JSON_VALUE})
+    @GetMapping(value = "/types")
     public ResponseEntity<?> loadLeaveType() {
         Map<String, Object> response = new HashMap<>();
         try {

@@ -45,7 +45,7 @@ public class EmployeeController {
     private EmployeService employeService;
 
 
-    @GetMapping(value = "/load/{employeeId}", consumes = {MediaType.APPLICATION_JSON_VALUE})
+    @GetMapping(value = "/load/{employeeId}")
     public ResponseEntity<?> loadAEmployeeById(@PathVariable("employeeId") String employeeId) throws ChangeSetPersister.NotFoundException {
             Map<String, Object> response = new HashMap<>();
         Optional<Employe> requestedPage =  employeService.findByEmployeeId(employeeId);
@@ -56,7 +56,7 @@ public class EmployeeController {
         return new ResponseEntity<>(requestedPage.get(), HttpStatus.OK);
     }
 
-    @GetMapping(value = "/load", consumes = {MediaType.APPLICATION_JSON_VALUE})
+    @GetMapping(value = "/load")
     public ResponseEntity<?> loadAllEmployee(
             @RequestParam(value ="page", defaultValue = "0") int page,
             @RequestParam(value ="size", defaultValue = "3") int size){
