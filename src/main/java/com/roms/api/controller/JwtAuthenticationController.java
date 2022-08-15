@@ -64,6 +64,9 @@ public class JwtAuthenticationController {
     @Value("${ROLE_EMPLOYEE}")
     private String employeeMenu;
 
+    @Value("${release.version}")
+    private String releaseVersion;
+
     @Autowired
     private JwtUserDetailsService userDetailsService;
 
@@ -103,12 +106,13 @@ public class JwtAuthenticationController {
     @RequestMapping(value = "/version", method = RequestMethod.GET)
     public String getAppVersion() throws IOException, XmlPullParserException {
 
-        MavenXpp3Reader reader = new MavenXpp3Reader();
-        Model model = reader.read(new FileReader("pom.xml"));
+      //  MavenXpp3Reader reader = new MavenXpp3Reader();
+       // Model model = reader.read(new FileReader("pom.xml"));
         StringBuilder sb = new StringBuilder();
-        sb.append(model.getArtifactId());
+        sb.append(releaseVersion);
+       /* sb.append(model.getArtifactId());
         sb.append("\n");
-        sb.append(model.getVersion());
+        sb.append(model.getVersion());*/
 
         return sb.toString();
 
