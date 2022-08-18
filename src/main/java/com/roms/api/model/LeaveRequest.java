@@ -43,6 +43,9 @@ public class LeaveRequest extends CommonFields implements Serializable {
     @Column(name="total_hour")
     private double totalHour;
 
+    @Column(name="total_day")
+    private Integer totalDay;
+
     @Column(name="leave_reason")
     private String leaveReason;
 
@@ -166,5 +169,13 @@ public class LeaveRequest extends CommonFields implements Serializable {
 
     public void setApprover(Employe approver) {
         this.approver = approver;
+    }
+
+    public Integer getTotalDay() {
+            return totalDay;
+    }
+
+    public void setTotalDay(Integer totalDay) {
+        this.totalDay = totalDay;
     }
 }
