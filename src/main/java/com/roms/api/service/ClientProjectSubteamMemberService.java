@@ -48,4 +48,14 @@ public class ClientProjectSubteamMemberService {
        }
 
     }
+
+    public Optional<Employe> getLeaveApprover(){
+        Optional<ClientProjectSubteam>  clientProjectSubteam = findClientProjectSubTeamByEmployeeId(loggedIn.getUser().getEmployeId().getId());
+        if(!clientProjectSubteam.isEmpty()) {
+            return findClientProjectSubTeamManager(clientProjectSubteam.get().getId());
+        }else{
+           return Optional.ofNullable(null);
+        }
+
+    }
 }

@@ -17,8 +17,8 @@
             </PatternLayout>
         </File>
         <RollingFile name="RollingFileAppender"
-                     fileName="logging-demo-app.log"
-                     filePattern="logging-demo-app-%d{dd-MM-yyyy}-%i.log.gz">
+                     fileName="roms-api.log"
+                     filePattern="roms-api-%d{dd-MM-yyyy}-%i.log.gz">
             <PatternLayout>
                 <Pattern>${LOG_PATTERN}</Pattern>
             </PatternLayout>
@@ -27,7 +27,7 @@
                     5 KiloBytes -->
                 <OnStartupTriggeringPolicy />
                 <SizeBasedTriggeringPolicy
-                        size="1024 KB" />
+                        size="2048 KB" />
                 <TimeBasedTriggeringPolicy />
             </Policies>
             <DefaultRolloverStrategy max="10" />

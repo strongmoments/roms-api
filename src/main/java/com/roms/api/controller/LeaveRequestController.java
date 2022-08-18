@@ -3,6 +3,7 @@ package com.roms.api.controller;
 import com.roms.api.model.Employe;
 import com.roms.api.model.LeaveRequest;
 import com.roms.api.model.Users;
+import com.roms.api.service.ClientProjectSubteamMemberService;
 import com.roms.api.service.LeaveRequestService;
 import com.roms.api.service.LeaveTypeService;
 import com.roms.api.utils.LoggedInUserDetails;
@@ -37,6 +38,9 @@ public class LeaveRequestController {
 
     @Autowired
     private LoggedInUserDetails loggedIn;
+
+    @Autowired
+    private ClientProjectSubteamMemberService clientProjectSubteamMemberService;
 
 
     @PostMapping(value = "/request", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
@@ -163,5 +167,18 @@ public class LeaveRequestController {
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/approver")
+    public ResponseEntity<?> loadLeveApprover() {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            return new ResponseEntity<>(clientProjectSubteamMemberService.getLeaveApprover(), HttpStatus.OK);
+        } catch (Exception e){
+            logger.error("An error occurred! {}", e.getMessage());
+            response.put("status","error");
+            response.put("error",e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

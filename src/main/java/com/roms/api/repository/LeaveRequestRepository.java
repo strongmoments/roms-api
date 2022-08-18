@@ -14,13 +14,13 @@ import java.util.List;
 @Repository
 public interface LeaveRequestRepository extends JpaRepository<LeaveRequest,String> {
 
-    Page<LeaveRequest> findAllByApproverAndOrganisation(Employe approver, Organisation organisation,PageRequest pageRequest);
+    Page<LeaveRequest> findAllByApproverAndOrganisationOrderByApplyDateDesc(Employe approver, Organisation organisation,PageRequest pageRequest);
 
-    Page<LeaveRequest> findAllByApproverAndLeaveStatusAndOrganisation(Employe approver, int leaveStatus, Organisation organisation,PageRequest pageRequest);
+    Page<LeaveRequest> findAllByApproverAndLeaveStatusAndOrganisationOrderByApplyDateDesc(Employe approver, int leaveStatus, Organisation organisation,PageRequest pageRequest);
 
-    Page<LeaveRequest> findAllByEmployeAndOrganisation(Employe requester, Organisation organisation, PageRequest pageRequest);
+    Page<LeaveRequest> findAllByEmployeAndOrganisationOrderByApplyDateDesc(Employe requester, Organisation organisation, PageRequest pageRequest);
 
-    Page<LeaveRequest> findAllByEmployeAndLeaveStatusAndOrganisation(Employe requester,int leaveStatus, Organisation organisation,PageRequest pageRequest);
+    Page<LeaveRequest> findAllByEmployeAndLeaveStatusAndOrganisationOrderByApplyDateDesc(Employe requester,int leaveStatus, Organisation organisation,PageRequest pageRequest);
 
 
 }

@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.roms</groupId>
 	<artifactId>roms-api</artifactId>
-	<version>release-1.3</version>
+	<version>0.0.3</version>
 	<name>roms</name>
 	<description>RTL Operation Management System</description>
 	<properties>

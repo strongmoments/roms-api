@@ -90,6 +90,7 @@ public class JwtAuthenticationController {
             response.put("menus",g.fromJson(employeeMenu,Map.class)  );
         }
         response.put("userDetail", userModel.getEmployeId());
+        response.put("role",userRolesMap.getRoleId().getName());
         return ResponseEntity.ok(response);
     }
 

@@ -37,22 +37,22 @@ public class LeaveRequestService {
 
     public Page<LeaveRequest> findAllRecievedRequest(String approverId,int page, int size){
         PageRequest pageble  = PageRequest.of(page, size, Sort.by("applyDate").descending());
-       return leaveRequestRepository.findAllByApproverAndOrganisation(new Employe(approverId), loggedIn.getOrg(),pageble);
+       return leaveRequestRepository.findAllByApproverAndOrganisationOrderByApplyDateDesc(new Employe(approverId), loggedIn.getOrg(),pageble);
     }
 
     public Page<LeaveRequest> findAllRecievedRequestByLeaveStatus(String approverId,int leaveStatus ,int page, int size){
         PageRequest pageble  = PageRequest.of(page, size, Sort.by("applyDate").descending());
-        return leaveRequestRepository.findAllByApproverAndLeaveStatusAndOrganisation(new Employe(approverId), leaveStatus, loggedIn.getOrg(),pageble);
+        return leaveRequestRepository.findAllByApproverAndLeaveStatusAndOrganisationOrderByApplyDateDesc(new Employe(approverId), leaveStatus, loggedIn.getOrg(),pageble);
     }
 
     public Page<LeaveRequest> findAllSentRequest(String employeeId, int page, int size){
         PageRequest pageble  = PageRequest.of(page, size, Sort.by("applyDate").descending());
-        return leaveRequestRepository.findAllByEmployeAndOrganisation(new Employe(employeeId), loggedIn.getOrg(),pageble);
+        return leaveRequestRepository.findAllByEmployeAndOrganisationOrderByApplyDateDesc(new Employe(employeeId), loggedIn.getOrg(),pageble);
     }
 
     public Page<LeaveRequest> findAllSentRequestByLeaveStatus(String employeeId,int leaveTatus,int page, int size){
         PageRequest pageble  = PageRequest.of(page, size, Sort.by("applyDate").descending());
-        return leaveRequestRepository.findAllByEmployeAndLeaveStatusAndOrganisation(new Employe(employeeId), leaveTatus,loggedIn.getOrg(),pageble);
+        return leaveRequestRepository.findAllByEmployeAndLeaveStatusAndOrganisationOrderByApplyDateDesc(new Employe(employeeId), leaveTatus,loggedIn.getOrg(),pageble);
     }
 
     public LeaveRequest applyLeave(LeaveRequest leaveRequest){
@@ -63,10 +63,7 @@ public class LeaveRequestService {
         leaveRequest.setCreateDate(Instant.now());
         leaveRequest.setApplyDate(Instant.now());
         leaveRequest.setLeaveStatus(1);
-        // featching employee team or gang
-        Optional<ClientProjectSubteam>  clientProjectSubteam = clientProjectSubteamMemberService.findClientProjectSubTeamByEmployeeId(leaveRequest.getEmploye().getId());
-        if(!clientProjectSubteam.isEmpty()){
-            Optional<Employe> manager  = clientProjectSubteamMemberService.findClientProjectSubTeamManager(clientProjectSubteam.get().getId());
+            Optional<Employe> manager  = clientProjectSubteamMemberService.getLeaveApprover();
             if(manager.isEmpty()){
                 // @todo throw exception manager not found
             }else{
@@ -74,12 +71,8 @@ public class LeaveRequestService {
                 if(!leaveRequest.getEmploye().getId().equalsIgnoreCase(manager.get().getId())){
                     leaveRequest.setApprover(manager.get());
                 }
-
             }
             leaveRequest = leaveRequestRepository.save(leaveRequest);
-        }else{
-            // @todo throw exception employee is not associate with gang
-        }
 
         return  leaveRequest;
     }
