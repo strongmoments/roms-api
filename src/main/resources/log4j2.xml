@@ -27,7 +27,7 @@
                     5 KiloBytes -->
                 <OnStartupTriggeringPolicy />
                 <SizeBasedTriggeringPolicy
-                        size="2048 KB" />
+                        size="1 MB" />
                 <TimeBasedTriggeringPolicy />
             </Policies>
             <DefaultRolloverStrategy max="10" />

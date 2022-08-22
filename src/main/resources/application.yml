@@ -30,7 +30,7 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         show-sql: true
   datasource:
-    url: jdbc:postgresql://localhost:5432/roms
+    url: jdbc:postgresql://localhost:5432/romspoc
     username: teamsm
     password: smproduct
 
@@ -57,18 +57,39 @@ userslide: slide
 slidepass: slide
 
 server:
-  port: 443
-  ssl:
-    key-store: classpath:keystore.p12
-    key-store-password: roms@123
-    keyStoreType: PKCS12
+  port: 8080
+  #ssl:
+    #key-store: file:C:\Users\MetroRush\Documents\vikash\keystore.p12
+    #key-store-password: smproduct
+  #keyStoreType: PKCS12
 
 release:
-  version: release-0.0.3
+  version: 0.0.4-SNAPSHOT
 
 common:
   password: roms@123
 
 ROLE_ADMIN: '{"dashboard":["mytask","mystaff","inspection"],"mytask":[],"mystaff":[],"timeoff":["applyleave", "history"],"operations":["assets","inspection"],"reports":[]}'
 ROLE_EMPLOYEE: '{"dashboard":["mytask","mystaff","inspection"],"mytask":[],"mystaff":[],"timeoff":["applyleave", "history"],"operations":["assets","inspection"]}'
+
+
+multitenancy:
+  schema-cache:
+    maximumSize: 100
+    expireAfterAccess: 10
+  master:
+    liquibase:
+      changeLog: classpath:db/changelog/db.changelog-master.yaml
+    repository:
+      packages: se.callista.blog.service.multi_tenancy.repository
+    entityManager:
+      packages: se.callista.blog.service.multi_tenancy.domain
+
+  tenant:
+    liquibase:
+      changeLog: classpath:db/changelog/db.changelog-tenant.yaml
+    repository:
+      packages: se.callista.blog.service.repository
+    entityManager:
+      packages: se.callista.blog.service.domain
 
