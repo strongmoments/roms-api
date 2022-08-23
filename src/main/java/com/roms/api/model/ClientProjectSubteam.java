@@ -22,10 +22,18 @@ public class ClientProjectSubteam extends CommonFields implements  Serializable{
     @Column(name="team_name",nullable=false)
     private String teamName;
 
+    @Column(name="code",nullable=false)
+    private String code;
+
     @OneToOne()
     @JoinColumn(name = "project_idx",referencedColumnName = "id")
     @Fetch(FetchMode.SELECT)
     private ClientProject clientProject;
+
+    @OneToOne()
+    @JoinColumn(name = "location_idx",referencedColumnName = "id")
+    @Fetch(FetchMode.SELECT)
+    private Location location;
 
     public ClientProjectSubteam() {
     }
@@ -51,5 +59,19 @@ public class ClientProjectSubteam extends CommonFields implements  Serializable{
         this.clientProject = clientProject;
     }
 
+    public Location getLocation() {
+        return location;
+    }
 
+    public void setLocation(Location location) {
+        this.location = location;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
 }

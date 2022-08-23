@@ -16,7 +16,10 @@ public class Employe extends CommonFields implements Serializable {
     @Serial
     private static final long serialVersionUID = 8369516416956648916L;
 
-    @Column(name = "first_name", nullable = false, updatable = false)
+    @Column(name = "employee_no", nullable = false )
+    private String employeeNo;
+
+    @Column(name = "first_name", nullable = false )
     private String firstName;
 
 
@@ -219,6 +222,14 @@ public class Employe extends CommonFields implements Serializable {
 
     public void setEmployeType(EmployeType employeType) {
         this.employeType = employeType;
+    }
+
+    public String getEmployeeNo() {
+        return employeeNo;
+    }
+
+    public void setEmployeeNo(String employeeNo) {
+        this.employeeNo = employeeNo;
     }
 }
 
