@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-@Repository
+
 public interface UsersRepository extends JpaRepository<Users, String> {
     public Optional<Users> findByUserIdAndOrganisation(String userId, Organisation orgId);
 

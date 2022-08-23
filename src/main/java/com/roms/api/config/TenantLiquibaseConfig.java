@@ -11,11 +11,11 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnProperty(name = "multitenancy.tenant.liquibase.enabled", havingValue = "true", matchIfMissing = true)
 public class TenantLiquibaseConfig {
 
-    @Bean
+    /*@Bean
     @ConfigurationProperties("multitenancy.tenant.liquibase")
-    public LiquibaseProperties tenantLiquibaseProperties2() {
+    public LiquibaseProperties liquibaseProperties() {
         return new LiquibaseProperties();
-    }
+    }*/
 
     @Bean
     public DynamicSchemaBasedMultiTenantSpringLiquibase tenantLiquibase() {

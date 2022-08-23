@@ -8,8 +8,12 @@ app:
       data-file-location: data
       data-file-name: yellow_tripdata_2021-01.csv
 spring:
+  liquibase:
+    change-log: classpath:changelog/db.changelog-master.yaml
+    enabled: true
   main:
     allow-circular-references: true
+    allow
   kafka:
     bootstrap-servers: 206.189.130.216:9092
     properties:
@@ -31,8 +35,8 @@ spring:
         show-sql: true
   datasource:
     url: jdbc:postgresql://localhost:5432/romspoc
-    username: teamsm
-    password: smproduct
+    username: postgres
+    password:
 
 jwt:
   secret: javainuse
@@ -79,7 +83,7 @@ multitenancy:
     expireAfterAccess: 10
   master:
     liquibase:
-      changeLog: classpath:db/changelog/db.changelog-master.yaml
+      changeLog: classpath:db.changelog/db.changelog-master.yaml
     repository:
       packages: se.callista.blog.service.multi_tenancy.repository
     entityManager:
@@ -87,7 +91,7 @@ multitenancy:
 
   tenant:
     liquibase:
-      changeLog: classpath:db/changelog/db.changelog-tenant.yaml
+      changeLog: classpath:db.changelog/db.changelog-tenant.yaml
     repository:
       packages: se.callista.blog.service.repository
     entityManager:

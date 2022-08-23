@@ -19,6 +19,9 @@ public class TenantManagementServiceImpl implements TenantManagementService {
 
     private final DataSource dataSource;
     private final JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    //@Qualifier("liquibaseProperties")
     private final LiquibaseProperties liquibaseProperties;
     private final ResourceLoader resourceLoader;
     private final TenantRepository tenantRepository;
@@ -26,7 +29,7 @@ public class TenantManagementServiceImpl implements TenantManagementService {
     @Autowired
     public TenantManagementServiceImpl(DataSource dataSource,
                                        JdbcTemplate jdbcTemplate,
-                                       @Qualifier("tenantLiquibaseProperties")
+                                      // @Qualifier("liquibaseProperties")
                                                LiquibaseProperties liquibaseProperties,
                                        ResourceLoader resourceLoader,
                                        TenantRepository tenantRepository) {

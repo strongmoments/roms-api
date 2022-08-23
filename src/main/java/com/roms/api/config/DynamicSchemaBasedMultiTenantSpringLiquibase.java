@@ -26,8 +26,8 @@ public class DynamicSchemaBasedMultiTenantSpringLiquibase implements Initializin
     private DataSource dataSource;
 
     @Autowired
-    @Qualifier("tenantLiquibaseProperties2")
-    private LiquibaseProperties liquibaseProperties;
+    @Qualifier("liquibaseProperties")
+    private LiquibaseProperties liquibaseProperties2;
 
     @Autowired
     private ResourceLoader resourceLoader;
@@ -56,8 +56,8 @@ public class DynamicSchemaBasedMultiTenantSpringLiquibase implements Initializin
         //liquibase.setResourceLoader(resourceLoader.getResource("db"));
         liquibase.setDataSource(dataSource);
         liquibase.setDefaultSchema(schema);
-        liquibase.setChangeLog(liquibaseProperties.getChangeLog());
-        liquibase.setContexts(liquibaseProperties.getContexts());
+        liquibase.setChangeLog(liquibaseProperties2.getChangeLog());
+        liquibase.setContexts(liquibaseProperties2.getContexts());
         return liquibase;
     }
 
