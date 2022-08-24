@@ -29,6 +29,7 @@ public class UserService  {
     private UserRolesMapService userRolesMapService;
 
 
+
      public Optional<Users> findByUsername(String username,String orgId) {
 
         return usersRepository.findByUserIdAndOrganisation(username,getOrganisation(orgId));

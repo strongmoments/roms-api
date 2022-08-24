@@ -13,4 +13,6 @@ public interface ClientProjectSubteamMemberRepository extends JpaRepository<Clie
     Optional<ClientProjectSubteamMember> findByClientProjectSubteamAndManagerFlagAndOrganisation(ClientProjectSubteam clientProjectSubteam, boolean isManager, Organisation organisation);
 
     List<ClientProjectSubteamMember> findByEmployeeAndOrganisation(Employe empId, Organisation organisation);
+    List<ClientProjectSubteamMember>   findAllByEmployeeFirstNameLikeAndOrganisation(String employeName,Organisation organisation);
+
 }

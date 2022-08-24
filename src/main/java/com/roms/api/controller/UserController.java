@@ -1,6 +1,7 @@
 package com.roms.api.controller;
 
 
+import com.roms.api.constant.Constant;
 import com.roms.api.model.*;
 import com.roms.api.service.ClientProjectSubteamMemberService;
 import com.roms.api.service.ClientProjectSubteamService;
@@ -26,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @RestController
 @CrossOrigin
@@ -54,6 +56,9 @@ public class UserController {
     @Autowired
     private ClientProjectSubteamMemberService  clientProjectSubteamMemberService;
 
+    private Map<String,LocationType>  locationTypeMap;
+    private Map<String,Location>  locationMap;
+
 
     @Secured("ROLE_ADMIN")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -81,7 +86,9 @@ public class UserController {
         String manageId ="";
         try {
             Workbook workbook = new XSSFWorkbook(filse.getInputStream());
+
             Sheet sheet  = workbook.getSheetAt(0);
+            Sheet locationType =  workbook.getSheet(Constant.LOCATION_TYPE);
             Map<String,String> loggedIndUser = (Map<String,String>)SecurityContextHolder.getContext().getAuthentication().getDetails();
             List<String> existingUserIds = userService.findAllUserIdByOrganisation(loggedIndUser.get("orgId").toString());
             List<Users> users = new ArrayList<>();
@@ -97,6 +104,7 @@ public class UserController {
                     if(existingUserIds.contains(emailId)){
                         continue;
                     }
+                //currentRow.cel
                     String surName = currentRow.getCell(0) == null ? "" :currentRow.getCell(0).getStringCellValue();
                     String firstName = currentRow.getCell(1) == null ? "" :currentRow.getCell(1).getStringCellValue();
                     String middleName = currentRow.getCell(2) == null ? "" :currentRow.getCell(2).getStringCellValue();
@@ -111,61 +119,10 @@ public class UserController {
                     roleName = roleName.toUpperCase();
                     roleName = roleName.trim();
 
-                    if(counter ==2){
-                        manageId = emailId;
-                        roleName = "ROLE_ADMIN";
-                    }
 
-                    Users userModel = new Users();
-                    Employe employeModel = new Employe();
-                    Roles rolesModel = new Roles();
-
-                    employeModel.setFirstName(firstName);
-                    employeModel.setLastName(surName);
-                    employeModel.setMiddleName(middleName);
-                    employeModel.setPhone(phoneNumber);
-                    employeModel.setEmail(emailId);
-                    employeModel.setJobTitle(positionTitle);
-                    employeModel.setGender(gender);
-                    employeModel.setDepartmentIdx("2f67b643-18e1-11ed-861d-0242ac120002");
-                    employeModel.setEmployeType(new EmployeType("374028ad-40c9-43c0-b5e5-907e21240a9e"));
-                    employeModel.setIndigenousFlag(false);
-
-                    rolesModel.setName(roleName.toUpperCase());
-
-                    userModel.setDisableFlag(false);
-                    userModel.setRole(rolesModel);
-                    userModel.setEmployeId(employeModel);
-                    userModel.setUserId(emailId);
-                    userModel.setAuthenticatonType("JWT");
-                    userModel.setApppassword(password);
-                    users.add(userModel);
 
             }
-            try {
 
-                for(Users userModel : users){
-                    //kafkaProducer.postUser("usermodel-rtl.kafka.data.save", "user", userModel);
-                    userModel = userService.save(userModel);
-                    List<ClientProjectSubteam> prjectTeams = clientProjectSubteamService.findAll();
-                    if(prjectTeams.isEmpty()){
-                        continue;
-                    }
-                    ClientProjectSubteamMember  teamMember = new ClientProjectSubteamMember();
-                    teamMember.setClientProjectSubteam(prjectTeams.get(0));
-                    teamMember.setEmployee(userModel.getEmployeId());
-                    if(manageId.equalsIgnoreCase(userModel.getEmployeId().getEmail())){
-                        teamMember.setManagerFlag(true);
-                    }else{
-                        teamMember.setManagerFlag(false);
-                    }
-                    clientProjectSubteamMemberService.save(teamMember);
-                }
-
-            } catch (Exception e) {
-                logger.error("An error occurred! {}", e.getMessage());
-
-            }
             workbook.close();
             response.put("status", "success");
             return new ResponseEntity<>(response, HttpStatus.OK);
@@ -176,4 +133,25 @@ public class UserController {
         }
 
     }
+
+       public  void SaveLoctionType(Sheet sheet){
+         Map<String,Integer> headerIndex = new HashMap<>();
+           Iterator<Row> rows = sheet.iterator();
+           while (rows.hasNext()) {
+               Row headerRow = rows.next();
+               AtomicInteger counter = new AtomicInteger();
+               headerRow.forEach(cell->{
+                   headerIndex.put(cell.getStringCellValue(),counter.getAndIncrement());
+;               });
+
+           }
+           int counter =0;
+           while (rows.hasNext()) {
+               Row currentRow = rows.next();
+               String locationType = currentRow.getCell(headerIndex.get(Constant.LOCATION_TYPE)).getStringCellValue();
+
+
+           }
+       }
+
 }
