@@ -1,6 +1,6 @@
 package com.roms.api.requestInput;
 
-public class EmployeeSearch {
+public class SearchInput {
     private String searchKey;
 
     public String getSearchKey() {

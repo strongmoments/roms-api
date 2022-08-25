@@ -3,8 +3,10 @@ package com.roms.api.controller;
 
 
 import com.roms.api.kafka.KafkaProducer;
+import com.roms.api.model.ClientProjectSubteamMember;
 import com.roms.api.model.Employe;
-import com.roms.api.model.Users;
+import com.roms.api.requestInput.SearchInput;
+import com.roms.api.service.ClientProjectSubteamMemberService;
 import com.roms.api.service.EmployeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,15 +15,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -42,6 +40,8 @@ public class EmployeeController {
     String postBrandTopic;
 
     @Autowired
+    private ClientProjectSubteamMemberService clientProjectSubteamMemberService;
+    @Autowired
     private EmployeService employeService;
 
 
@@ -54,6 +54,12 @@ public class EmployeeController {
                return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
             }
         return new ResponseEntity<>(requestedPage.get(), HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/searchoperatorfromteam")
+    public ResponseEntity<?> searchOperatorFromSubteamMember(@RequestBody SearchInput employeeSearch) throws ChangeSetPersister.NotFoundException {
+        List<ClientProjectSubteamMember> requestedPage =  clientProjectSubteamMemberService.findAllEmployeeByNameOrNumber(employeeSearch);
+        return new ResponseEntity<>(requestedPage, HttpStatus.OK);
     }
 
     @GetMapping(value = "/load")

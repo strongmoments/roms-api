@@ -8,7 +8,7 @@ import java.io.Serial;
 import java.io.Serializable;
 
 @Entity
-@Table(name="location_type")
+@Table(name="location")
 public class Location extends CommonFields implements Serializable {
     @Serial
     private static final long serialVersionUID = -4590696208175081666L;

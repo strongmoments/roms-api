@@ -56,7 +56,6 @@ public class UserService  {
             employeModel.setCreateDate(Instant.now());
             employeModel.setOrganisation(employeModel.getOrganisation());
             employeModel.setCreateBy(loggedInUser);
-            employeModel.setBirthdate(Instant.now());
             employeModel.setStartDate(Instant.now());
             employeModel = employeService.save(employeModel);
 

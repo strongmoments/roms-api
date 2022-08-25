@@ -1,16 +1,13 @@
 package com.roms.api.service;
-import com.roms.api.constant.Constant;
 import com.roms.api.model.*;
 import com.roms.api.repository.ClientProjectSubteamMemberRepository;
-import com.roms.api.requestInput.EmployeeSearch;
+import com.roms.api.requestInput.SearchInput;
 import com.roms.api.utils.LoggedInUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 
@@ -60,7 +57,7 @@ public class ClientProjectSubteamMemberService {
 
     }
 
-    public List<ClientProjectSubteamMember> findAllEmployeeByNameOrNumber(EmployeeSearch employeeSearch){
+    public List<ClientProjectSubteamMember> findAllEmployeeByNameOrNumber(SearchInput employeeSearch){
              Employe employee = new Employe();
                 employee.setFirstName(employeeSearch.getSearchKey());
             return clientProjectSubteamMemberRepository.findAllByEmployeeFirstNameLikeAndOrganisation(employeeSearch.getSearchKey(), loggedIn.getOrg());

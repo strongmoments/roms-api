@@ -47,6 +47,7 @@ public class LeaveRequestController {
     public ResponseEntity<?> requestLeave(@RequestBody LeaveRequest leaveRequest) throws ParseException {
         Map<String,Object> response = new HashMap<>();
         try {
+
             SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault());
             Instant i = sdf.parse(leaveRequest.getStrStartDateTime()).toInstant();
             leaveRequest.setStartDateTime(sdf.parse(leaveRequest.getStrStartDateTime()).toInstant());

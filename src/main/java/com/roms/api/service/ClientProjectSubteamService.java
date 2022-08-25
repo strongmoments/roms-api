@@ -1,6 +1,7 @@
 package com.roms.api.service;
 import com.roms.api.model.*;
 import com.roms.api.repository.ClientProjectSubteamRepository;
+import com.roms.api.requestInput.SearchInput;
 import com.roms.api.utils.LoggedInUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,9 @@ public class ClientProjectSubteamService {
       return  clientProjectSubteamRepository.findAllByOrganisation(loggedIn.getOrg());
     }
 
+    public List<ClientProjectSubteam> searChBySubTeamName(SearchInput searchInput){
+        return  clientProjectSubteamRepository.findAllByTeamNameStartingWithAndOrganisation(searchInput.getSearchKey(),loggedIn.getOrg());
+    }
 
 
 }

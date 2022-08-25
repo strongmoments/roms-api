@@ -12,5 +12,6 @@ import java.util.List;
 @Repository
 public interface ClientProjectSubteamRepository extends JpaRepository<ClientProjectSubteam, String> {
      List<ClientProjectSubteam> findAllByOrganisation(Organisation organisation);
+     List<ClientProjectSubteam> findAllByTeamNameStartingWithAndOrganisation(String searchKey, Organisation organisation);
 
 }
