@@ -63,13 +63,16 @@ public class Employe extends CommonFields implements Serializable {
     private boolean indigenousFlag;
 
     @OneToOne()
-    @JoinColumn(name = "employee_typeIdx",referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "employee_typeIdx",referencedColumnName = "id")
     @Fetch(FetchMode.SELECT)
     private EmployeType employeType;
 
 
-    @Column(name = "department_idx")
-    private String departmentIdx;
+    @OneToOne()
+    @JoinColumn(name = "department_idx",referencedColumnName = "id")
+    @Fetch(FetchMode.SELECT)
+    private Departments departments;
+
 
     @Column(name = "profile_image")
     private byte[] profileImage;
@@ -194,13 +197,6 @@ public class Employe extends CommonFields implements Serializable {
         this.indigenousFlag = indigenousFlag;
     }
 
-    public String getDepartmentIdx() {
-        return departmentIdx;
-    }
-
-    public void setDepartmentIdx(String departmentIdx) {
-        this.departmentIdx = departmentIdx;
-    }
     public byte[] getProfileImage() {
         return profileImage;
     }
@@ -230,6 +226,14 @@ public class Employe extends CommonFields implements Serializable {
 
     public void setEmployeeNo(String employeeNo) {
         this.employeeNo = employeeNo;
+    }
+
+    public Departments getDepartments() {
+        return departments;
+    }
+
+    public void setDepartments(Departments departments) {
+        this.departments = departments;
     }
 }
 

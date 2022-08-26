@@ -17,8 +17,8 @@ public class ClientProjectSubteamService {
     @Autowired
     private LoggedInUserDetails loggedIn;
 
-    public void save(ClientProjectSubteam model){
-       clientProjectSubteamRepository.save(model);
+    public ClientProjectSubteam save(ClientProjectSubteam model){
+       return clientProjectSubteamRepository.save(model);
     }
 
     public List<ClientProjectSubteam> findAll(){

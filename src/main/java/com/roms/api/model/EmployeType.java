@@ -7,12 +7,9 @@ import java.io.Serializable;
 
 @Entity
 @Table(name="employee_type")
-
 public class EmployeType extends CommonFields implements Serializable {
     @Column(name="name",nullable=false)
     private String name;  // type Operator Casual, Operator Permanent, Coperate Casual, Coprate Permanent
-
-
 
     public String getName() {
         return name;
@@ -21,12 +18,4 @@ public class EmployeType extends CommonFields implements Serializable {
     public void setName(String name) {
         this.name = name;
     }
-
-    public EmployeType() {
-
-    }
-    public EmployeType(String id){
-        super(id);
-    }
-
 }

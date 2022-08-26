@@ -1,15 +1,15 @@
 package com.roms.api.controller;
 
 
+import com.roms.api.constant.Constant;
 import com.roms.api.model.*;
-import com.roms.api.service.ClientProjectSubteamMemberService;
-import com.roms.api.service.ClientProjectSubteamService;
+import com.roms.api.service.*;
+import com.roms.api.utils.LoggedInUserDetails;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import com.roms.api.kafka.KafkaProducer;
-import com.roms.api.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @RestController
 @CrossOrigin
@@ -44,10 +45,38 @@ public class UserController {
     String postBrandTopic;
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private LoggedInUserDetails loggedIn;
     @Autowired
     private ClientProjectSubteamService clientProjectSubteamService;
     @Autowired
     private ClientProjectSubteamMemberService clientProjectSubteamMemberService;
+
+    @Autowired
+    private LocationTypeService locationTypeService;
+
+    @Autowired
+    private LocationService locationService;
+
+    @Autowired
+    private DepartmentService departmentService;
+
+    @Autowired
+    private ClientProjectService clientProjectService;
+
+    @Autowired
+    private EmployeTypeService employeTypeService;
+
+
+    Map<String,LocationType> locationTypeMap;
+    Map<String,Location> locationMap;
+    Map<String,Departments> departmentsMap;
+    Map<String,ClientProject> clientProjectMap;
+    Map<String,ClientProjectSubteam> clientProjectSubteamMap;
+    Map<String, EmployeType> employeTypeMap;
+
+
 
 
     @Secured("ROLE_ADMIN")
@@ -76,40 +105,212 @@ public class UserController {
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
         try {
             Workbook workbook = new XSSFWorkbook(filse.getInputStream());
-            Sheet sheet = workbook.getSheetAt(0);
-            Map<String, String> loggedIndUser = (Map<String, String>) SecurityContextHolder.getContext().getAuthentication().getDetails();
-            List<String> existingUserIds = userService.findAllUserIdByOrganisation(loggedIndUser.get("orgId").toString());
-            List<Users> users = new ArrayList<>();
-            Iterator<Row> rows = sheet.iterator();
-            rows.next();
-            int counter = 0;
+            Sheet locationTypeSheet = workbook.getSheet(Constant.LOCATION_TYPE);
+            Sheet locationSheet  = workbook.getSheet(Constant.LOCATION);
+            Sheet employeeTypeSheet = workbook.getSheet(Constant.EMPLOYEE_TYPE);
+            Sheet departmentSheet  = workbook.getSheet(Constant.DEPARTMENT);
+            Sheet clientProjectSheet  = workbook.getSheet(Constant.CLIENT_PROJECT);
+            Sheet clientProjectTeamSheet  = workbook.getSheet(Constant.CLIENT_PROJECT_TEAM);
+
+            Sheet employeeSheet  = workbook.getSheet(Constant.EMPLOYEE);
+
+            saveLoctionType(locationTypeSheet);
+            saveLocaton(locationSheet);
+            saveDepartment(departmentSheet);
+            saveClientProject(clientProjectSheet);
+            saveClientProjectTeam(clientProjectTeamSheet);
+            saveEmployeType(employeeTypeSheet);
+            saveEmplyee(employeeSheet);
+            workbook.close();
+
+        } catch (Exception e) {
+            response.put("error", e.getMessage());
+            response.put("status", "error");
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return null;
+    }
+    // save location type
+    public  void saveLoctionType(Sheet sheet){
+        locationTypeMap = new HashMap<>();
+        Iterator<Row> rows = sheet.iterator();
+        Row headerRow = rows.next();
+        Map<String,Integer> headerIndex = getHeaderIndex(headerRow);
+
+        int counter =0;
+        while (rows.hasNext()) {
+            LocationType locationType = new LocationType();
+            Row currentRow = rows.next();
+            String desc = currentRow.getCell(headerIndex.get(Constant.LOCATION_TYPE)).getStringCellValue();
+            String code = currentRow.getCell(headerIndex.get(Constant.LOCATION_TYPE_CODE)).getStringCellValue();
+            locationType.setDescription(desc);
+            locationType.setCode(code);
+            locationType = locationTypeService.save(locationType);
+            locationTypeMap.put(code,locationType);
+
+        }
+    }
+
+    // save locations
+    public  void saveLocaton(Sheet sheet){
+        locationMap = new HashMap<>();
+        Iterator<Row> rows = sheet.iterator();
+        Row headerRow = rows.next();
+        Map<String,Integer> headerIndex = getHeaderIndex(headerRow);
+
+        int counter =0;
+        while (rows.hasNext()) {
+            Location location = new Location();
+            Row currentRow = rows.next();
+            String desc = getCellStringValue(currentRow,headerIndex.get(Constant.DESC)) ;
+            String code = getCellStringValue(currentRow,headerIndex.get(Constant.CODE));
+            String address = getCellStringValue(currentRow,headerIndex.get(Constant.ADDRESS));
+            String geoCode  =getCellStringValue(currentRow,headerIndex.get(Constant.GEO_CODE));
+            String locationTypeCoe = getCellStringValue(currentRow,headerIndex.get(Constant.LOCATION_TYPE_CODE));
+
+            location.setCode(code);
+            location.setDescription(desc);
+            location.setAddress(address);
+            location.setGeoCdoe(geoCode);
+            LocationType locationType = locationTypeMap.get(locationTypeCoe);
+            location.setLocationType(locationType);
+            location = locationService.save(location);
+
+            locationMap.put(code,location);
+
+        }
+    }
+
+    // save departments  type
+    public  void saveDepartment(Sheet sheet){
+        departmentsMap = new HashMap<>();
+        Iterator<Row> rows = sheet.iterator();
+        Row headerRow = rows.next();
+        Map<String,Integer> headerIndex = getHeaderIndex(headerRow);
+
+        int counter =0;
+        while (rows.hasNext()) {
+            Departments departments = new Departments();
+            Row currentRow = rows.next();
+            String desc =  getCellStringValue(currentRow,headerIndex.get(Constant.DEPARTMENT_NAME));
+            String code = getCellStringValue(currentRow,headerIndex.get(Constant.CODE));
+            departments.setDescription(desc);
+            departments.setCode(code);
+            departments = departmentService.save(departments);
+            departmentsMap.put(code,departments);
+
+        }
+    }
+
+
+    // save client project
+    public  void saveClientProject(Sheet sheet){
+        clientProjectMap = new HashMap<>();
+        Iterator<Row> rows = sheet.iterator();
+        Row headerRow = rows.next();
+        Map<String,Integer> headerIndex = getHeaderIndex(headerRow);
+
+        int counter =0;
+        while (rows.hasNext()) {
+            ClientProject clientProject = new ClientProject();
+            Row currentRow = rows.next();
+            String desc =  getCellStringValue(currentRow,headerIndex.get(Constant.PROJECT_NAME)); //currentRow.getCell(headerIndex.get(Constant.)).getStringCellValue();
+            String code = getCellStringFromNumeric(currentRow,headerIndex.get(Constant.PROJECT_CODE));
+            clientProject.setName(desc);
+            clientProject  = clientProjectService.save(clientProject);
+            clientProjectMap.put(code,clientProject);
+
+        }
+    }
+
+    // save client subteam
+    public  void saveClientProjectTeam(Sheet sheet){
+        clientProjectSubteamMap = new HashMap<>();
+        Iterator<Row> rows = sheet.iterator();
+        Row headerRow = rows.next();
+        Map<String,Integer> headerIndex = getHeaderIndex(headerRow);
+
+        int counter =0;
+        while (rows.hasNext()) {
+            ClientProjectSubteam clientProjectSubteam = new ClientProjectSubteam();
+            Row currentRow = rows.next();
+            String teamName = getCellStringValue(currentRow,headerIndex.get(Constant.TEAM_NAME)); // currentRow.getCell(headerIndex.get(Constant.PROJECT_NAME)).getStringCellValue();
+            String code = getCellStringValue(currentRow,headerIndex.get(Constant.GANG_CODE)); // currentRow.getCell(headerIndex.get(Constant.GANG_CODE)).getStringCellValue();
+            String locationCode = getCellStringValue(currentRow,headerIndex.get(Constant.LOCATION_CODE)); // currentRow.getCell(headerIndex.get(Constant.LOCATION_CODE)).getStringCellValue();
+            String projectCode = getCellStringFromNumeric(currentRow,headerIndex.get(Constant.PROJECT_CODE)); // currentRow.getCell(headerIndex.get(Constant.PROJECT_CODE)).getStringCellValue();
+
+            clientProjectSubteam.setCode(code);
+            clientProjectSubteam.setTeamName(teamName);
+            Location location = locationMap.get(locationCode);
+            ClientProject clientProject = clientProjectMap.get(projectCode);
+            clientProjectSubteam.setLocation(location);
+            clientProjectSubteam.setClientProject(clientProject);
+            clientProjectSubteam  = clientProjectSubteamService.save(clientProjectSubteam);
+            clientProjectSubteamMap.put(code,clientProjectSubteam);
+
+        }
+    }
+
+    // save employeeType
+    public  void saveEmployeType(Sheet sheet){
+        employeTypeMap = new HashMap<>();
+        Iterator<Row> rows = sheet.iterator();
+        Row headerRow = rows.next();
+        Map<String,Integer> headerIndex = getHeaderIndex(headerRow);
+
+        int counter =0;
+        while (rows.hasNext()) {
+            EmployeType employeType = new EmployeType();
+            Row currentRow = rows.next();
+            String empType = currentRow.getCell(headerIndex.get(Constant.EMPLOYEE_TYPE)).getStringCellValue();
+            String code = currentRow.getCell(headerIndex.get(Constant.EMPLOYEE_TYPE_CODE)).getStringCellValue();
+            employeType.setName(empType);
+            employeType = employeTypeService.save(employeType);
+            employeTypeMap.put(code,employeType);
+
+        }
+    }
+
+    // save employee
+    public  void saveEmplyee(Sheet sheet){
+        Iterator<Row> rows = sheet.iterator();
+        Row headerRow = rows.next();
+        Map<String,Integer> headerIndex = getHeaderIndex(headerRow);
+
+        Map<String, String> loggedIndUser = (Map<String, String>) SecurityContextHolder.getContext().getAuthentication().getDetails();
+
             while (rows.hasNext()) {
-                counter = counter + 1;
                 Row currentRow = rows.next();
                 String emailId = currentRow.getCell(4) == null ? "" : currentRow.getCell(4).getStringCellValue();
-                if (existingUserIds.contains(emailId)) {
-                   // continue;
-                }
-                String surName = currentRow.getCell(0) == null ? "" : currentRow.getCell(0).getStringCellValue();
-                String firstName = currentRow.getCell(1) == null ? "" : currentRow.getCell(1).getStringCellValue();
-                String middleName = currentRow.getCell(2) == null ? "" : currentRow.getCell(2).getStringCellValue();
-                String phoneNumber = currentRow.getCell(3) == null ? "" : currentRow.getCell(3).getStringCellValue();
-                String positionTitle = currentRow.getCell(5) == null ? "" : currentRow.getCell(5).getStringCellValue();
-                Date dob = currentRow.getCell(6) == null ? new Date() :currentRow.getCell(6).getDateCellValue();
-                String gender = currentRow.getCell(7) == null ? "m" : currentRow.getCell(7).getStringCellValue().toLowerCase();
+
+                String surName =   getCellStringValue(currentRow, headerIndex.get(Constant.SURNAME));  //currentRow.getCell(0) == null ? "" : currentRow.getCell(0).getStringCellValue();
+                String firstName = getCellStringValue(currentRow, headerIndex.get(Constant.FIRST_NAME));
+                String middleName = getCellStringValue(currentRow, headerIndex.get(Constant.MIDDLE_NAME));
+                String phoneNumber = getCellStringValue(currentRow, headerIndex.get(Constant.PHONE_NO));
+                String positionTitle = getCellStringValue(currentRow, headerIndex.get(Constant.JOB_TITLE));
+                Date dob = getCellDateValue(currentRow, headerIndex.get(Constant.DOB));
+                String gender = getCellStringValue(currentRow, headerIndex.get(Constant.GENDER));
                 gender = gender.toUpperCase();
-                String roleName = currentRow.getCell(8) == null ? "ROLE_EMPLOYEE" : currentRow.getCell(8).getStringCellValue().toLowerCase();
+                String roleName = getCellStringValue(currentRow, headerIndex.get(Constant.ROLE));
                 roleName = roleName.toUpperCase();
                 roleName = roleName.trim();
 
+                String email = getCellStringValue(currentRow, headerIndex.get(Constant.EMAIL));
+                String employeeNO = getCellStringValue(currentRow, headerIndex.get(Constant.EMPLOYEE_NO));
+
+                String departmentCode = getCellStringValue(currentRow, headerIndex.get(Constant.DEPARTMENT_CODE));
+                String employeTypeCode = getCellStringValue(currentRow, headerIndex.get(Constant.EMPLOYEE_TYPE_CODE));
+                String gangCode = getCellStringValue(currentRow, headerIndex.get(Constant.GANG_CODE));
+                String isManager = getCellStringValue(currentRow, headerIndex.get(Constant.IS_MANAGER));
 
 
-                Users userModel = new Users();
+
                 Employe employeModel = new Employe();
-                Roles rolesModel = new Roles();
 
                 employeModel.setFirstName(firstName);
-                employeModel.setEmployeeNo(new StringBuffer().append(new Random(1001).nextInt()).toString());
+                employeModel.setEmployeeNo(employeeNO);
+                employeModel.setEmail(email);
                 employeModel.setLastName(surName);
                 employeModel.setMiddleName(middleName);
                 employeModel.setPhone(phoneNumber);
@@ -117,64 +318,71 @@ public class UserController {
                 employeModel.setJobTitle(positionTitle);
                 employeModel.setBirthdate(dob.toInstant());
                 employeModel.setGender(gender);
-                employeModel.setDepartmentIdx("2f67b643-18e1-11ed-861d-0242ac120002");
-                employeModel.setEmployeType(new EmployeType("374028ad-40c9-43c0-b5e5-907e21240a9e"));
+                employeModel.setDepartments(departmentsMap.get(departmentCode));
+                employeModel.setEmployeType(employeTypeMap.get(employeTypeCode));
                 employeModel.setIndigenousFlag(false);
 
-                rolesModel.setName(roleName.toUpperCase());
 
+
+                Users userModel = new Users();
+
+                Roles rolesModel = new Roles();
+                rolesModel.setName(roleName.toUpperCase());
                 userModel.setDisableFlag(false);
                 userModel.setRole(rolesModel);
                 userModel.setEmployeId(employeModel);
                 userModel.setUserId(emailId);
                 userModel.setAuthenticatonType("JWT");
                 userModel.setApppassword(password);
-                users.add(userModel);
 
-            }
-            try {
-                    int counter2 =0;
-                for (Users userModel : users) {
-                    counter2++;
-                    if(counter2<=12){
-                        continue;
-                    }
+                userModel = userService.save(userModel);
 
-                    //kafkaProducer.postUser("usermodel-rtl.kafka.data.save", "user", userModel);
-                    userModel = userService.save(userModel);
-                    List<ClientProjectSubteam> prjectTeams = clientProjectSubteamService.findAll();
-                    if (prjectTeams.isEmpty()) {
-                        continue;
-                    }
-                    ClientProjectSubteamMember teamMember = new ClientProjectSubteamMember();
-                    if(counter2<20){
-                        teamMember.setClientProjectSubteam(prjectTeams.get(0));
-                    }else{
-                        teamMember.setClientProjectSubteam(prjectTeams.get(1));
-                    }
 
-                    teamMember.setEmployee(userModel.getEmployeId());
-                    if (manageId.equalsIgnoreCase(userModel.getEmployeId().getEmail()) || "estreet@rtl.com.au".equalsIgnoreCase(userModel.getEmployeId().getEmail())) {
-                        teamMember.setManagerFlag(true);
-                    } else {
-                        teamMember.setManagerFlag(false);
-                    }
-                    clientProjectSubteamMemberService.save(teamMember);
-
+                ClientProjectSubteamMember teamMember = new ClientProjectSubteamMember();
+                employeModel = userModel.getEmployeId();
+                if("".equalsIgnoreCase(employeModel.getId()) || null == employeModel.getId()){
+                    userModel =userService.findByUsername(userModel.getUsername(), loggedIn.getOrg().getId()).get();
                 }
 
-            } catch (Exception e) {
-                logger.error("An error occurred! {}", e.getMessage());
+                teamMember.setEmployee(userModel.getEmployeId());
+
+                if ("y".equalsIgnoreCase(isManager)) {
+                    teamMember.setManagerFlag(true);
+                } else {
+                    teamMember.setManagerFlag(false);
+                }
+                teamMember.setClientProjectSubteam(clientProjectSubteamMap.get(gangCode));
+                teamMember.setStartDate(Instant.now());
+                clientProjectSubteamMemberService.save(teamMember);
+
 
             }
-            workbook.close();
-            response.put("status", "success");
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        } catch (Exception e) {
-            response.put("error", e.getMessage());
-            response.put("status", "error");
-            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    }
+
+
+
+
+
+    public Date getCellDateValue(Row row , Integer headerIndx){
+        return row.getCell(headerIndx) == null ? new Date() : row.getCell(headerIndx).getDateCellValue();
+    }
+    public String getCellStringValue(Row row , Integer headerIndx){
+        return row.getCell(headerIndx) == null ? "" : row.getCell(headerIndx).getStringCellValue();
+    }
+    public String getCellStringFromNumeric(Row row , Integer headerIndx){
+         double val = row.getCell(headerIndx) == null ? 0 : row.getCell(headerIndx).getNumericCellValue();
+        return String.valueOf(val);
+    }
+
+    public Map<String,Integer> getHeaderIndex(Row headerRow){
+        Map<String,Integer> headerIndex = new HashMap<>();
+
+        AtomicInteger headerCounter = new AtomicInteger();
+        headerRow.forEach(cell->{
+            headerIndex.put(cell.getStringCellValue(),headerCounter.getAndIncrement());
+            ;               });
+        return headerIndex;
 
     }
+
 }

@@ -9,8 +9,9 @@ import org.springframework.stereotype.Service;
 public class EmployeTypeService {
     @Autowired
     private EmployeTypeRepository employeTypeRepository;
-    public void save(EmployeType model){
-        employeTypeRepository.save(model);
+
+    public EmployeType save(EmployeType model){
+        return employeTypeRepository.save(model);
     }
 
 }
