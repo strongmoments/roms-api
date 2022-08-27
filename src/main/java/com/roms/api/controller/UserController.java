@@ -282,7 +282,7 @@ public class UserController {
 
             while (rows.hasNext()) {
                 Row currentRow = rows.next();
-                String emailId = currentRow.getCell(4) == null ? "" : currentRow.getCell(4).getStringCellValue();
+
 
                 String surName =   getCellStringValue(currentRow, headerIndex.get(Constant.SURNAME));  //currentRow.getCell(0) == null ? "" : currentRow.getCell(0).getStringCellValue();
                 String firstName = getCellStringValue(currentRow, headerIndex.get(Constant.FIRST_NAME));
@@ -314,7 +314,7 @@ public class UserController {
                 employeModel.setLastName(surName);
                 employeModel.setMiddleName(middleName);
                 employeModel.setPhone(phoneNumber);
-                employeModel.setEmail(emailId);
+                employeModel.setEmail(email);
                 employeModel.setJobTitle(positionTitle);
                 employeModel.setBirthdate(dob.toInstant());
                 employeModel.setGender(gender);
@@ -331,7 +331,7 @@ public class UserController {
                 userModel.setDisableFlag(false);
                 userModel.setRole(rolesModel);
                 userModel.setEmployeId(employeModel);
-                userModel.setUserId(emailId);
+                userModel.setUserId(email);
                 userModel.setAuthenticatonType("JWT");
                 userModel.setApppassword(password);
 

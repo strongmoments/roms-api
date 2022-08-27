@@ -155,6 +155,34 @@ public class LeaveRequestController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @GetMapping(value = "/appliedToMeHistory")
+    public ResponseEntity<?> loadApliedToMeLeaveHistory(
+            @RequestParam(value ="page", defaultValue = "0") int page,
+            @RequestParam(value ="size", defaultValue = "3") int size){
+
+        String employeeId = loggedIn.getUser().getEmployeId().getId();
+
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Page<LeaveRequest> requestedPage = null;
+
+            requestedPage = leaveRequestService.findAllRecievedRequestHistory(employeeId, page, size);
+
+            response.put("totalElement", requestedPage.getTotalElements());
+            response.put("totalPage", requestedPage.getTotalPages());
+            response.put("numberOfelement", requestedPage.getNumberOfElements());
+            response.put("currentPageNmber", requestedPage.getNumber());
+            response.put("data", requestedPage.getContent());
+        } catch (Exception e){
+            logger.error("An error occurred! {}", e.getMessage());
+            response.put("status","error");
+            response.put("error",e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+
 
     @GetMapping(value = "/types")
     public ResponseEntity<?> loadLeaveType() {

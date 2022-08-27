@@ -14,6 +14,8 @@ import java.util.List;
 @Repository
 public interface LeaveRequestRepository extends JpaRepository<LeaveRequest,String> {
 
+    Page<LeaveRequest> findAllByApproverAndOrganisationAndLeaveStatusGreaterThanOrderByApplyDateDesc(Employe approver, Organisation organisation,int leaveStatus,PageRequest pageRequest);
+
     Page<LeaveRequest> findAllByApproverAndOrganisationOrderByApplyDateDesc(Employe approver, Organisation organisation,PageRequest pageRequest);
 
     Page<LeaveRequest> findAllByApproverAndLeaveStatusAndOrganisationOrderByApplyDateDesc(Employe approver, int leaveStatus, Organisation organisation,PageRequest pageRequest);
