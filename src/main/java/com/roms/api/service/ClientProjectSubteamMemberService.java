@@ -27,7 +27,7 @@ public class ClientProjectSubteamMemberService {
     }
 
     public Optional<ClientProjectSubteam> findClientProjectSubTeamByEmployeeId(String employeeId){
-        List<ClientProjectSubteamMember> clientProjectSubteamMember = clientProjectSubteamMemberRepository.findByEmployeeAndOrganisation(new Employe(employeeId), loggedIn.getOrg());
+        List<ClientProjectSubteamMember> clientProjectSubteamMember = clientProjectSubteamMemberRepository.findByEmployeeAndOrganisationAndManagerFlag(new Employe(employeeId), loggedIn.getOrg(),false);
         if(!clientProjectSubteamMember.isEmpty()){
             return Optional.ofNullable(clientProjectSubteamMember.get(0).getClientProjectSubteam());
         }else{
