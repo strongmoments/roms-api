@@ -1,6 +1,7 @@
 package com.roms.api.controller;
 
 
+import com.roms.api.config.CustomPasswordEncoder;
 import com.roms.api.constant.Constant;
 import com.roms.api.model.*;
 import com.roms.api.service.*;
@@ -28,6 +29,7 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.random.RandomGenerator;
 
 @RestController
 @CrossOrigin
@@ -43,6 +45,9 @@ public class UserController {
     String password;
     @Value("user-rtl.kafka.data.save")
     String postBrandTopic;
+
+    @Autowired
+    private CustomPasswordEncoder customPasswordEncoder;
     @Autowired
     private UserService userService;
 
@@ -120,7 +125,7 @@ public class UserController {
             saveClientProject(clientProjectSheet);
             saveClientProjectTeam(clientProjectTeamSheet);
             saveEmployeType(employeeTypeSheet);
-            saveEmplyee(employeeSheet);
+            saveEmplyee(employeeSheet, response);
             workbook.close();
 
         } catch (Exception e) {
@@ -128,8 +133,8 @@ public class UserController {
             response.put("status", "error");
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+        return new ResponseEntity<>(response, HttpStatus.OK);
 
-        return null;
     }
     // save location type
     public  void saveLoctionType(Sheet sheet){
@@ -273,16 +278,16 @@ public class UserController {
     }
 
     // save employee
-    public  void saveEmplyee(Sheet sheet){
+    public  void saveEmplyee(Sheet sheet,  Map<String, Object> response ){
         Iterator<Row> rows = sheet.iterator();
         Row headerRow = rows.next();
         Map<String,Integer> headerIndex = getHeaderIndex(headerRow);
+        Random random = new Random();
 
         Map<String, String> loggedIndUser = (Map<String, String>) SecurityContextHolder.getContext().getAuthentication().getDetails();
 
             while (rows.hasNext()) {
                 Row currentRow = rows.next();
-
 
                 String surName =   getCellStringValue(currentRow, headerIndex.get(Constant.SURNAME));  //currentRow.getCell(0) == null ? "" : currentRow.getCell(0).getStringCellValue();
                 String firstName = getCellStringValue(currentRow, headerIndex.get(Constant.FIRST_NAME));
@@ -310,7 +315,6 @@ public class UserController {
 
                 employeModel.setFirstName(firstName);
                 employeModel.setEmployeeNo(employeeNO);
-                employeModel.setEmail(email);
                 employeModel.setLastName(surName);
                 employeModel.setMiddleName(middleName);
                 employeModel.setPhone(phoneNumber);
@@ -333,7 +337,8 @@ public class UserController {
                 userModel.setEmployeId(employeModel);
                 userModel.setUserId(email);
                 userModel.setAuthenticatonType("JWT");
-                userModel.setApppassword(password);
+                String passwords  = "roms@"+random.nextInt(100,1000);
+                userModel.setApppassword(customPasswordEncoder.encode(passwords));
 
                 userModel = userService.save(userModel);
 
@@ -354,6 +359,8 @@ public class UserController {
                 teamMember.setClientProjectSubteam(clientProjectSubteamMap.get(gangCode));
                 teamMember.setStartDate(Instant.now());
                 clientProjectSubteamMemberService.save(teamMember);
+
+                response.put(email,passwords);
 
 
             }

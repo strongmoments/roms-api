@@ -41,7 +41,7 @@ public class LeaveRequestService {
     }
 
     public Page<LeaveRequest> findAllRecievedRequestHistory(String approverId,int page, int size){
-        PageRequest pageble  = PageRequest.of(page, size, Sort.by("applyDate").descending());
+        PageRequest pageble  = PageRequest.of(page, size, Sort.by("last_update_date").descending());
         return leaveRequestRepository.findAllByApproverAndOrganisationAndLeaveStatusGreaterThanOrderByApplyDateDesc(new Employe(approverId), loggedIn.getOrg(),1,pageble);
     }
 
