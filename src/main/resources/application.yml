@@ -57,7 +57,11 @@ userslide: slide
 slidepass: slide
 
 server:
-  port: 8080
+  port: 443
+  ssl:
+    key-store: classpath:keystore.p12
+    key-store-password: roms@123
+    keyStoreType: PKCS12
 
 
 release:

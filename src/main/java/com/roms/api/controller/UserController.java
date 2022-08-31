@@ -400,8 +400,10 @@ public class UserController {
                 teamMember.setClientProjectSubteam(clientProjectSubteamMap.get(gangCode));
                 teamMember.setStartDate(Instant.now());
                 clientProjectSubteamMemberService.save(teamMember);
+                if(userModel.getId() != null){
+                    response.put(email,passwords);
+                }
 
-                response.put(email,passwords);
 
 
             }
