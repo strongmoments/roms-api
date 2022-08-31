@@ -402,7 +402,11 @@ public class UserController {
                 clientProjectSubteamMemberService.save(teamMember);
 
                 if(response.get(email) == null){
-                    response.put(email,passwords);
+                    Map<String, Object> obj = new HashMap<>();
+                    obj.put("manager",isManager);
+                    obj.put("name",firstName+" "+surName);
+                    obj.put("password",passwords);
+                    response.put(email,obj);
                 }
 
 
