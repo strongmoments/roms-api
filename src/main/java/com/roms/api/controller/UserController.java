@@ -1,6 +1,7 @@
 package com.roms.api.controller;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.roms.api.config.CustomPasswordEncoder;
 import com.roms.api.constant.Constant;
 import com.roms.api.model.*;
@@ -98,6 +99,45 @@ public class UserController {
             response.put("status", "error");
             response.put("error", e.getMessage());
         }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/uploadPic" , method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE  })
+    public ResponseEntity<Map<String,Object>> uploadPic(@RequestParam(value="files") MultipartFile[] filse) throws IOException {
+
+        Map<String, Object> response = new HashMap();
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, MultipartFile> imageData = new HashMap();
+        try {
+            for (MultipartFile file : filse) {
+                String fileName = file.getOriginalFilename();
+                imageData.put(fileName, file);
+            }
+            imageData.forEach((k, v) -> {
+                String emailId = "";
+                int endIndex = k.lastIndexOf(".");
+                if (endIndex != -1) {
+                    emailId = k.substring(0, endIndex); // not forgot to put check if(endIndex != -1)
+                }
+                Optional<Users> users = userService.findByUsername(emailId, loggedIn.getOrg().getId());
+                if (!users.isEmpty()) {
+                    try {
+
+                        userService.uploadProfilePic(users.get().getEmployeId(), v);
+                        response.put(emailId, "updated");
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        response.put("error", e.getMessage());
+                    }
+                }
+            });
+        } catch(Exception ee){
+            ee.printStackTrace();
+            response.put("error", ee.getMessage());
+        }
+
+
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -302,6 +342,7 @@ public class UserController {
                 roleName = roleName.trim();
 
                 String email = getCellStringValue(currentRow, headerIndex.get(Constant.EMAIL));
+                email = email.trim();
                 String employeeNO = getCellStringValue(currentRow, headerIndex.get(Constant.EMPLOYEE_NO));
 
                 String departmentCode = getCellStringValue(currentRow, headerIndex.get(Constant.DEPARTMENT_CODE));

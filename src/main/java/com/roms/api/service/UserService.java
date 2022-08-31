@@ -6,7 +6,9 @@ import com.roms.api.repository.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +39,12 @@ public class UserService  {
 
     public List<String> findAllUserIdByOrganisation(String orgId){
          return usersRepository.findAllUserIdByOrganisation(orgId);
+    }
+
+    public void uploadProfilePic(Employe employe, MultipartFile file) throws IOException {
+
+        employe.setProfileImage(file.getBytes());
+        employeService.save(employe);
     }
 
     public Users save(Users usersModel) {
@@ -96,6 +104,7 @@ public class UserService  {
             return  true;
         }
     }
+
 
     private  Organisation getOrganisation(String orgId){
         Organisation organisation = new  Organisation();
