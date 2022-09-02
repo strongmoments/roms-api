@@ -82,7 +82,7 @@ public class LeaveRequestService {
         return  leaveRequest;
     }
 
-    public void approveLeave(LeaveRequest leaveRequest){
+    public LeaveRequest approveLeave(LeaveRequest leaveRequest){
         Optional<LeaveRequest> leaveRequestModel =  leaveRequestRepository.findById(leaveRequest.getId());
         if(!(leaveRequestModel.isEmpty()) ){
             if(!(leaveRequestModel.get().getEmploye().getId().equalsIgnoreCase(loggedIn.getUser().getEmployeId().getId()))) {
@@ -92,15 +92,15 @@ public class LeaveRequestService {
                 leaveRequestMole.setDateOfApproval(Instant.now());
                 leaveRequestMole.setUpdateBy(loggedIn.getUser());
                 leaveRequestMole.setLastUpdateDate(Instant.now());
-                leaveRequestRepository.save(leaveRequestMole);
+                leaveRequest =leaveRequestRepository.save(leaveRequestMole);
             }
         }else{
             //@todo throw exception leave request not found
         }
-
+        return leaveRequest;
     }
 
-    public void rejectLeave(LeaveRequest request){
+    public LeaveRequest rejectLeave(LeaveRequest request){
         Optional<LeaveRequest> leaveRequest =  leaveRequestRepository.findById(request.getId());
         if(!leaveRequest.isEmpty()){
             if(!(leaveRequest.get().getEmploye().getId().equalsIgnoreCase(loggedIn.getUser().getEmployeId().getId()))){
@@ -110,11 +110,12 @@ public class LeaveRequestService {
                 leaveRequestMole.setDateOfApproval(Instant.now());
                 leaveRequestMole.setUpdateBy(loggedIn.getUser());
                 leaveRequestMole.setLastUpdateDate(Instant.now());
-                leaveRequestRepository.save(leaveRequestMole);
+                request = leaveRequestRepository.save(leaveRequestMole);
             }
         }else{
             //@todo throw exception leave request not found
         }
+        return  request;
     }
 
 

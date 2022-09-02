@@ -6,6 +6,7 @@ import com.roms.api.model.Users;
 import com.roms.api.service.ClientProjectSubteamMemberService;
 import com.roms.api.service.LeaveRequestService;
 import com.roms.api.service.LeaveTypeService;
+import com.roms.api.service.NotificationService;
 import com.roms.api.utils.LoggedInUserDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,6 +43,9 @@ public class LeaveRequestController {
     @Autowired
     private ClientProjectSubteamMemberService clientProjectSubteamMemberService;
 
+    @Autowired
+    private NotificationService notificationService;
+
 
     @PostMapping(value = "/request", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<?> requestLeave(@RequestBody LeaveRequest leaveRequest) throws ParseException {
@@ -52,7 +56,9 @@ public class LeaveRequestController {
             Instant i = sdf.parse(leaveRequest.getStrStartDateTime()).toInstant();
             leaveRequest.setStartDateTime(sdf.parse(leaveRequest.getStrStartDateTime()).toInstant());
             leaveRequest.setEndDateTime(sdf.parse(leaveRequest.getStrEndDateTime()).toInstant());
-            leaveRequestService.applyLeave(leaveRequest);
+            LeaveRequest leaveRequests = leaveRequestService.applyLeave(leaveRequest);
+            notificationService.sendLeaveRequestNotification(leaveRequests);
+
         }catch (Exception e){
             logger.error("Error while applying leave {} ",  e.getMessage());
             response.put("error", e.getMessage());
@@ -68,7 +74,8 @@ public class LeaveRequestController {
     public ResponseEntity<?> approveLeave(@RequestBody LeaveRequest leaveRequest) {
         Map<String,Object> response = new HashMap<>();
         try {
-             leaveRequestService.approveLeave(leaveRequest);
+            leaveRequest = leaveRequestService.approveLeave(leaveRequest);
+            notificationService.sendLeaveApprovedNotification(leaveRequest, "approved your", "approve");
         }catch (Exception e){
             logger.error("Error while approving leave {} ",  e.getMessage());
             response.put("error", e.getMessage());
@@ -84,6 +91,7 @@ public class LeaveRequestController {
         Map<String,Object> response = new HashMap<>();
         try {
             leaveRequestService.rejectLeave(leaveRequest);
+            notificationService.sendLeaveApprovedNotification(leaveRequest, "rejected your", "reject");
         }catch (Exception e){
             logger.error("Error while rejecting leave {} ",  e.getMessage());
             response.put("error", e.getMessage());

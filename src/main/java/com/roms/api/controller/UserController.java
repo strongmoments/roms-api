@@ -378,7 +378,7 @@ public class UserController {
                 userModel.setEmployeId(employeModel);
                 userModel.setUserId(email);
                 userModel.setAuthenticatonType("JWT");
-                String passwords  = "roms@"+random.nextInt(100,1000);
+                String passwords  = "admin";//"roms@"+random.nextInt(100,1000);
                 userModel.setApppassword(customPasswordEncoder.encode(passwords));
 
                 userModel = userService.save(userModel);
