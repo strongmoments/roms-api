@@ -91,7 +91,7 @@ public class NotificationService {
 
     }
 
-    public Map<String, Object>  loadNotification() throws JsonProcessingException {
+    public List<Object>  loadNotification() throws JsonProcessingException {
 
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
@@ -103,7 +103,7 @@ public class NotificationService {
        String responseAsStrign =  restTemplate.exchange(                "http://localhost:8081/loadNotification", HttpMethod.POST, entity, String.class).getBody();
 
         ObjectMapper obj = new ObjectMapper();
-        Map<String, Object> response = obj.readValue(responseAsStrign, HashMap.class);
+        List<Object> response = obj.readValue(responseAsStrign, ArrayList.class);
         return response;
     }
 

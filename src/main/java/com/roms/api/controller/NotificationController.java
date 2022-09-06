@@ -47,14 +47,10 @@ public class NotificationController {
     @GetMapping(value = "/load")
     public ResponseEntity<?> loadNotification(){
         Map<String,Object> response = new HashMap<>();
-        List<Object> objectList = new ArrayList<Object>();
         try {
-            Map<String,Object> responseMap =   notificationService.loadNotification();
-            responseMap.forEach( (k, v)->{
-                objectList.add(v);
-                    }
-            );
-            response.put("data",objectList);
+            List<Object>  responseMap =   notificationService.loadNotification();
+
+            response.put("data",responseMap);
         } catch (Exception e){
             response.put("error", e.getMessage());
             response.put("status", "error");
