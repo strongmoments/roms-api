@@ -7,7 +7,10 @@ public class PushNotificationPayload {
         private String from;
         private String message;
         private String type;
+
+        private String eventId;
         private Map<String, Object> body;
+
 
     public String getUsername() {
         return username;
@@ -47,5 +50,13 @@ public class PushNotificationPayload {
 
     public void setBody(Map<String, Object> body) {
         this.body = body;
+    }
+
+    public String getEventId() {
+        return eventId;
+    }
+
+    public void setEventId(String eventId) {
+        this.eventId = eventId;
     }
 }
