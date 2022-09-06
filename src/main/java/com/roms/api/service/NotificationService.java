@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.roms.api.model.EmployeeDevices;
 import com.roms.api.model.LeaveRequest;
+import com.roms.api.model.LeaveType;
 import com.roms.api.model.PushNotificationPayload;
 import com.roms.api.utils.LoggedInUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,10 @@ public class NotificationService {
     @Autowired
     private EmployeeDeviceService employeeDeviceService;
 
+    @Autowired
+    private LeaveTypeService leaveTypeService;
+
+
 
     public  void sendLeaveRequestNotification(LeaveRequest leaveRequest){
 
@@ -41,8 +46,9 @@ public class NotificationService {
         PushNotificationPayload requestPayload = new PushNotificationPayload();
         String fromName  = loggedIn.getUser().getEmployeId().getFirstName() +" "+loggedIn.getUser().getEmployeId().getLastName();
         requestPayload.setFrom(loggedIn.getUser().getEmployeId().getId());
+        Optional<LeaveType>  leaveType = leaveTypeService.findById(leaveRequest.getLeaveType().getId());
         requestPayload.setType("leave_request");
-        requestPayload.setMessage(fromName+"  applied for "+leaveRequest.getLeaveType().getLeaveDescription()+" leave");
+        requestPayload.setMessage(fromName+"  applied for "+(leaveType.isEmpty()  ?"" :leaveType.get().getLeaveDescription())+" leave");
         requestPayload.setUsername(leaveRequest.getApprover().getId());
         Map<String ,Object> obj = new HashMap<>();
         obj.put("profileImage",loggedIn.getUser().getEmployeId().getProfileImage());
@@ -74,7 +80,8 @@ public class NotificationService {
         String fromName  = loggedIn.getUser().getEmployeId().getFirstName() +" "+loggedIn.getUser().getEmployeId().getLastName();
         requestPayload.setFrom(loggedIn.getUser().getEmployeId().getId());
         requestPayload.setType("leave_"+type);
-        requestPayload.setMessage(fromName+" "+message+" "+leaveRequest.getLeaveType().getLeaveDescription()+" leave");
+        Optional<LeaveType>  leaveType = leaveTypeService.findById(leaveRequest.getLeaveType().getId());
+        requestPayload.setMessage(fromName+" "+message+" "+(leaveType.isEmpty()  ?"" :leaveType.get().getLeaveDescription())+" leave");
 
         requestPayload.setUsername(leaveRequest.getEmploye().getId());
         Map<String ,Object> obj = new HashMap<>();

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class LeaveTypeService {
@@ -22,4 +23,9 @@ public class LeaveTypeService {
     public List<LeaveType> findAll(){
         return  leaveTypeRepository.findAllByOrganisation(loggedIn.getOrg());
     }
+    public Optional<LeaveType> findById(String leaveTypeId){
+
+        return leaveTypeRepository.findById(leaveTypeId);
+    }
+
 }
