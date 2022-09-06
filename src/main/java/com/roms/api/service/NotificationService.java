@@ -48,7 +48,7 @@ public class NotificationService {
         requestPayload.setFrom(loggedIn.getUser().getEmployeId().getId());
         Optional<LeaveType>  leaveType = leaveTypeService.findById(leaveRequest.getLeaveType().getId());
         requestPayload.setType("leave_request");
-        requestPayload.setMessage(fromName+"  applied for "+(leaveType.isEmpty()  ?"" :leaveType.get().getLeaveDescription())+" leave");
+        requestPayload.setMessage(fromName+" applied for "+(leaveType.isEmpty()  ?"" :leaveType.get().getLeaveDescription()).toLowerCase()+" leave");
         requestPayload.setUsername(leaveRequest.getApprover().getId());
         Map<String ,Object> obj = new HashMap<>();
         obj.put("profileImage",loggedIn.getUser().getEmployeId().getProfileImage());
@@ -81,7 +81,7 @@ public class NotificationService {
         requestPayload.setFrom(loggedIn.getUser().getEmployeId().getId());
         requestPayload.setType("leave_"+type);
         Optional<LeaveType>  leaveType = leaveTypeService.findById(leaveRequest.getLeaveType().getId());
-        requestPayload.setMessage(fromName+" "+message+" "+(leaveType.isEmpty()  ?"" :leaveType.get().getLeaveDescription())+" leave");
+        requestPayload.setMessage(fromName+" "+message+" "+(leaveType.isEmpty()  ?"" :leaveType.get().getLeaveDescription()).toLowerCase()+" leave");
 
         requestPayload.setUsername(leaveRequest.getEmploye().getId());
         Map<String ,Object> obj = new HashMap<>();
@@ -109,6 +109,10 @@ public class NotificationService {
         HttpEntity<PushNotificationPayload> entity = new HttpEntity<PushNotificationPayload>(requestPayload,headers);
        String responseAsStrign =  restTemplate.exchange(                "http://localhost:8081/loadNotification", HttpMethod.POST, entity, String.class).getBody();
 
+        if(responseAsStrign.isEmpty()){
+            Map<String,Object> response = new HashMap<>();
+         return response;
+        }
         ObjectMapper obj = new ObjectMapper();
         Map<String,Object>  response = obj.readValue(responseAsStrign, HashMap.class);
         return response;
