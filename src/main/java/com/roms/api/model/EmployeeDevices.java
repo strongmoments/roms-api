@@ -8,7 +8,7 @@ import java.io.Serial;
 import java.io.Serializable;
 
 @Entity
-@Table(name ="Employees")
+@Table(name ="Employee_devices")
 public class EmployeeDevices extends CommonFields implements Serializable {
 
     @Serial
