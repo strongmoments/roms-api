@@ -52,8 +52,10 @@ public class NotificationService {
         requestPayload.setUsername(leaveRequest.getApprover().getId());
         Map<String ,Object> obj = new HashMap<>();
         obj.put("profileImage",loggedIn.getUser().getEmployeId().getProfileImage());
-        obj.put("time", Instant.now());
+        String time = String.valueOf(Instant.now().toEpochMilli());
+        obj.put("time", time);
         obj.put("devices",allDevices);
+        obj.put("eventId",leaveRequest.getId());
         requestPayload.setBody(obj);
 
         HttpEntity<PushNotificationPayload> entity = new HttpEntity<PushNotificationPayload>(requestPayload,headers);
@@ -86,8 +88,11 @@ public class NotificationService {
         requestPayload.setUsername(leaveRequest.getEmploye().getId());
         Map<String ,Object> obj = new HashMap<>();
         obj.put("profileImage",loggedIn.getUser().getEmployeId().getProfileImage());
-        obj.put("time", Instant.now());
+        String time = String.valueOf(Instant.now().toEpochMilli());
+        obj.put("time", time);
         obj.put("devices",allDevices);
+        obj.put("eventId",leaveRequest.getId());
+
         requestPayload.setBody(obj);
 
         HttpEntity<PushNotificationPayload> entity = new HttpEntity<PushNotificationPayload>(requestPayload,headers);
@@ -109,7 +114,7 @@ public class NotificationService {
         HttpEntity<PushNotificationPayload> entity = new HttpEntity<PushNotificationPayload>(requestPayload,headers);
        String responseAsStrign =  restTemplate.exchange(                "http://localhost:8081/loadNotification", HttpMethod.POST, entity, String.class).getBody();
 
-        if(responseAsStrign.isEmpty()){
+        if(responseAsStrign.equalsIgnoreCase("empty")){
             Map<String,Object> response = new HashMap<>();
          return response;
         }
