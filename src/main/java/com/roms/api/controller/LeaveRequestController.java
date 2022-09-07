@@ -57,6 +57,7 @@ public class LeaveRequestController {
             leaveRequest.setStartDateTime(sdf.parse(leaveRequest.getStrStartDateTime()).toInstant());
             leaveRequest.setEndDateTime(sdf.parse(leaveRequest.getStrEndDateTime()).toInstant());
             LeaveRequest leaveRequests = leaveRequestService.applyLeave(leaveRequest);
+            if(leaveRequest != null && leaveRequest.getId() != null)
             notificationService.sendLeaveRequestNotification(leaveRequests);
 
         }catch (Exception e){
@@ -75,6 +76,7 @@ public class LeaveRequestController {
         Map<String,Object> response = new HashMap<>();
         try {
             leaveRequest = leaveRequestService.approveLeave(leaveRequest);
+            if(leaveRequest != null && leaveRequest.getId() != null)
             notificationService.sendLeaveApprovedNotification(leaveRequest, "approved your", "approve");
         }catch (Exception e){
             logger.error("Error while approving leave {} ",  e.getMessage());
@@ -91,6 +93,7 @@ public class LeaveRequestController {
         Map<String,Object> response = new HashMap<>();
         try {
             leaveRequestService.rejectLeave(leaveRequest);
+            if(leaveRequest != null && leaveRequest.getId() != null)
             notificationService.sendLeaveApprovedNotification(leaveRequest, "rejected your", "reject");
         }catch (Exception e){
             logger.error("Error while rejecting leave {} ",  e.getMessage());
