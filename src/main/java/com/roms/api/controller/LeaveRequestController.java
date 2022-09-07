@@ -92,7 +92,7 @@ public class LeaveRequestController {
     public ResponseEntity<?> rejectLeave(@RequestBody LeaveRequest leaveRequest) {
         Map<String,Object> response = new HashMap<>();
         try {
-            leaveRequestService.rejectLeave(leaveRequest);
+            leaveRequest =  leaveRequestService.rejectLeave(leaveRequest);
             if(leaveRequest != null && leaveRequest.getId() != null)
             notificationService.sendLeaveApprovedNotification(leaveRequest, "rejected your", "reject");
         }catch (Exception e){
