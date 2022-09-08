@@ -46,8 +46,30 @@ public class LeaveRequestService {
     }
 
     public Page<LeaveRequest> findAllLeaveTransaction(int page, int size){
-        PageRequest pageble  = PageRequest.of(page, size, Sort.by("lastUpdateDate").descending());
+        PageRequest pageble  = PageRequest.of(page, size, Sort.by("applyDate").descending());
         return leaveRequestRepository.findAllByOrganisationOrderByApplyDateDesc(loggedIn.getOrg(),pageble);
+    }
+
+    public Page<LeaveRequest> findAllLeaveTransactionByDepartment(int page, int size,String departmentId){
+        PageRequest pageble  = PageRequest.of(page, size, Sort.by("applyDate").descending());
+        Departments departments = new Departments();
+        departments.setId(departmentId);
+        return leaveRequestRepository.findAllByEmployeDepartmentsAndOrganisationOrderByApplyDateDesc(departments,loggedIn.getOrg(),pageble);
+    }
+    public Page<LeaveRequest> findAllLeaveTransactionByEmployeeType(int page, int size,String employeeTypeId){
+        PageRequest pageble  = PageRequest.of(page, size, Sort.by("applyDate").descending());
+        EmployeType employeType = new EmployeType();
+        employeType.setId(employeeTypeId);
+        return leaveRequestRepository.findAllByEmployeEmployeTypeAndOrganisationOrderByApplyDateDesc(employeType,loggedIn.getOrg(),pageble);
+    }
+
+    public Page<LeaveRequest> findAllLeaveTransactionByEmployeeTypeAndDepartment(int page, int size,String employeeTypeId, String departmentId){
+        PageRequest pageble  = PageRequest.of(page, size, Sort.by("applyDate").descending());
+        EmployeType employeType = new EmployeType();
+        employeType.setId(employeeTypeId);
+        Departments departments = new Departments();
+        departments.setId(departmentId);
+        return leaveRequestRepository.findAllByEmployeEmployeTypeAndEmployeDepartmentsAndOrganisationOrderByApplyDateDesc(employeType,departments,loggedIn.getOrg(),pageble);
     }
 
 

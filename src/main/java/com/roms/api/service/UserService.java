@@ -55,6 +55,8 @@ public class UserService  {
     }
 
     public Users updateUser(Users usersModel) {
+        usersModel.setUpdateBy(loggedIn.getUser());
+        usersModel.setLastUpdateDate(Instant.now());
         return usersRepository.save(usersModel);
     }
     public Users save(Users usersModel) {

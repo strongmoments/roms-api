@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.List;
 
 @Service
 public class DepartmentService {
@@ -21,6 +22,11 @@ public class DepartmentService {
         departments.setCreateBy(loggedIn.getUser());
         departments.setCreateDate(Instant.now());
         return  departmentsRepository.save(departments);
+    }
+
+    public List<Departments> findAllDepartments(){
+        return departmentsRepository.findAllByOrganisation(loggedIn.getOrg());
+
     }
 
 }

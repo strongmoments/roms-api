@@ -3,6 +3,7 @@ package com.roms.api.controller;
 import com.roms.api.model.Employe;
 import com.roms.api.model.LeaveRequest;
 import com.roms.api.model.Users;
+import com.roms.api.requestInput.LeaveRequestSearchInput;
 import com.roms.api.service.ClientProjectSubteamMemberService;
 import com.roms.api.service.LeaveRequestService;
 import com.roms.api.service.LeaveTypeService;
@@ -17,6 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.xml.crypto.Data;
@@ -222,8 +224,9 @@ public class LeaveRequestController {
         }
     }
 
-    @GetMapping(value = "/loadAll")
+    @PostMapping(value = "/loadAll")
     public ResponseEntity<?> loadAll(
+            @RequestBody LeaveRequestSearchInput leaveRequestSearchInput,
             @RequestParam(value ="page", defaultValue = "0") int page,
             @RequestParam(value ="size", defaultValue = "3") int size){
 
@@ -231,7 +234,15 @@ public class LeaveRequestController {
         try {
             Page<LeaveRequest> requestedPage = null;
 
-            requestedPage = leaveRequestService.findAllLeaveTransaction(page, size);
+            if(!(StringUtils.isEmpty(leaveRequestSearchInput.getDepartmentId()) )&& !(StringUtils.isEmpty(leaveRequestSearchInput.getEmployeeTypeId())) ){
+                requestedPage = leaveRequestService.findAllLeaveTransactionByEmployeeTypeAndDepartment(page, size, leaveRequestSearchInput.getEmployeeTypeId(),leaveRequestSearchInput.getDepartmentId());
+            }else if(!(StringUtils.isEmpty(leaveRequestSearchInput.getDepartmentId()) ) && StringUtils.isEmpty(leaveRequestSearchInput.getEmployeeTypeId()) ){
+                requestedPage = leaveRequestService.findAllLeaveTransactionByDepartment(page, size,leaveRequestSearchInput.getDepartmentId());
+            }else if(StringUtils.isEmpty(leaveRequestSearchInput.getDepartmentId())  && !(StringUtils.isEmpty(leaveRequestSearchInput.getEmployeeTypeId())) ){
+                requestedPage = leaveRequestService.findAllLeaveTransactionByEmployeeType(page, size,leaveRequestSearchInput.getEmployeeTypeId());
+            }else {
+                requestedPage = leaveRequestService.findAllLeaveTransaction(page, size);
+            }
 
             response.put("totalElement", requestedPage.getTotalElements());
             response.put("totalPage", requestedPage.getTotalPages());
