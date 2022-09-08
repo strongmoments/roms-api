@@ -24,5 +24,7 @@ public interface LeaveRequestRepository extends JpaRepository<LeaveRequest,Strin
 
     Page<LeaveRequest> findAllByEmployeAndLeaveStatusAndOrganisationOrderByApplyDateDesc(Employe requester,int leaveStatus, Organisation organisation,PageRequest pageRequest);
 
+    Page<LeaveRequest> findAllByOrganisationOrderByApplyDateDesc( Organisation organisation,PageRequest pageRequest);
+
 
 }
