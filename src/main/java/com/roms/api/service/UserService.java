@@ -3,6 +3,7 @@ package com.roms.api.service;
 
 import com.roms.api.model.*;
 import com.roms.api.repository.UsersRepository;
+import com.roms.api.utils.LoggedInUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,12 @@ public class UserService  {
     @Autowired
     private UserRolesMapService userRolesMapService;
 
+    @Autowired
+    private LoggedInUserDetails loggedIn;
+
+    public Optional<Users> findByUserId() {
+        return usersRepository.findById(loggedIn.getUser().getId());
+    }
 
 
      public Optional<Users> findByUsername(String username,String orgId) {
@@ -47,6 +54,9 @@ public class UserService  {
         employeService.save(employe);
     }
 
+    public Users updateUser(Users usersModel) {
+        return usersRepository.save(usersModel);
+    }
     public Users save(Users usersModel) {
          if(doesUserExist(usersModel.getUserId())){
              // @todo
