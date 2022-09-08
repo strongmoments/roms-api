@@ -35,7 +35,7 @@ public class PasswordController {
     private CustomPasswordEncoder customPasswordEncoder;
 
 
-    @PostMapping(value = "/change", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @PostMapping(value = "/change", consumes = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<?> requestLeave(@RequestBody UpdatePassword passwordInput) throws ParseException {
         Map<String,Object> response = new HashMap<>();
         try {
