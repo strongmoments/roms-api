@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.Instant;
 import java.util.List;
 
 @Repository
@@ -23,11 +24,17 @@ public interface LeaveRequestRepository extends JpaRepository<LeaveRequest,Strin
 
     Page<LeaveRequest> findAllByOrganisationOrderByApplyDateDesc( Organisation organisation,PageRequest pageRequest);
 
-    Page<LeaveRequest> findAllByEmployeDepartmentsAndOrganisationOrderByApplyDateDesc(Departments departments,Organisation organisation, PageRequest pageRequest);
+    Page<LeaveRequest> findAllByEmployeDepartmentsAndApplyDateBetweenAndOrganisationOrderByApplyDateDesc(Departments departments,Instant fromDate,Instant toDate,Organisation organisation, PageRequest pageRequest);
+    Page<LeaveRequest> findAllByEmployeDepartmentsAndApplyDateBetweenAndOrganisationAndLeaveStatusOrderByApplyDateDesc(Departments departments,Instant fromDate,Instant toDate,Organisation organisation,int leaveStatus, PageRequest pageRequest);
 
-    Page<LeaveRequest> findAllByEmployeEmployeTypeAndOrganisationOrderByApplyDateDesc(EmployeType employeType,Organisation organisation, PageRequest pageRequest);
+    Page<LeaveRequest> findAllByEmployeEmployeTypeAndApplyDateBetweenAndOrganisationOrderByApplyDateDesc(EmployeType employeType,Instant fromDate,Instant toDate,Organisation organisation, PageRequest pageRequest);
+    Page<LeaveRequest> findAllByEmployeEmployeTypeAndApplyDateBetweenAndOrganisationAndLeaveStatusOrderByApplyDateDesc(EmployeType employeType,Instant fromDate,Instant toDate,Organisation organisation, int leaveStatus,PageRequest pageRequest);
 
-    Page<LeaveRequest> findAllByEmployeEmployeTypeAndEmployeDepartmentsAndOrganisationOrderByApplyDateDesc(EmployeType employeType,Departments departments,Organisation organisation, PageRequest pageRequest);
+    Page<LeaveRequest> findAllByEmployeEmployeTypeAndEmployeDepartmentsAndApplyDateBetweenAndOrganisationOrderByApplyDateDesc(EmployeType employeType,Departments departments,Instant fromDate,Instant toDate,Organisation organisation, PageRequest pageRequest);
+
+    Page<LeaveRequest> findAllByEmployeEmployeTypeAndEmployeDepartmentsAndApplyDateBetweenAndOrganisationAndLeaveStatusOrderByApplyDateDesc(EmployeType employeType,Departments departments,Instant fromDate,Instant toDate,Organisation organisation, int leavestatus, PageRequest pageRequest);
+
+
 
 
 }

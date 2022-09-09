@@ -5,7 +5,7 @@ public class LeaveRequestSearchInput {
     String departmentId;
     String fromDate;
     String toDate;
-    String searchText;
+    String leaveStatus;
 
     public String getEmployeeTypeId() {
         return employeeTypeId;
@@ -39,11 +39,11 @@ public class LeaveRequestSearchInput {
         this.toDate = toDate;
     }
 
-    public String getSearchText() {
-        return searchText;
+    public String getLeaveStatus() {
+        return leaveStatus;
     }
 
-    public void setSearchText(String searchText) {
-        this.searchText = searchText;
+    public void setLeaveStatus(String leaveStatus) {
+        this.leaveStatus = leaveStatus;
     }
 }
