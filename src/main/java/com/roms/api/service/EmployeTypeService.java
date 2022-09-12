@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class EmployeTypeService {
@@ -17,14 +18,25 @@ public class EmployeTypeService {
     private LoggedInUserDetails loggedIn;
 
     public EmployeType save(EmployeType model){
-        model.setOrganisation(loggedIn.getOrg());
-        model.setCreateBy(loggedIn.getUser());
-        model.setCreateDate(Instant.now());
-        return employeTypeRepository.save(model);
+        Optional<EmployeType> employeType = findAllEmployeeType(model.getName());
+        if(!employeType.isEmpty()){
+            return employeType.get();
+
+        }else{
+            model.setOrganisation(loggedIn.getOrg());
+            model.setCreateBy(loggedIn.getUser());
+            model.setCreateDate(Instant.now());
+            return employeTypeRepository.save(model);
+
+        }
     }
 
     public List<EmployeType> findAllEmployeeType(){
         return  employeTypeRepository.findAllByOrganisation(loggedIn.getOrg());
+    }
+
+    public Optional<EmployeType> findAllEmployeeType(String name){
+        return  employeTypeRepository.findByNameAndOrganisation(name,loggedIn.getOrg());
     }
 
 }

@@ -2,9 +2,11 @@ package com.roms.api.service;
 
 import com.roms.api.model.Roles;
 import com.roms.api.repository.RoleRepository;
+import com.roms.api.utils.LoggedInUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.Optional;
 
 @Service
@@ -13,7 +15,22 @@ public class RoleService {
     @Autowired
     private RoleRepository roleRepository;
 
+    @Autowired
+    private LoggedInUserDetails loggedIn;
+
+    public Roles save(Roles role){
+        Optional<Roles> roles  = findByRoleName(role.getName());
+        if(!roles.isEmpty()){
+            return roles.get();
+        }else{
+            role.setCreateBy(loggedIn.getUser());
+            role.setOrganisation(loggedIn.getOrg());
+            role.setCreateDate(Instant.now());
+            return roleRepository.save(role);
+
+        }
+    }
     public Optional<Roles> findByRoleName(String roleName){
-        return roleRepository.findByRolename(roleName);
+        return roleRepository.findByNameAndOrganisation(roleName,loggedIn.getOrg());
     }
 }

@@ -64,6 +64,9 @@ public class JwtAuthenticationController {
     @Value("${ROLE_EMPLOYEE}")
     private String employeeMenu;
 
+    @Value("${ROLE_SUPERVISOR}")
+    private String supervisor;
+
     @Value("${release.version}")
     private String releaseVersion;
 
@@ -89,6 +92,10 @@ public class JwtAuthenticationController {
         if("ROLE_EMPLOYEE".equalsIgnoreCase(userRolesMap.getRoleId().getName())){
             response.put("menus",g.fromJson(employeeMenu,Map.class)  );
         }
+        if("ROLE_SUPERVISOR".equalsIgnoreCase(userRolesMap.getRoleId().getName())){
+            response.put("menus",g.fromJson(supervisor,Map.class)  );
+        }
+
         response.put("userDetail", userModel.getEmployeId());
         response.put("role",userRolesMap.getRoleId().getName());
         return ResponseEntity.ok(response);

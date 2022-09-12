@@ -237,6 +237,8 @@ public class Employe extends CommonFields implements Serializable {
     public void setDepartments(Departments departments) {
         this.departments = departments;
     }
+
+
 }
 
 

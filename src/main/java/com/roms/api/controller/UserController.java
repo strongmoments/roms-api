@@ -80,6 +80,11 @@ public class UserController {
     @Autowired
     private EmployeeManagerTypeService employeeManagerTypeService;
 
+    @Autowired
+    private RoleService roleService;
+
+
+
 
     Map<String,LocationType> locationTypeMap;
     Map<String,Location> locationMap;
@@ -146,7 +151,32 @@ public class UserController {
         Map<String, Object> response = new HashMap<>();
         try {
             //kafkaProducer.postUser(postBrandTopic, kafkaGroupId, userModel);
-            userService.save(userModel);
+            String roleName = userModel.getRole().getName();
+            Roles roles = new Roles();
+            roles.setName(roleName);
+            roles =  roleService.save(roles);
+            userModel.setRole(roles);
+
+            Departments departments = new Departments();
+            departments.setCode(userModel.getEmployeId().getDepartments().getDescription());
+            departments.setDescription(userModel.getEmployeId().getDepartments().getDescription());
+            departments = departmentService.save(departments);
+            userModel.getEmployeId().setDepartments(departments);
+
+            EmployeType employeType = new EmployeType();
+            employeType.setName(userModel.getEmployeId().getEmployeType().getName());
+            employeType = employeTypeService.save(employeType);
+            userModel.getEmployeId().setEmployeType(employeType);
+
+            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+            Instant dob = sdf.parse("11-11-1960").toInstant();
+            userModel.getEmployeId().setBirthdate(dob);
+
+            String password  = "roms@123";
+            userModel.setApppassword(customPasswordEncoder.encode(password));
+            userModel.setDisableFlag(false);
+            userModel =  userService.save(userModel);
+            response.put("status","success");
         } catch (Exception e) {
             logger.error("An error occurred! {}", e.getMessage());
             response.put("status", "error");

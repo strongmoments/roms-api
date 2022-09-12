@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class DepartmentService {
@@ -18,10 +19,16 @@ public class DepartmentService {
     private LoggedInUserDetails loggedIn;
 
     public Departments save(Departments departments){
-        departments.setOrganisation(loggedIn.getOrg());
-        departments.setCreateBy(loggedIn.getUser());
-        departments.setCreateDate(Instant.now());
-        return  departmentsRepository.save(departments);
+        Optional<Departments> department = findByName(departments.getCode());
+        if(!department.isEmpty()){
+            departments.setOrganisation(loggedIn.getOrg());
+            departments.setCreateBy(loggedIn.getUser());
+            departments.setCreateDate(Instant.now());
+            return  departmentsRepository.save(departments);
+
+        }else{
+            return department.get();
+        }
     }
 
     public List<Departments> findAllDepartments(){
@@ -29,4 +36,8 @@ public class DepartmentService {
 
     }
 
+    public Optional<Departments> findByName(String name){
+        return departmentsRepository.findByCodeAndOrganisation(name,loggedIn.getOrg());
+
+    }
 }
