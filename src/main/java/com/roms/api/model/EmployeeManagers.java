@@ -21,6 +21,12 @@ public class EmployeeManagers extends CommonFields implements Serializable {
     @JoinColumn(name = "managers_idx",referencedColumnName = "id")
     private Employe managers;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "managers_type_idx",referencedColumnName = "id")
+    private EmployeeManagerType employeeManagerType;
+
+
+
     public Employe getEmploye() {
         return employe;
     }
@@ -35,5 +41,13 @@ public class EmployeeManagers extends CommonFields implements Serializable {
 
     public void setManagers(Employe managers) {
         this.managers = managers;
+    }
+
+    public EmployeeManagerType getEmployeeManagerType() {
+        return employeeManagerType;
+    }
+
+    public void setEmployeeManagerType(EmployeeManagerType employeeManagerType) {
+        this.employeeManagerType = employeeManagerType;
     }
 }

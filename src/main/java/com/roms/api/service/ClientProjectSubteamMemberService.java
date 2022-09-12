@@ -18,12 +18,19 @@ public class ClientProjectSubteamMemberService {
    @Autowired
    private LoggedInUserDetails loggedIn;
 
+   @Autowired
+   private EmployeeManagerService employeeManagerService;
+
 
     public void save(ClientProjectSubteamMember model){
         model.setOrganisation(loggedIn.getOrg());
         model.setCreateDate(Instant.now());
         model.setCreateBy(loggedIn.getUser());
         clientProjectSubteamMemberRepository.save(model);
+    }
+
+    public List<ClientProjectSubteamMember> findAll(){
+        return clientProjectSubteamMemberRepository.findByOrganisation(loggedIn.getOrg());
     }
 
     public Optional<ClientProjectSubteam> findClientProjectSubTeamByEmployeeId(String employeeId){
@@ -48,13 +55,13 @@ public class ClientProjectSubteamMemberService {
     }
 
     public Optional<Employe> getLeaveApprover(){
-        Optional<ClientProjectSubteam>  clientProjectSubteam = findClientProjectSubTeamByEmployeeId(loggedIn.getUser().getEmployeId().getId());
-        if(!clientProjectSubteam.isEmpty()) {
-            return findClientProjectSubTeamManager(clientProjectSubteam.get().getId());
-        }else{
-           return Optional.ofNullable(null);
-        }
+        Optional<EmployeeManagers>  manger = employeeManagerService.getManager(loggedIn.getUser().getEmployeId().getId());
+        if(!manger.isEmpty()){
+            return Optional.ofNullable(manger.get().getEmploye());
 
+        }else{
+            return  Optional.ofNullable(null);
+        }
     }
 
     public List<ClientProjectSubteamMember> findAllEmployeeByNameOrNumber(SearchInput employeeSearch){

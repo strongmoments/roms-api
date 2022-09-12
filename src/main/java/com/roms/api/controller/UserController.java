@@ -74,6 +74,12 @@ public class UserController {
     @Autowired
     private EmployeTypeService employeTypeService;
 
+    @Autowired
+    private EmployeeManagerService employeeManagerService;
+
+    @Autowired
+    private EmployeeManagerTypeService employeeManagerTypeService;
+
 
     Map<String,LocationType> locationTypeMap;
     Map<String,Location> locationMap;
@@ -83,6 +89,53 @@ public class UserController {
     Map<String, EmployeType> employeTypeMap;
 
 
+    @Secured("ROLE_ADMIN")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping(value = "/migrate", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ResponseEntity<?> migrateManager(@RequestBody Users userModel) {
+        logger.info(("Process add new brand"));
+        String mangerType = "Line Managre";
+        EmployeeManagerType managerTypes = new EmployeeManagerType();
+        managerTypes.setCode(mangerType.toLowerCase());
+        managerTypes.setType(mangerType);
+        managerTypes =  employeeManagerTypeService.save(managerTypes);
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Map<String, Employe> managerMap = new HashMap<>();
+
+            List<ClientProjectSubteamMember>  allMember = clientProjectSubteamMemberService.findAll();
+            allMember.forEach(obj->{
+                if(obj.isManagerFlag()){
+                    managerMap.put(obj.getClientProjectSubteam().getId(),obj.getEmployee());
+                }
+            });
+
+            for(ClientProjectSubteamMember obj : allMember){
+                EmployeeManagers mangerMapping = new EmployeeManagers();
+                mangerMapping.setEmploye(obj.getEmployee());
+                if(null == managerMap.get(obj.getClientProjectSubteam().getId())){
+                    continue;
+                }
+                mangerMapping.setManagers(managerMap.get(obj.getClientProjectSubteam().getId()));
+                mangerMapping.setEmployeeManagerType(managerTypes);
+                if(!mangerMapping.getManagers().getId().equalsIgnoreCase(mangerMapping.getEmploye().getId())){
+                    employeeManagerService.save(mangerMapping);
+                }
+
+
+            }
+
+
+
+
+        } catch (Exception e) {
+            logger.error("An error occurred! {}", e.getMessage());
+            response.put("status", "error");
+            response.put("error", e.getMessage());
+        }
+        response.put("status","success");
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
 
     @Secured("ROLE_ADMIN")

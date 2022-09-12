@@ -20,12 +20,27 @@ public class EmployeeManagerService {
     private LoggedInUserDetails loggedIn;
 
     public void save(EmployeeManagers employeeManagers){
-        employeeManagers.setCreateBy(loggedIn.getUser());
-        employeeManagers.setCreateDate(Instant.now());
-        employeeManagers.setOrganisation(loggedIn.getOrg());
+
+        if(! isSameManagerExist(employeeManagers.getEmploye().getId(), employeeManagers.getManagers().getId())){
+            employeeManagers.setCreateBy(loggedIn.getUser());
+            employeeManagers.setCreateDate(Instant.now());
+            employeeManagers.setOrganisation(loggedIn.getOrg());
+            employeeManagerRepository.save(employeeManagers);
+        }
 
     }
 
+    public Optional<EmployeeManagers> getManager(String employeeId){
+        return employeeManagerRepository.findByEmployeAndAndOrganisation(new Employe(employeeId), loggedIn.getOrg());
+    }
+
+    public boolean isSameManagerExist(String employeeId, String managerId){
+        if(employeeManagerRepository.findByEmployeAndManagersAndOrganisation(new Employe(employeeId),new Employe(managerId), loggedIn.getOrg()).isEmpty()){
+            return false;
+        }
+        return true;
+
+    }
     public void updateManager(String employeeId, String managerId){
         Optional<EmployeeManagers> managerDetails = employeeManagerRepository.findByEmployeAndOrganisation(new Employe(employeeId), loggedIn.getOrg());
         if(!managerDetails.isEmpty()){
