@@ -1,5 +1,7 @@
 package com.roms.api.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.GenericGenerator;
@@ -15,6 +17,7 @@ import java.time.Instant;
 import java.util.Collection;
 
 
+@JsonIgnoreProperties("hibernatelazyinitializer")
 @Entity
 @Table(name ="users")
 public class Users  extends CommonFields implements Serializable, UserDetails {

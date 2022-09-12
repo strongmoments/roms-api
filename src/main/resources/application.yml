@@ -22,11 +22,12 @@ spring:
 
   jpa:
     generate-ddl: true
-    open-in-view: false
+
     show-sql: true
     properties:
       hibernate:
         ddl-auto: create
+        enable_lazy_load_no_trans: true
         jdbc:
           lob:
             non_contextual_creation: true
