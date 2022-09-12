@@ -8,6 +8,9 @@ app:
       data-file-location: data
       data-file-name: yellow_tripdata_2021-01.csv
 spring:
+  jackson:
+    serialization:
+      fail-on-self-references : true
   main:
     allow-circular-references: true
   kafka:
