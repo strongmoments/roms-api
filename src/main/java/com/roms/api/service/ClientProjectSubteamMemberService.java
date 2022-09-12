@@ -57,7 +57,7 @@ public class ClientProjectSubteamMemberService {
     public Optional<Employe> getLeaveApprover(){
         Optional<EmployeeManagers>  manger = employeeManagerService.getManager(loggedIn.getUser().getEmployeId().getId());
         if(!manger.isEmpty()){
-            return Optional.ofNullable(manger.get().getEmploye());
+            return Optional.ofNullable(manger.get().getManagers());
 
         }else{
             return  Optional.ofNullable(null);

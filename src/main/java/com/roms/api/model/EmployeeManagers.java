@@ -17,7 +17,7 @@ public class EmployeeManagers extends CommonFields implements Serializable {
     @JoinColumn(name = "employee_idx",referencedColumnName = "id")
     private Employe employe;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "managers_idx",referencedColumnName = "id")
     private Employe managers;
 
