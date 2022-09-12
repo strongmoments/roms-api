@@ -10,7 +10,7 @@ app:
 spring:
   jackson:
     serialization:
-      fail-on-self-references : true
+      fail-on-self-references : false
   main:
     allow-circular-references: true
   kafka:
