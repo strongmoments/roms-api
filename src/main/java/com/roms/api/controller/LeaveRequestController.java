@@ -250,7 +250,12 @@ public class LeaveRequestController {
             }else if(StringUtils.isEmpty(leaveRequestSearchInput.getDepartmentId())  && !(StringUtils.isEmpty(leaveRequestSearchInput.getEmployeeTypeId())) ){
                 requestedPage = leaveRequestService.findAllLeaveTransactionByEmployeeType(page, size,fromDate,toDate,leaveRequestSearchInput.getEmployeeTypeId());
             }else {
-                requestedPage = leaveRequestService.findAllLeaveTransaction(page, size);
+                if(leaveStatus>0){
+                    requestedPage = leaveRequestService.findAllLeaveTransactionByLeaveStatus( page, size,fromDate,toDate,leaveStatus);
+                }else{
+                    requestedPage = leaveRequestService.findAllLeaveTransaction(page, size, fromDate,toDate);
+                }
+
             }
 
             response.put("totalElement", requestedPage.getTotalElements());
