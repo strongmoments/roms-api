@@ -3,9 +3,13 @@ package com.roms.api.service;
 import com.roms.api.model.Employe;
 import com.roms.api.model.EmployeeManagers;
 import com.roms.api.model.EmployeeResignation;
+import com.roms.api.model.LeaveRequest;
 import com.roms.api.repository.EmployeeResignationRepository;
 import com.roms.api.utils.LoggedInUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -26,6 +30,26 @@ public class EmployeeResignationService {
     public Optional<EmployeeResignation> findById(String id){
       return employeeResignationRepository.findById(id);
     }
+
+
+    public Page<EmployeeResignation> findAllRecievedRequestHistory( int page, int size){
+        PageRequest pageble  = PageRequest.of(page, size, Sort.by("dateOfApproval").descending());
+        return employeeResignationRepository.findAllByApproverAndOrganisationAndStatusGreaterThan(loggedIn.getUser().getEmployeId(), loggedIn.getOrg(),1, pageble);
+    }
+    public Page<EmployeeResignation> findAllRecievedRequest( int page, int size){
+        PageRequest pageble  = PageRequest.of(page, size, Sort.by("applyDate").descending());
+        return employeeResignationRepository.findAllByApproverAndOrganisation(loggedIn.getUser().getEmployeId(),loggedIn.getOrg(), pageble);
+    }
+
+
+    public Page<EmployeeResignation> findAllRecievedRequestByLeaveStatus( int page, int size, int resignationStatus){
+        PageRequest pageble  = PageRequest.of(page, size, Sort.by("applyDate").descending());
+        return employeeResignationRepository.findAllByApproverAndStatusAndOrganisation(new Employe(loggedIn.getUser().getEmployeId().getId()), resignationStatus, loggedIn.getOrg(),pageble);
+    }
+    public Optional<EmployeeResignation> findAppliedResignation(){
+        return employeeResignationRepository.findByEmployeeAndOrganisation(loggedIn.getUser().getEmployeId(),loggedIn.getOrg());
+    }
+
 
     public EmployeeResignation resigne(EmployeeResignation employeeResignation){
 

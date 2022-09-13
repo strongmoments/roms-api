@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -61,7 +62,7 @@ public class ResignationController {
     }
 
     @PostMapping(value = "/approve", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public ResponseEntity<?> approveLeave(@RequestBody EmployeeResignation employeeResignation) {
+    public ResponseEntity<?> approveResignation(@RequestBody EmployeeResignation employeeResignation) {
         Map<String,Object> response = new HashMap<>();
         try {
             employeeResignation = employeeResignationService.approveResignation(employeeResignation);
@@ -78,7 +79,7 @@ public class ResignationController {
     }
 
     @PostMapping(value = "/reject", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public ResponseEntity<?> rejectLeave(@RequestBody EmployeeResignation employeeResignation) {
+    public ResponseEntity<?> rejectResignation(@RequestBody EmployeeResignation employeeResignation) {
         Map<String,Object> response = new HashMap<>();
         try {
             employeeResignation = employeeResignationService.resectResignation(employeeResignation);
@@ -94,6 +95,77 @@ public class ResignationController {
         return new ResponseEntity<>(response, HttpStatus.OK);
 
     }
+
+    @GetMapping(value = "/applied")
+    public ResponseEntity<?> loadAppliedResignation(){
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Page<LeaveRequest> requestedPage = null;
+            response.put("data",employeeResignationService.findAppliedResignation().get());
+        } catch (Exception e){
+            logger.error("An error occurred! {}", e.getMessage());
+            response.put("status","error");
+            response.put("error",e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/appliedToMe")
+    public ResponseEntity<?> loadApliedToMeResignation(
+            @RequestParam(value ="status", defaultValue = "0") int resigneStatus,
+            @RequestParam(value ="page", defaultValue = "0") int page,
+            @RequestParam(value ="size", defaultValue = "3") int size){
+
+
+
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Page<EmployeeResignation> requestedPage = null;
+            if(resigneStatus == 0){
+                requestedPage = employeeResignationService.findAllRecievedRequest( page, size);
+            }else{
+                requestedPage = employeeResignationService.findAllRecievedRequestByLeaveStatus(page, size,resigneStatus);
+            }
+            response.put("totalElement", requestedPage.getTotalElements());
+            response.put("totalPage", requestedPage.getTotalPages());
+            response.put("numberOfelement", requestedPage.getNumberOfElements());
+            response.put("currentPageNmber", requestedPage.getNumber());
+            response.put("data", requestedPage.getContent());
+        } catch (Exception e){
+            logger.error("An error occurred! {}", e.getMessage());
+            response.put("status","error");
+            response.put("error",e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/appliedToMeHistory")
+    public ResponseEntity<?> loadApliedToMeLeaveHistory(
+            @RequestParam(value ="page", defaultValue = "0") int page,
+            @RequestParam(value ="size", defaultValue = "3") int size){
+
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Page<EmployeeResignation> requestedPage = null;
+
+            requestedPage = employeeResignationService.findAllRecievedRequestHistory( page, size);
+
+            response.put("totalElement", requestedPage.getTotalElements());
+            response.put("totalPage", requestedPage.getTotalPages());
+            response.put("numberOfelement", requestedPage.getNumberOfElements());
+            response.put("currentPageNmber", requestedPage.getNumber());
+            response.put("data", requestedPage.getContent());
+        } catch (Exception e){
+            logger.error("An error occurred! {}", e.getMessage());
+            response.put("status","error");
+            response.put("error",e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
 
 
 }

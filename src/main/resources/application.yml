@@ -32,7 +32,7 @@ spring:
           lob:
             non_contextual_creation: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
-        show-sql: true
+        show-sql: false
   datasource:
     url: jdbc:postgresql://localhost:5432/roms
     username: teamsm
