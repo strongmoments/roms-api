@@ -32,7 +32,7 @@ public class ResigneNotifcationServiceImpl extends NotificationService {
     public void sendNotification(String eventId) {
 
         Optional<EmployeeResignation> employeeResignations= employeeResignationService.findById(eventId);
-        if(!employeeResignations.isPresent()){
+        if(employeeResignations.isPresent()){
             EmployeeResignation employeeResignation = employeeResignations.get();
             List<String> allDevices = employeeDeviceService.findAllResisterdDeviceOfEmployee(employeeResignation.getApprover().getId());
             RestTemplate restTemplate = new RestTemplate();
@@ -68,7 +68,7 @@ public class ResigneNotifcationServiceImpl extends NotificationService {
     @Override
     public void sendApprovedOrRejectNotification(String eventId, String message, String type) {
         Optional<EmployeeResignation> employeeResignations= employeeResignationService.findById(eventId);
-        if(!employeeResignations.isEmpty()){
+        if(employeeResignations.isPresent()){
             EmployeeResignation employeeResignation = employeeResignations.get();
             List<String> allDevices = employeeDeviceService.findAllResisterdDeviceOfEmployee(employeeResignation.getEmployee().getId());
             RestTemplate restTemplate = new RestTemplate();

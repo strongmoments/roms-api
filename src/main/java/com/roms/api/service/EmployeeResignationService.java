@@ -1,11 +1,14 @@
 package com.roms.api.service;
 
+import com.roms.api.controller.ResignationController;
 import com.roms.api.model.Employe;
 import com.roms.api.model.EmployeeManagers;
 import com.roms.api.model.EmployeeResignation;
 import com.roms.api.model.LeaveRequest;
 import com.roms.api.repository.EmployeeResignationRepository;
 import com.roms.api.utils.LoggedInUserDetails;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,6 +21,7 @@ import java.util.Optional;
 @Service
 public class EmployeeResignationService {
 
+    public static final Logger logger = LoggerFactory.getLogger(EmployeeResignationService.class);
     @Autowired
     private EmployeeResignationRepository employeeResignationRepository;
 
@@ -58,6 +62,13 @@ public class EmployeeResignationService {
             //@todo throw exception you dont have manager
             return null;
         }else{
+
+            Optional<EmployeeResignation> employeeResignation1 = employeeResignationRepository.findByEmployeeAndApproverAndOrganisation(loggedIn.getUser().getEmployeId(),employeeManagers.get().getManagers(),loggedIn.getOrg());
+            if(employeeResignation1.isPresent()){
+                logger.info("already resigned ");
+                return null;
+            }
+
           Employe manager =  employeeManagers.get().getManagers();
             employeeResignation.setApprover(manager);
             employeeResignation.setApplyDate(Instant.now());

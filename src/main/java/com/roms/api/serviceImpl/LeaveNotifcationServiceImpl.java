@@ -41,7 +41,7 @@ public class LeaveNotifcationServiceImpl extends NotificationService {
     public void sendNotification(String eventId) {
 
        Optional<LeaveRequest> leaveRequests =leaveRequestService.findById(eventId);
-       if(!leaveRequests.isEmpty()){
+       if(leaveRequests.isPresent()){
            LeaveRequest leaveRequest = leaveRequests.get();
            RestTemplate restTemplate = new RestTemplate();
            HttpHeaders headers = new HttpHeaders();
@@ -80,7 +80,7 @@ public class LeaveNotifcationServiceImpl extends NotificationService {
     @Override
     public void sendApprovedOrRejectNotification(String eventId, String message, String type) {
         Optional<LeaveRequest> leaveRequests =leaveRequestService.findById(eventId);
-        if(!leaveRequests.isEmpty()) {
+        if(leaveRequests.isPresent()) {
             LeaveRequest leaveRequest = leaveRequests.get();
             RestTemplate restTemplate = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();

@@ -16,6 +16,7 @@ public interface EmployeeResignationRepository extends JpaRepository<EmployeeRes
 
     public Optional<EmployeeResignation> findByEmployeeAndOrganisation(Employe employee, Organisation org);
 
+    public Optional<EmployeeResignation> findByEmployeeAndApproverAndOrganisation(Employe employee,Employe approver, Organisation org);
     public Page<EmployeeResignation> findAllByApproverAndOrganisation(Employe employee,  Organisation org, PageRequest pageable) ;
 
     public Page<EmployeeResignation> findAllByApproverAndOrganisationAndStatusGreaterThan(Employe employee,  Organisation org,int statues, PageRequest pageable) ;
