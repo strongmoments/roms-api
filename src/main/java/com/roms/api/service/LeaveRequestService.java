@@ -30,6 +30,9 @@ public class LeaveRequestService {
 
 
 
+    public Optional<LeaveRequest> findById(String id){
+        return leaveRequestRepository.findById(id);
+    }
 
     public void LeaveRequestRepository(LeaveRequest model) {
         leaveRequestRepository.save(model);

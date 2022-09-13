@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,10 +31,19 @@ public class EmployeeDeviceService {
         }
     }
 
-    List<EmployeeDevices> findAllByEmployee(String employeeId){
+    public List<EmployeeDevices> findAllByEmployee(String employeeId){
        Employe employee =  new Employe();
        employee.setId(employeeId);
         return employeeDeviceRepository.findAllByEmployeAndOrganisation(employee, loggedIn.getOrg());
+    }
+
+    public List<String> findAllResisterdDeviceOfEmployee(String employeeId){
+        List<EmployeeDevices> notificatinDevices = findAllByEmployee(employeeId);
+        List<String> allDevices = new ArrayList<>();
+        notificatinDevices.forEach(obj->{
+            allDevices.add(obj.getNotificationDeviceToken());
+        });
+        return allDevices;
     }
 
     public boolean findByNotificatoinDeviceId(String noficationDeviceId){

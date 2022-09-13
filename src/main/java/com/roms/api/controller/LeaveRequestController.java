@@ -12,6 +12,7 @@ import com.roms.api.utils.LoggedInUserDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -46,6 +47,7 @@ public class LeaveRequestController {
     private ClientProjectSubteamMemberService clientProjectSubteamMemberService;
 
     @Autowired
+    @Qualifier("leavenotification")
     private NotificationService notificationService;
 
 
@@ -60,7 +62,7 @@ public class LeaveRequestController {
             leaveRequest.setEndDateTime(sdf.parse(leaveRequest.getStrEndDateTime()).toInstant());
             LeaveRequest leaveRequests = leaveRequestService.applyLeave(leaveRequest);
             if(leaveRequest != null && leaveRequest.getId() != null)
-            notificationService.sendLeaveRequestNotification(leaveRequests);
+            notificationService.sendNotification(leaveRequest.getId());
 
         }catch (Exception e){
             logger.error("Error while applying leave {} ",  e.getMessage());
@@ -79,7 +81,7 @@ public class LeaveRequestController {
         try {
             leaveRequest = leaveRequestService.approveLeave(leaveRequest);
             if(leaveRequest != null && leaveRequest.getId() != null)
-            notificationService.sendLeaveApprovedNotification(leaveRequest, "approved your", "approve");
+            notificationService.sendApprovedOrRejectNotification(leaveRequest.getId(), "approved your", "approve");
         }catch (Exception e){
             logger.error("Error while approving leave {} ",  e.getMessage());
             response.put("error", e.getMessage());
@@ -96,7 +98,7 @@ public class LeaveRequestController {
         try {
             leaveRequest =  leaveRequestService.rejectLeave(leaveRequest);
             if(leaveRequest != null && leaveRequest.getId() != null)
-            notificationService.sendLeaveApprovedNotification(leaveRequest, "rejected your", "reject");
+            notificationService.sendApprovedOrRejectNotification(leaveRequest.getId(), "rejected your", "reject");
         }catch (Exception e){
             logger.error("Error while rejecting leave {} ",  e.getMessage());
             response.put("error", e.getMessage());
