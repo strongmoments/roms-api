@@ -2,6 +2,7 @@ package com.roms.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.roms.api.model.EmployeeResignation;
+import com.roms.api.model.LeaveExportHistory;
 import com.roms.api.model.LeaveRequest;
 import com.roms.api.requestInput.LeaveRequestSearchInput;
 import com.roms.api.service.EmployeeResignationService;
@@ -191,20 +192,20 @@ public class ResignationController {
         try {
             Page<EmployeeResignation> requestedPage = null;
             if(!(StringUtils.isEmpty(leaveRequestSearchInput.getDepartmentId()) )&& !(StringUtils.isEmpty(leaveRequestSearchInput.getEmployeeTypeId())) && status >0){
-               // requestedPage = leaveRequestService.findAllLeaveTransactionByEmployeeTypeAndDepartmentAndLeaveStatus(page, size,fromDate,toDate, leaveRequestSearchInput.getEmployeeTypeId(),leaveRequestSearchInput.getDepartmentId(), status);
+                requestedPage = employeeResignationService.findAllResingTransactionByEmployeeTypeAndDepartmentAndStatus(page, size,fromDate,toDate, leaveRequestSearchInput.getEmployeeTypeId(),leaveRequestSearchInput.getDepartmentId(), status);
             }else if(!(StringUtils.isEmpty(leaveRequestSearchInput.getDepartmentId()) ) && StringUtils.isEmpty(leaveRequestSearchInput.getEmployeeTypeId()) && status >0){
-               // requestedPage = leaveRequestService.findAllLeaveTransactionByDepartmentAndLeaveStatus(page, size,fromDate,toDate,leaveRequestSearchInput.getDepartmentId(),status);
+                requestedPage = employeeResignationService.findAllResignTransactionByDepartmentAndLeaveStatus(page, size,fromDate,toDate,leaveRequestSearchInput.getDepartmentId(),status);
             }else if(StringUtils.isEmpty(leaveRequestSearchInput.getDepartmentId())  && !(StringUtils.isEmpty(leaveRequestSearchInput.getEmployeeTypeId())) && status>0 ){
-               // requestedPage = leaveRequestService.findAllLeaveTransactionByEmployeeTypeAndLeaveStatus(page, size,fromDate,toDate,leaveRequestSearchInput.getEmployeeTypeId(),status);
+                requestedPage = employeeResignationService.findAllResigneTransactionByEmployeeTypeAndLeaveStatus(page, size,fromDate,toDate,leaveRequestSearchInput.getEmployeeTypeId(),status);
             }else if(!(StringUtils.isEmpty(leaveRequestSearchInput.getDepartmentId()) )&& !(StringUtils.isEmpty(leaveRequestSearchInput.getEmployeeTypeId())) ){
-               // requestedPage = leaveRequestService.findAllLeaveTransactionByEmployeeTypeAndDepartment(page, size,fromDate,toDate, leaveRequestSearchInput.getEmployeeTypeId(),leaveRequestSearchInput.getDepartmentId());
+                requestedPage = employeeResignationService.findAllResigneTransactionByEmployeeTypeAndDepartment(page, size,fromDate,toDate, leaveRequestSearchInput.getEmployeeTypeId(),leaveRequestSearchInput.getDepartmentId());
             }else if(!(StringUtils.isEmpty(leaveRequestSearchInput.getDepartmentId()) ) && StringUtils.isEmpty(leaveRequestSearchInput.getEmployeeTypeId()) ){
-               // requestedPage = leaveRequestService.findAllLeaveTransactionByDepartment(page, size,fromDate,toDate,leaveRequestSearchInput.getDepartmentId());
+                requestedPage = employeeResignationService.findAllResignTransactionByDepartment(page, size,fromDate,toDate,leaveRequestSearchInput.getDepartmentId());
             }else if(StringUtils.isEmpty(leaveRequestSearchInput.getDepartmentId())  && !(StringUtils.isEmpty(leaveRequestSearchInput.getEmployeeTypeId())) ){
-               // requestedPage = leaveRequestService.findAllLeaveTransactionByEmployeeType(page, size,fromDate,toDate,leaveRequestSearchInput.getEmployeeTypeId());
+                requestedPage = employeeResignationService.findAllResigneTransactionByEmployeeType(page, size,fromDate,toDate,leaveRequestSearchInput.getEmployeeTypeId());
             }else {
                 if(status>0){
-                   // requestedPage = leaveRequestService.findAllLeaveTransactionByLeaveStatus( page, size,fromDate,toDate,status);
+                    requestedPage = employeeResignationService.findAllLeaveTransactionByLeaveStatus( page, size,fromDate,toDate,status);
                 }else{
                     requestedPage = employeeResignationService.findAllResignationTransaction(page, size, fromDate,toDate);
                 }
@@ -222,6 +223,22 @@ public class ResignationController {
             response.put("error",e.getMessage());
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/export", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ResponseEntity<?> requestLeave(@RequestBody LeaveExportHistory leaveExportHistory) throws ParseException {
+        Map<String,Object> response = new HashMap<>();
+        try {
+           // leaveExportHistoryService.save(leaveExportHistory);
+        }catch (Exception e){
+            e.printStackTrace();
+            logger.error("Error while adding leave export history {} ",  e.getMessage());
+            response.put("error", e.getMessage());
+            response.put("status", "error");
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        response.put("status","success");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

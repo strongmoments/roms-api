@@ -1,10 +1,7 @@
 package com.roms.api.service;
 
 import com.roms.api.controller.ResignationController;
-import com.roms.api.model.Employe;
-import com.roms.api.model.EmployeeManagers;
-import com.roms.api.model.EmployeeResignation;
-import com.roms.api.model.LeaveRequest;
+import com.roms.api.model.*;
 import com.roms.api.repository.EmployeeResignationRepository;
 import com.roms.api.utils.LoggedInUserDetails;
 import org.slf4j.Logger;
@@ -64,6 +61,65 @@ public class EmployeeResignationService {
         PageRequest pageble  = PageRequest.of(page, size, Sort.by("applyDate").descending());
         return employeeResignationRepository.findAllByApplyDateBetweenAndOrganisation(fromdDate, toDate,loggedIn.getOrg(),pageble);
     }
+    public Page<EmployeeResignation> findAllResingTransactionByEmployeeTypeAndDepartmentAndStatus(int page, int size, Instant fromdDate, Instant toDate,String employeeTypeId, String departmentId, int status){
+        PageRequest pageble  = PageRequest.of(page, size, Sort.by("applyDate").descending());
+        EmployeType employeType = new EmployeType();
+        employeType.setId(employeeTypeId);
+        Departments departments = new Departments();
+        departments.setId(departmentId);
+        return employeeResignationRepository.findAllByEmployeeEmployeTypeAndEmployeeDepartmentsAndApplyDateBetweenAndOrganisationAndStatus(employeType,departments,fromdDate, toDate,loggedIn.getOrg(),status,pageble);
+    }
+
+    public Page<EmployeeResignation> findAllResignTransactionByDepartmentAndLeaveStatus(int page, int size, Instant fromdDate, Instant toDate, String departmentId, int status){
+        PageRequest pageble  = PageRequest.of(page, size, Sort.by("applyDate").descending());
+        Departments departments = new Departments();
+        departments.setId(departmentId);
+        return employeeResignationRepository.findAllByEmployeeDepartmentsAndApplyDateBetweenAndOrganisationAndStatus(departments,fromdDate, toDate,loggedIn.getOrg(),status,pageble);
+    }
+
+    public Page<EmployeeResignation> findAllResigneTransactionByEmployeeTypeAndLeaveStatus(int page, int size, Instant fromdDate, Instant toDate, String employeeTypeId, int status){
+        PageRequest pageble  = PageRequest.of(page, size, Sort.by("applyDate").descending());
+        EmployeType employeType = new EmployeType();
+        employeType.setId(employeeTypeId);
+        return employeeResignationRepository.findAllByEmployeeEmployeTypeAndApplyDateBetweenAndOrganisationAndStatus(employeType,fromdDate, toDate,loggedIn.getOrg(),status,pageble);
+    }
+
+    public Page<EmployeeResignation> findAllResigneTransactionByEmployeeTypeAndDepartment(int page, int size, Instant fromdDate, Instant toDate, String employeeTypeId,String departmentId){
+        PageRequest pageble  = PageRequest.of(page, size, Sort.by("applyDate").descending());
+        EmployeType employeType = new EmployeType();
+        employeType.setId(employeeTypeId);
+        Departments departments = new Departments();
+        departments.setId(departmentId);
+        return employeeResignationRepository.findAllByEmployeeEmployeTypeAndEmployeeDepartmentsAndApplyDateBetweenAndOrganisation(employeType,departments,fromdDate, toDate,loggedIn.getOrg(),pageble);
+    }
+
+    public Page<EmployeeResignation> findAllResignTransactionByDepartment(int page, int size, Instant fromdDate, Instant toDate, String departmentId){
+        PageRequest pageble  = PageRequest.of(page, size, Sort.by("applyDate").descending());
+        Departments departments = new Departments();
+        departments.setId(departmentId);
+        return employeeResignationRepository.findAllByEmployeeDepartmentsAndApplyDateBetweenAndOrganisation(departments,fromdDate, toDate,loggedIn.getOrg(),pageble);
+    }
+
+    public Page<EmployeeResignation> findAllResigneTransactionByEmployeeType(int page, int size, Instant fromdDate, Instant toDate, String employeeTypeId){
+        PageRequest pageble  = PageRequest.of(page, size, Sort.by("applyDate").descending());
+        EmployeType employeType = new EmployeType();
+        employeType.setId(employeeTypeId);
+        return employeeResignationRepository.findAllByEmployeeEmployeTypeAndApplyDateBetweenAndOrganisation(employeType,fromdDate, toDate,loggedIn.getOrg(),pageble);
+    }
+
+    public Page<EmployeeResignation> findAllLeaveTransactionByLeaveStatus(int page, int size, Instant fromdDate, Instant toDate, Integer status){
+        PageRequest pageble  = PageRequest.of(page, size, Sort.by("applyDate").descending());
+
+        return employeeResignationRepository.findAllByApplyDateBetweenAndOrganisationAndStatus(fromdDate, toDate,loggedIn.getOrg(),status,pageble);
+    }
+
+
+
+
+
+
+
+
 
     public EmployeeResignation resigne(EmployeeResignation employeeResignation, Map<String,Object> response){
 
