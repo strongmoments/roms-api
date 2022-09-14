@@ -234,7 +234,7 @@ public class LeaveRequestController {
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
         Instant fromDate = sdf.parse(leaveRequestSearchInput.getFromDate()).toInstant();
         Instant toDate = sdf.parse(leaveRequestSearchInput.getToDate()).toInstant();
-        Integer leaveStatus = Integer.parseInt(leaveRequestSearchInput.getLeaveStatus());
+        Integer leaveStatus = Integer.parseInt(leaveRequestSearchInput.getStatus());
 
         Map<String, Object> response = new HashMap<>();
         try {

@@ -3,6 +3,7 @@ package com.roms.api.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.roms.api.model.EmployeeResignation;
 import com.roms.api.model.LeaveRequest;
+import com.roms.api.requestInput.LeaveRequestSearchInput;
 import com.roms.api.service.EmployeeResignationService;
 import com.roms.api.service.NotificationService;
 import org.slf4j.Logger;
@@ -13,10 +14,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.HashMap;
@@ -159,6 +162,54 @@ public class ResignationController {
             Page<EmployeeResignation> requestedPage = null;
 
             requestedPage = employeeResignationService.findAllRecievedRequestHistory( page, size);
+
+            response.put("totalElement", requestedPage.getTotalElements());
+            response.put("totalPage", requestedPage.getTotalPages());
+            response.put("numberOfelement", requestedPage.getNumberOfElements());
+            response.put("currentPageNmber", requestedPage.getNumber());
+            response.put("data", requestedPage.getContent());
+        } catch (Exception e){
+            logger.error("An error occurred! {}", e.getMessage());
+            response.put("status","error");
+            response.put("error",e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/loadAll")
+    public ResponseEntity<?> loadAll(
+            @RequestBody LeaveRequestSearchInput leaveRequestSearchInput,
+            @RequestParam(value ="page", defaultValue = "0") int page,
+            @RequestParam(value ="size", defaultValue = "3") int size) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+        Instant fromDate = sdf.parse(leaveRequestSearchInput.getFromDate()).toInstant();
+        Instant toDate = sdf.parse(leaveRequestSearchInput.getToDate()).toInstant();
+        Integer status = Integer.parseInt(leaveRequestSearchInput.getStatus());
+
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Page<EmployeeResignation> requestedPage = null;
+            if(!(StringUtils.isEmpty(leaveRequestSearchInput.getDepartmentId()) )&& !(StringUtils.isEmpty(leaveRequestSearchInput.getEmployeeTypeId())) && status >0){
+               // requestedPage = leaveRequestService.findAllLeaveTransactionByEmployeeTypeAndDepartmentAndLeaveStatus(page, size,fromDate,toDate, leaveRequestSearchInput.getEmployeeTypeId(),leaveRequestSearchInput.getDepartmentId(), status);
+            }else if(!(StringUtils.isEmpty(leaveRequestSearchInput.getDepartmentId()) ) && StringUtils.isEmpty(leaveRequestSearchInput.getEmployeeTypeId()) && status >0){
+               // requestedPage = leaveRequestService.findAllLeaveTransactionByDepartmentAndLeaveStatus(page, size,fromDate,toDate,leaveRequestSearchInput.getDepartmentId(),status);
+            }else if(StringUtils.isEmpty(leaveRequestSearchInput.getDepartmentId())  && !(StringUtils.isEmpty(leaveRequestSearchInput.getEmployeeTypeId())) && status>0 ){
+               // requestedPage = leaveRequestService.findAllLeaveTransactionByEmployeeTypeAndLeaveStatus(page, size,fromDate,toDate,leaveRequestSearchInput.getEmployeeTypeId(),status);
+            }else if(!(StringUtils.isEmpty(leaveRequestSearchInput.getDepartmentId()) )&& !(StringUtils.isEmpty(leaveRequestSearchInput.getEmployeeTypeId())) ){
+               // requestedPage = leaveRequestService.findAllLeaveTransactionByEmployeeTypeAndDepartment(page, size,fromDate,toDate, leaveRequestSearchInput.getEmployeeTypeId(),leaveRequestSearchInput.getDepartmentId());
+            }else if(!(StringUtils.isEmpty(leaveRequestSearchInput.getDepartmentId()) ) && StringUtils.isEmpty(leaveRequestSearchInput.getEmployeeTypeId()) ){
+               // requestedPage = leaveRequestService.findAllLeaveTransactionByDepartment(page, size,fromDate,toDate,leaveRequestSearchInput.getDepartmentId());
+            }else if(StringUtils.isEmpty(leaveRequestSearchInput.getDepartmentId())  && !(StringUtils.isEmpty(leaveRequestSearchInput.getEmployeeTypeId())) ){
+               // requestedPage = leaveRequestService.findAllLeaveTransactionByEmployeeType(page, size,fromDate,toDate,leaveRequestSearchInput.getEmployeeTypeId());
+            }else {
+                if(status>0){
+                   // requestedPage = leaveRequestService.findAllLeaveTransactionByLeaveStatus( page, size,fromDate,toDate,status);
+                }else{
+                    requestedPage = employeeResignationService.findAllResignationTransaction(page, size, fromDate,toDate);
+                }
+
+            }
 
             response.put("totalElement", requestedPage.getTotalElements());
             response.put("totalPage", requestedPage.getTotalPages());

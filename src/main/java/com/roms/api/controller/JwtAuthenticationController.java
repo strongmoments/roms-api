@@ -17,6 +17,7 @@ import com.roms.api.utils.JwtTokenUtil;
 import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -85,7 +86,11 @@ public class JwtAuthenticationController {
         Users userModel = userService.findByUsername(authenticationRequest.getUsername(), authenticationRequest.getOrgId()).get();
         // check if user has expired
         if(Instant.now().isAfter(userModel.getEmployeId().getEndDate() == null ? Instant.now() : userModel.getEmployeId().getEndDate())){
-            throw new RuntimeException("user_has_expired");
+
+            response.put("error","user_has_expired");
+            response.put("status", "error");
+            return new ResponseEntity<>(response, HttpStatus.PERMANENT_REDIRECT);
+
         }
 
         UserRolesMap userRolesMap =  userRolesMapService.findAllByUserId(userModel.getId()).get(0);

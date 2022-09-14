@@ -9,6 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,6 +23,9 @@ public interface EmployeeResignationRepository extends JpaRepository<EmployeeRes
 
     public Page<EmployeeResignation> findAllByApproverAndOrganisationAndStatusGreaterThan(Employe employee,  Organisation org,int statues, PageRequest pageable) ;
     public Page<EmployeeResignation> findAllByApproverAndStatusAndOrganisation(Employe employee, int resigneStatus, Organisation org, PageRequest pageable) ;
+
+    Page<EmployeeResignation> findAllByApplyDateBetweenAndOrganisation(Instant fromDate, Instant todate, Organisation organisation, PageRequest pageRequest);
+
 
 
 }

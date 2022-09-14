@@ -60,6 +60,11 @@ public class EmployeeResignationService {
     }
 
 
+    public Page<EmployeeResignation> findAllResignationTransaction(int page, int size,Instant fromdDate, Instant toDate){
+        PageRequest pageble  = PageRequest.of(page, size, Sort.by("applyDate").descending());
+        return employeeResignationRepository.findAllByApplyDateBetweenAndOrganisation(fromdDate, toDate,loggedIn.getOrg(),pageble);
+    }
+
     public EmployeeResignation resigne(EmployeeResignation employeeResignation, Map<String,Object> response){
 
         Optional<EmployeeManagers> employeeManagers = employeeManagerService.getManager(loggedIn.getUser().getEmployeId().getId());
