@@ -83,6 +83,7 @@ public class EmployeeResignationService {
     }
 
     public EmployeeResignation approveResignation(EmployeeResignation employeeResignation){
+        String comment = employeeResignation.getComment();
         Optional<EmployeeResignation> employeeResignation1 = findById(employeeResignation.getId());
         if(employeeResignation1.isEmpty()){
             //@todo throw exception you dont have manager
@@ -90,6 +91,7 @@ public class EmployeeResignationService {
         }else{
             employeeResignation =  employeeResignation1.get();
             employeeResignation.setStatus(2);
+            employeeResignation.setComment(comment);
             employeeResignation.setUpdateBy(loggedIn.getUser());
             employeeResignation.setLastUpdateDate(Instant.now());
             employeeResignation =employeeResignationRepository.save(employeeResignation);
@@ -98,6 +100,7 @@ public class EmployeeResignationService {
     }
 
     public EmployeeResignation resectResignation(EmployeeResignation employeeResignation){
+        String comment = employeeResignation.getComment();
         Optional<EmployeeResignation> employeeResignation1 = findById(employeeResignation.getId());
         if(employeeResignation1.isEmpty()){
             //@todo throw exception you dont have manager
@@ -105,6 +108,7 @@ public class EmployeeResignationService {
         }else{
             employeeResignation =  employeeResignation1.get();
             employeeResignation.setStatus(3);
+            employeeResignation.setComment(comment);
             employeeResignation.setUpdateBy(loggedIn.getUser());
             employeeResignation.setLastUpdateDate(Instant.now());
             employeeResignation =employeeResignationRepository.save(employeeResignation);

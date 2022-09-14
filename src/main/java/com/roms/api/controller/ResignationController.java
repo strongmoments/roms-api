@@ -38,17 +38,23 @@ public class ResignationController {
     private NotificationService notificationService;
 
     @RequestMapping(value = "/apply" , method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE  })
-    public ResponseEntity<?> submitResignation(@RequestParam String inputJsonString, @RequestParam(value="files") MultipartFile file) throws IOException {
+    public ResponseEntity<?> submitResignation(@RequestParam String inputJsonString, @RequestParam(value="files") MultipartFile files[]) throws IOException {
 
         Map<String,Object> response = new HashMap();
         try {
             ObjectMapper mapper  = new ObjectMapper();
             Map<String, MultipartFile> imageData = new HashMap();
             EmployeeResignation employeeResignation = mapper.readValue(inputJsonString, EmployeeResignation.class);
+            for(MultipartFile file : files){
+                imageData.put(file.getOriginalFilename(),file);
+
+            }
 
             SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
             Instant lastWorkingDate = sdf.parse(employeeResignation.getStrLastWorkingDate()).toInstant();
             employeeResignation.setLastWorkingDate(lastWorkingDate);
+            employeeResignation.setSignature(imageData.get("signature.png").getBytes());
+            employeeResignation.setEmployeeImage(imageData.get("employeeImage.png").getBytes());
             employeeResignation = employeeResignationService.resigne(employeeResignation);
             if(employeeResignation != null && employeeResignation.getId() != null)
                 notificationService.sendNotification(employeeResignation.getId());
