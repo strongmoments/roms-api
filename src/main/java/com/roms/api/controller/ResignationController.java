@@ -55,10 +55,12 @@ public class ResignationController {
             employeeResignation.setLastWorkingDate(lastWorkingDate);
             employeeResignation.setSignature(imageData.get("signature.png").getBytes());
             employeeResignation.setEmployeeImage(imageData.get("employeeImage.png").getBytes());
-            employeeResignation = employeeResignationService.resigne(employeeResignation);
+            employeeResignation = employeeResignationService.resigne(employeeResignation, response);
             if(employeeResignation != null && employeeResignation.getId() != null)
                 notificationService.sendNotification(employeeResignation.getId());
-            response.put("status","success");
+            if(null == response.get("status")){
+                response.put("status","success");
+            }
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             response.put("error", e.getMessage());
@@ -107,7 +109,7 @@ public class ResignationController {
         Map<String, Object> response = new HashMap<>();
         try {
             Page<LeaveRequest> requestedPage = null;
-            response.put("data",employeeResignationService.findAppliedResignation().get());
+            response.put("data",employeeResignationService.findAppliedResignation());
         } catch (Exception e){
             logger.error("An error occurred! {}", e.getMessage());
             response.put("status","error");

@@ -9,14 +9,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface EmployeeResignationRepository extends JpaRepository<EmployeeResignation,String> {
 
-    public Optional<EmployeeResignation> findByEmployeeAndOrganisation(Employe employee, Organisation org);
+    public List<EmployeeResignation> findAllByEmployeeAndOrganisationOrderByApplyDateDesc(Employe employee, Organisation org);
 
-    public Optional<EmployeeResignation> findByEmployeeAndApproverAndOrganisation(Employe employee,Employe approver, Organisation org);
+    public Optional<EmployeeResignation> findByEmployeeAndApproverAndOrganisationAndStatusIsNot(Employe employee,Employe approver, Organisation org,int status);
     public Page<EmployeeResignation> findAllByApproverAndOrganisation(Employe employee,  Organisation org, PageRequest pageable) ;
 
     public Page<EmployeeResignation> findAllByApproverAndOrganisationAndStatusGreaterThan(Employe employee,  Organisation org,int statues, PageRequest pageable) ;

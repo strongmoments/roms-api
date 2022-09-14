@@ -16,6 +16,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -30,6 +32,9 @@ public class EmployeeResignationService {
 
     @Autowired
     private EmployeeManagerService employeeManagerService;
+
+    @Autowired
+    private EmployeService employeService;
 
     public Optional<EmployeeResignation> findById(String id){
       return employeeResignationRepository.findById(id);
@@ -50,22 +55,26 @@ public class EmployeeResignationService {
         PageRequest pageble  = PageRequest.of(page, size, Sort.by("applyDate").descending());
         return employeeResignationRepository.findAllByApproverAndStatusAndOrganisation(new Employe(loggedIn.getUser().getEmployeId().getId()), resignationStatus, loggedIn.getOrg(),pageble);
     }
-    public Optional<EmployeeResignation> findAppliedResignation(){
-        return employeeResignationRepository.findByEmployeeAndOrganisation(loggedIn.getUser().getEmployeId(),loggedIn.getOrg());
+    public List<EmployeeResignation> findAppliedResignation(){
+        return employeeResignationRepository.findAllByEmployeeAndOrganisationOrderByApplyDateDesc(loggedIn.getUser().getEmployeId(),loggedIn.getOrg());
     }
 
 
-    public EmployeeResignation resigne(EmployeeResignation employeeResignation){
+    public EmployeeResignation resigne(EmployeeResignation employeeResignation, Map<String,Object> response){
 
         Optional<EmployeeManagers> employeeManagers = employeeManagerService.getManager(loggedIn.getUser().getEmployeId().getId());
         if(employeeManagers.isEmpty()){
-            //@todo throw exception you dont have manager
+            logger.info("manger not found");
+            response.put("status","error");
+            response.put("error","manager_not_found");
             return null;
         }else{
 
-            Optional<EmployeeResignation> employeeResignation1 = employeeResignationRepository.findByEmployeeAndApproverAndOrganisation(loggedIn.getUser().getEmployeId(),employeeManagers.get().getManagers(),loggedIn.getOrg());
+            Optional<EmployeeResignation> employeeResignation1 = employeeResignationRepository.findByEmployeeAndApproverAndOrganisationAndStatusIsNot(loggedIn.getUser().getEmployeId(),employeeManagers.get().getManagers(),loggedIn.getOrg(),3);
             if(employeeResignation1.isPresent()){
-                logger.info("already resigned ");
+                response.put("status","error");
+                response.put("error","already_resigned");
+                logger.info("Already resigned");
                 return null;
             }
 
@@ -89,14 +98,22 @@ public class EmployeeResignationService {
             //@todo throw exception you dont have manager
             return null;
         }else{
+
             employeeResignation =  employeeResignation1.get();
-            employeeResignation.setStatus(2);
-            employeeResignation.setComment(comment);
-            employeeResignation.setUpdateBy(loggedIn.getUser());
-            employeeResignation.setLastUpdateDate(Instant.now());
-            employeeResignation =employeeResignationRepository.save(employeeResignation);
+            if(employeeResignation.getApprover().getId().equalsIgnoreCase(loggedIn.getUser().getEmployeId().getId())) {
+                employeeResignation.setStatus(2);
+                employeeResignation.setComment(comment);
+                employeeResignation.setUpdateBy(loggedIn.getUser());
+                employeeResignation.setLastUpdateDate(Instant.now());
+                employeeResignation = employeeResignationRepository.save(employeeResignation);
+                Employe employe = employeeResignation.getEmployee();
+                employe.setEndDate(employeeResignation.getLastWorkingDate());
+                employeService.update(employe);
+                return employeeResignation;
+            }
+
         }
-        return employeeResignation;
+        return  null;
     }
 
     public EmployeeResignation resectResignation(EmployeeResignation employeeResignation){
@@ -107,13 +124,16 @@ public class EmployeeResignationService {
             return null;
         }else{
             employeeResignation =  employeeResignation1.get();
-            employeeResignation.setStatus(3);
-            employeeResignation.setComment(comment);
-            employeeResignation.setUpdateBy(loggedIn.getUser());
-            employeeResignation.setLastUpdateDate(Instant.now());
-            employeeResignation =employeeResignationRepository.save(employeeResignation);
+            if(employeeResignation.getApprover().getId().equalsIgnoreCase(loggedIn.getUser().getEmployeId().getId())) {
+                employeeResignation.setStatus(3);
+                employeeResignation.setComment(comment);
+                employeeResignation.setUpdateBy(loggedIn.getUser());
+                employeeResignation.setLastUpdateDate(Instant.now());
+                employeeResignation = employeeResignationRepository.save(employeeResignation);
+                return employeeResignation;
+            }
         }
-        return employeeResignation;
+        return null;
     }
 
 }

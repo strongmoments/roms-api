@@ -37,6 +37,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -82,6 +83,11 @@ public class JwtAuthenticationController {
 
         final UserDetails userDetails = userDetailsService.loadUserByUsername(userNameWithOrgid);
         Users userModel = userService.findByUsername(authenticationRequest.getUsername(), authenticationRequest.getOrgId()).get();
+        // check if user has expired
+        if(Instant.now().isAfter(userModel.getEmployeId().getEndDate() == null ? Instant.now() : userModel.getEmployeId().getEndDate())){
+            throw new RuntimeException("user_has_expired");
+        }
+
         UserRolesMap userRolesMap =  userRolesMapService.findAllByUserId(userModel.getId()).get(0);
         Gson g = new Gson();
         final String token = jwtTokenUtil.generateToken(userDetails,authenticationRequest.getOrgId());

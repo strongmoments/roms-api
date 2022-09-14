@@ -30,6 +30,13 @@ public class EmployeService {
 
     }
 
+    public Employe update(Employe employeModel){
+        employeModel.setUpdateBy(loggedIn.getUser());
+        employeModel.setLastUpdateDate(Instant.now());
+        return employeModel = employeesRepository.save(employeModel);
+
+    }
+
     public Optional<Employe> findByEmployeeId(String employeeId){
         return  employeesRepository.findById(employeeId);
     }
