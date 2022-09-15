@@ -13,6 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -111,6 +112,30 @@ public class EmployeeResignationService {
         PageRequest pageble  = PageRequest.of(page, size, Sort.by("applyDate").descending());
 
         return employeeResignationRepository.findAllByApplyDateBetweenAndOrganisationAndStatus(fromdDate, toDate,loggedIn.getOrg(),status,pageble);
+    }
+
+    public Map<String,Object> checkResignationStatus() {
+        Map<String,Object> response = new HashMap<>();
+        Optional<EmployeeManagers> employeeManagers = employeeManagerService.getManager(loggedIn.getUser().getEmployeId().getId());
+        if (employeeManagers.isEmpty()) {
+            logger.info("manger not found");
+            response.put("status", "error");
+            response.put("error", "manager_not_found");
+            return response;
+        } else {
+
+            Optional<EmployeeResignation> employeeResignation1 = employeeResignationRepository.findByEmployeeAndApproverAndOrganisationAndStatusIsNot(loggedIn.getUser().getEmployeId(), employeeManagers.get().getManagers(), loggedIn.getOrg(), 3);
+            if (employeeResignation1.isPresent()) {
+                response.put("status", "error");
+                response.put("error", "already_resigned");
+                logger.info("Already resigned");
+                return response;
+            }else{
+                response.put("status","success");
+                return response;
+            }
+        }
+
     }
 
 
