@@ -1,9 +1,9 @@
 package com.roms.api.service;
 
-
 import com.roms.api.model.LeaveExportHistory;
-import com.roms.api.model.LeaveRequest;
+import com.roms.api.model.ResignationExportHistory;
 import com.roms.api.repository.LeaveExportHistoryRepository;
+import com.roms.api.repository.ResignationExportHistoryRepository;
 import com.roms.api.utils.LoggedInUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -14,28 +14,27 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 
 @Service
-public class LeaveExportHistoryService {
+public class ResignationExportHistoryService {
 
     @Autowired
-    private LeaveExportHistoryRepository leaveExportHistoryRepository;
+    private ResignationExportHistoryRepository resignationExportHistoryRepository;
 
 
     @Autowired
     private LoggedInUserDetails loggedIn;
 
-    public LeaveExportHistory save(LeaveExportHistory leaveExportHistory){
+    public ResignationExportHistory save(ResignationExportHistory leaveExportHistory){
         leaveExportHistory.setExportBy(loggedIn.getUser().getEmployeId());
         leaveExportHistory.setCreateBy(loggedIn.getUser());
         leaveExportHistory.setCreateDate(Instant.now());
         leaveExportHistory.setOrganisation(loggedIn.getOrg());
         leaveExportHistory.setExportDate(Instant.now());
-        return leaveExportHistoryRepository.save(leaveExportHistory);
+        return resignationExportHistoryRepository.save(leaveExportHistory);
     }
-    public Page<LeaveExportHistory> findAll(int page, int size){
+    public Page<ResignationExportHistory> findAll(int page, int size){
         PageRequest pageble  = PageRequest.of(page, size, Sort.by("exportDate").descending());
-        return leaveExportHistoryRepository.findAllByOrganisation(loggedIn.getOrg(),pageble);
+        return resignationExportHistoryRepository.findAllByOrganisation(loggedIn.getOrg(),pageble);
 
     }
-
 
 }

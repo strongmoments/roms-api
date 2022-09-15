@@ -4,9 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.roms.api.model.EmployeeResignation;
 import com.roms.api.model.LeaveExportHistory;
 import com.roms.api.model.LeaveRequest;
+import com.roms.api.model.ResignationExportHistory;
 import com.roms.api.requestInput.LeaveRequestSearchInput;
 import com.roms.api.service.EmployeeResignationService;
 import com.roms.api.service.NotificationService;
+import com.roms.api.service.ResignationExportHistoryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +42,9 @@ public class ResignationController {
     @Autowired
     @Qualifier("resignenotification")
     private NotificationService notificationService;
+
+    @Autowired
+    private ResignationExportHistoryService resignationExportHistoryService;
 
     @RequestMapping(value = "/apply" , method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE  })
     public ResponseEntity<?> submitResignation(@RequestParam String inputJsonString, @RequestParam(value="files") MultipartFile files[]) throws IOException {
@@ -227,13 +232,13 @@ public class ResignationController {
     }
 
     @PostMapping(value = "/export", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public ResponseEntity<?> requestLeave(@RequestBody LeaveExportHistory leaveExportHistory) throws ParseException {
+    public ResponseEntity<?> requestLeave(@RequestBody ResignationExportHistory resignationExportHistory) throws ParseException {
         Map<String,Object> response = new HashMap<>();
         try {
-           // leaveExportHistoryService.save(leaveExportHistory);
+            resignationExportHistoryService.save(resignationExportHistory);
         }catch (Exception e){
             e.printStackTrace();
-            logger.error("Error while adding leave export history {} ",  e.getMessage());
+            logger.error("Error while adding resignation export history {} ",  e.getMessage());
             response.put("error", e.getMessage());
             response.put("status", "error");
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -242,6 +247,28 @@ public class ResignationController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @GetMapping(value = "/loadexporthistory")
+    public ResponseEntity<?> loadAll(
+            @RequestParam(value ="page", defaultValue = "0") int page,
+            @RequestParam(value ="size", defaultValue = "3") int size){
+
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Page<ResignationExportHistory> requestedPage = null;
+            requestedPage = resignationExportHistoryService.findAll(page,size);
+            response.put("totalElement", requestedPage.getTotalElements());
+            response.put("totalPage", requestedPage.getTotalPages());
+            response.put("numberOfelement", requestedPage.getNumberOfElements());
+            response.put("currentPageNmber", requestedPage.getNumber());
+            response.put("data", requestedPage.getContent());
+        } catch (Exception e){
+            logger.error("An error occurred! {}", e.getMessage());
+            response.put("status","error");
+            response.put("error",e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
 
 }
