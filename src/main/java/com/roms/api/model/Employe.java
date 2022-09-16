@@ -64,8 +64,8 @@ public class Employe extends CommonFields implements Serializable {
     @Column(name = "indigenous_flag", nullable = false)
     private boolean indigenousFlag;
 
-   /* @Column(name = "manager_flag", nullable = false)
-    private boolean managerFlag;*/
+    @Column(name="manager_flag")
+    private boolean managerFlag;
 
     @OneToOne()
     @JoinColumn(name = "employee_typeIdx",referencedColumnName = "id")
@@ -252,13 +252,13 @@ public class Employe extends CommonFields implements Serializable {
         this.orgId = orgId;
     }
 
-  /*  public boolean isManagerFlag() {
+    public boolean isManagerFlag() {
         return managerFlag;
     }
 
     public void setManagerFlag(boolean managerFlag) {
         this.managerFlag = managerFlag;
-    }*/
+    }
 }
 
 

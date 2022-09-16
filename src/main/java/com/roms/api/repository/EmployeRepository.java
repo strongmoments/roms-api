@@ -20,4 +20,6 @@ public interface EmployeRepository extends JpaRepository<Employe,String> {
 
     @Query("SELECT p.birthdate from Employe p where p.organisation.id =?1")
     List<Instant> findBirthDateByOrganisation(String organisation);
+
+    List<Employe> findAllByManagerFlagAndOrganisation(boolean managerFlag, Organisation organisation);
 }

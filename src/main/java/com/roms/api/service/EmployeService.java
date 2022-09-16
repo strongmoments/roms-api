@@ -30,6 +30,11 @@ public class EmployeService {
 
     }
 
+    public List<Employe> findAllManagers(){
+        return employeesRepository.findAllByManagerFlagAndOrganisation(true,loggedIn.getOrg());
+
+    }
+
     public Employe update(Employe employeModel){
         employeModel.setUpdateBy(loggedIn.getUser());
         employeModel.setLastUpdateDate(Instant.now());
