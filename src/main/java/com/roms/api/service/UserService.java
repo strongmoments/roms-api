@@ -104,6 +104,7 @@ public class UserService  {
             headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
             UUID uuid=UUID.randomUUID();
             employeePayLoad.setId(String.valueOf(uuid));
+            employeePayLoad.setAppliedOn(String.valueOf(Instant.now().toEpochMilli()));
             employeePayLoad.setStatus(1);
             HttpEntity<EmployeePayLoad> entity = new HttpEntity<EmployeePayLoad>(employeePayLoad,headers);
             String response = restTemplate.exchange(

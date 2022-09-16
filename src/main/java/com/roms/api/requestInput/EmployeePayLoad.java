@@ -14,8 +14,10 @@ public class EmployeePayLoad {
     public String lastName;
     public String email;
     public String phone;
+    public String appliedOn;
     public String orgId;
     public  int status;
+
 
 
 
