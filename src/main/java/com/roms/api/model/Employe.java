@@ -64,6 +64,9 @@ public class Employe extends CommonFields implements Serializable {
     @Column(name = "indigenous_flag", nullable = false)
     private boolean indigenousFlag;
 
+   /* @Column(name = "manager_flag", nullable = false)
+    private boolean managerFlag;*/
+
     @OneToOne()
     @JoinColumn(name = "employee_typeIdx",referencedColumnName = "id")
     @Fetch(FetchMode.SELECT)
@@ -248,6 +251,14 @@ public class Employe extends CommonFields implements Serializable {
     public void setOrgId(String orgId) {
         this.orgId = orgId;
     }
+
+  /*  public boolean isManagerFlag() {
+        return managerFlag;
+    }
+
+    public void setManagerFlag(boolean managerFlag) {
+        this.managerFlag = managerFlag;
+    }*/
 }
 
 

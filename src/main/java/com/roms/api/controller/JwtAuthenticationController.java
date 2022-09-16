@@ -7,6 +7,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.roms.api.model.*;
+import com.roms.api.requestInput.EmployeePayLoad;
 import com.roms.api.service.JwtUserDetailsService;
 import com.roms.api.service.UserRolesMapService;
 import com.roms.api.service.UserService;
@@ -113,11 +114,11 @@ public class JwtAuthenticationController {
     }
 
     @RequestMapping(value = "/addUserRequest", method = RequestMethod.POST)
-    public ResponseEntity<?> requestUser(@RequestBody Employe employe) throws Exception {
+    public ResponseEntity<?> requestUser(@RequestBody EmployeePayLoad employe) throws Exception {
 
         Map<String,Object> response = new HashMap<>();
-        response.put("status","success");
-
+        String resonse  = userService.saveTemporary(employe);
+        response.put("status",resonse);
         return ResponseEntity.ok(response);
     }
 

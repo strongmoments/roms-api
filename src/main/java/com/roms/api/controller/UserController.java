@@ -530,7 +530,8 @@ public class UserController {
         Map<String, Object> response = new HashMap<>();
         ArrayList obj = new ArrayList();
         try {
-            response.put("data",obj);
+
+            response.put("data",userService.loadPendinRegistration());
         } catch (Exception e){
             logger.error("An error occurred! {}", e.getMessage());
             response.put("status","error");

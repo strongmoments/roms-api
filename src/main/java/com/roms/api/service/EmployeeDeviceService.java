@@ -2,6 +2,7 @@ package com.roms.api.service;
 
 import com.roms.api.model.Employe;
 import com.roms.api.model.EmployeeDevices;
+import com.roms.api.model.Organisation;
 import com.roms.api.repository.EmployeeDeviceRepository;
 import com.roms.api.utils.LoggedInUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,18 +32,25 @@ public class EmployeeDeviceService {
         }
     }
 
-    public List<EmployeeDevices> findAllByEmployee(String employeeId){
+    public List<EmployeeDevices> findAllByEmployee(String employeeId,String orgId){
        Employe employee =  new Employe();
        employee.setId(employeeId);
-        return employeeDeviceRepository.findAllByEmployeAndOrganisation(employee, loggedIn.getOrg());
+        Organisation org = new Organisation();
+        org.setId(orgId);
+        return employeeDeviceRepository.findAllByEmployeAndOrganisation(employee, org);
     }
 
-    public List<String> findAllResisterdDeviceOfEmployee(String employeeId){
-        List<EmployeeDevices> notificatinDevices = findAllByEmployee(employeeId);
+    public List<String> findAllResisterdDeviceOfEmployee(String employeeId,String orgId){
+        Organisation org =new Organisation();
+        org.setId(orgId);
+        List<EmployeeDevices> notificatinDevices = findAllByEmployee(employeeId,orgId);
         List<String> allDevices = new ArrayList<>();
-        notificatinDevices.forEach(obj->{
-            allDevices.add(obj.getNotificationDeviceToken());
-        });
+        if(!notificatinDevices.isEmpty()){
+            notificatinDevices.forEach(obj->{
+                allDevices.add(obj.getNotificationDeviceToken());
+            });
+        }
+
         return allDevices;
     }
 

@@ -1,19 +1,27 @@
 package com.roms.api.service;
 
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.roms.api.model.*;
 import com.roms.api.repository.UsersRepository;
+import com.roms.api.requestInput.EmployeePayLoad;
 import com.roms.api.utils.LoggedInUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.Instant;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class UserService  {
@@ -31,6 +39,9 @@ public class UserService  {
     @Autowired
     private UserRolesMapService userRolesMapService;
 
+    @Autowired
+    @Qualifier("addusernotification")
+    private NotificationService notificationService;
     @Autowired
     private LoggedInUserDetails loggedIn;
 
@@ -62,6 +73,48 @@ public class UserService  {
         usersModel.setLastUpdateDate(Instant.now());
         return usersRepository.save(usersModel);
     }
+    public List<Object> loadPendinRegistration() throws JsonProcessingException {
+
+        List<Object> dataList = new ArrayList<>();
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+
+      EmployeePayLoad  employeePayLoad = EmployeePayLoad.builder().orgId("ab905406-79a3-4e54-8244-d79fc0e60937").build();
+
+
+        HttpEntity<EmployeePayLoad> entity = new HttpEntity<EmployeePayLoad>(employeePayLoad,headers);
+        String responseAsStrign =  restTemplate.exchange(                "http://localhost:8081/loadUser", HttpMethod.POST, entity, String.class).getBody();
+
+        if(!responseAsStrign.equalsIgnoreCase("empty")){
+            ObjectMapper obj = new ObjectMapper();
+            Map<String,Object>  response = obj.readValue(responseAsStrign, HashMap.class);
+            response.forEach((k,v)->{
+
+                dataList.add(v);
+            });
+        }
+
+        return dataList;
+    }
+
+    public String saveTemporary(EmployeePayLoad employeePayLoad) {
+            RestTemplate restTemplate = new RestTemplate();
+            HttpHeaders headers = new HttpHeaders();
+            headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+            UUID uuid=UUID.randomUUID();
+            employeePayLoad.setId(String.valueOf(uuid));
+            employeePayLoad.setStatus(1);
+            HttpEntity<EmployeePayLoad> entity = new HttpEntity<EmployeePayLoad>(employeePayLoad,headers);
+            String response = restTemplate.exchange(
+                    "http://localhost:8081/addUser", HttpMethod.POST, entity, String.class).getBody();
+            if("success".equalsIgnoreCase(response)){
+                notificationService.sendNotification(employeePayLoad);
+            }
+            return response;
+    }
+
+
     public Users save(Users usersModel) {
          if(doesUserExist(usersModel.getUserId())){
              // @todo

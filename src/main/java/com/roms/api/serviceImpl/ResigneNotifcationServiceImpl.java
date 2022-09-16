@@ -34,7 +34,7 @@ public class ResigneNotifcationServiceImpl extends NotificationService {
         Optional<EmployeeResignation> employeeResignations= employeeResignationService.findById(eventId);
         if(employeeResignations.isPresent()){
             EmployeeResignation employeeResignation = employeeResignations.get();
-            List<String> allDevices = employeeDeviceService.findAllResisterdDeviceOfEmployee(employeeResignation.getApprover().getId());
+            List<String> allDevices = employeeDeviceService.findAllResisterdDeviceOfEmployee(employeeResignation.getApprover().getId(),loggedIn.getOrg().getId());
             RestTemplate restTemplate = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();
             headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
@@ -70,7 +70,7 @@ public class ResigneNotifcationServiceImpl extends NotificationService {
         Optional<EmployeeResignation> employeeResignations= employeeResignationService.findById(eventId);
         if(employeeResignations.isPresent()){
             EmployeeResignation employeeResignation = employeeResignations.get();
-            List<String> allDevices = employeeDeviceService.findAllResisterdDeviceOfEmployee(employeeResignation.getEmployee().getId());
+            List<String> allDevices = employeeDeviceService.findAllResisterdDeviceOfEmployee(employeeResignation.getEmployee().getId(),loggedIn.getOrg().getId());
             RestTemplate restTemplate = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();
             headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));

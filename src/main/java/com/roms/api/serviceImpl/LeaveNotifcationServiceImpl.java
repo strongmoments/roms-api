@@ -46,11 +46,14 @@ public class LeaveNotifcationServiceImpl extends NotificationService {
            RestTemplate restTemplate = new RestTemplate();
            HttpHeaders headers = new HttpHeaders();
            headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-           List<EmployeeDevices> notificatinDevices = employeeDeviceService.findAllByEmployee(leaveRequest.getApprover().getId());
+           List<EmployeeDevices> notificatinDevices = employeeDeviceService.findAllByEmployee(leaveRequest.getApprover().getId(),loggedIn.getOrg().getId());
            List<String> allDevices = new ArrayList<>();
-           notificatinDevices.forEach(obj->{
-               allDevices.add(obj.getNotificationDeviceToken());
-           });
+           if(notificatinDevices.isEmpty()){
+               notificatinDevices.forEach(obj->{
+                   allDevices.add(obj.getNotificationDeviceToken());
+               });
+           }
+
            PushNotificationPayload requestPayload = new PushNotificationPayload();
            String fromName  = loggedIn.getUser().getEmployeId().getFirstName() +" "+loggedIn.getUser().getEmployeId().getLastName();
            requestPayload.setFrom(loggedIn.getUser().getEmployeId().getId());
@@ -86,11 +89,13 @@ public class LeaveNotifcationServiceImpl extends NotificationService {
             HttpHeaders headers = new HttpHeaders();
             headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 
-            List<EmployeeDevices> notificatinDevices = employeeDeviceService.findAllByEmployee(leaveRequest.getEmploye().getId());
+            List<EmployeeDevices> notificatinDevices = employeeDeviceService.findAllByEmployee(leaveRequest.getEmploye().getId(),loggedIn.getOrg().getId());
             List<String> allDevices = new ArrayList<>();
-            notificatinDevices.forEach(obj -> {
-                allDevices.add(obj.getNotificationDeviceToken());
-            });
+            if(notificatinDevices.isEmpty()){
+                notificatinDevices.forEach(obj->{
+                    allDevices.add(obj.getNotificationDeviceToken());
+                });
+            }
 
             PushNotificationPayload requestPayload = new PushNotificationPayload();
             String fromName = loggedIn.getUser().getEmployeId().getFirstName() + " " + loggedIn.getUser().getEmployeId().getLastName();

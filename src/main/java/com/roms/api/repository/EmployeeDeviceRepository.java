@@ -16,4 +16,5 @@ public interface EmployeeDeviceRepository extends JpaRepository<EmployeeDevices,
 
     List<EmployeeDevices> findAllByEmployeAndOrganisation(Employe emplyee, Organisation org);
 
+
 }
