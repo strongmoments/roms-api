@@ -50,7 +50,7 @@ public class AdduserNotifcationServiceImpl extends NotificationService {
                     String fromName = employeePayLoad.getFirstName() + " " + employeePayLoad.getLastName();
                     requestPayload.setFrom("");
                     requestPayload.setType("adduser_request");
-                    requestPayload.setMessage(fromName + " has applied for resignation");
+                    requestPayload.setMessage(fromName + " has applied for registration");
                     requestPayload.setUsername(employes.get(0).getId());
                     Map<String, Object> obj = new HashMap<>();
                     obj.put("profileImage", "");
