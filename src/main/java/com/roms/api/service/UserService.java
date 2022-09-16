@@ -53,6 +53,9 @@ public class UserService  {
         employe.setProfileImage(file.getBytes());
         employeService.save(employe);
     }
+    public Users updateLastLogin(Users usersModel) {
+        return usersRepository.save(usersModel);
+    }
 
     public Users updateUser(Users usersModel) {
         usersModel.setUpdateBy(loggedIn.getUser());

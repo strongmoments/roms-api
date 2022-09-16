@@ -75,6 +75,9 @@ public class Employe extends CommonFields implements Serializable {
     @Fetch(FetchMode.SELECT)
     private Departments departments;
 
+    @Transient
+    private String orgId;
+
 
     @Column(name = "profile_image")
     private byte[] profileImage;
@@ -238,7 +241,13 @@ public class Employe extends CommonFields implements Serializable {
         this.departments = departments;
     }
 
+    public String getOrgId() {
+        return orgId;
+    }
 
+    public void setOrgId(String orgId) {
+        this.orgId = orgId;
+    }
 }
 
 

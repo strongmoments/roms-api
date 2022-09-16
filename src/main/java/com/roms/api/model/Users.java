@@ -46,6 +46,9 @@ public class Users  extends CommonFields implements Serializable, UserDetails {
     @Column(name="end_date")
     public Instant endDate;
 
+    @Column(name="last_login")
+    public Instant lastLogin;
+
     @Column(name="password_expiry_flag")
     private boolean passwordExpiryFlag;
 
@@ -160,5 +163,13 @@ public class Users  extends CommonFields implements Serializable, UserDetails {
     @Override
     public boolean isEnabled() {
         return disableFlag == false ? true : false;
+    }
+
+    public Instant getLastLogin() {
+        return lastLogin;
+    }
+
+    public void setLastLogin(Instant lastLogin) {
+        this.lastLogin = lastLogin;
     }
 }
