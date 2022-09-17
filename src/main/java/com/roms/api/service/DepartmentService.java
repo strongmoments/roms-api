@@ -20,7 +20,7 @@ public class DepartmentService {
 
     public Departments save(Departments departments){
         Optional<Departments> department = findByName(departments.getCode());
-        if(!department.isEmpty()){
+        if(department.isEmpty()){
             departments.setOrganisation(loggedIn.getOrg());
             departments.setCreateBy(loggedIn.getUser());
             departments.setCreateDate(Instant.now());

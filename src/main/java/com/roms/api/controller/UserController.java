@@ -189,7 +189,7 @@ public class UserController {
                 roles.setName(roleName);
                 roles =  roleService.save(roles);
                 userModels.setRole(roles);
-            }{
+            }else{
                 roles.setId(request.getRoleId());
                 userModels.setRole(roles);
             }
