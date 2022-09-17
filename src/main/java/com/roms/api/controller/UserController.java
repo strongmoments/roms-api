@@ -152,7 +152,14 @@ public class UserController {
         Map<String, Object> response = new HashMap<>();
         try {
 
+            if(userService.doesUserExist(request.getEmail())){
+                response.put("status","error");
+                response.put("error","already_exist");
+                return new ResponseEntity<>(response, HttpStatus.OK);
+
+            }
             Users userModels = new Users();
+            userModels.setAuthenticatonType("jwt");
             Departments departments = new Departments();
             EmployeType employeType = new EmployeType();
 
@@ -167,7 +174,7 @@ public class UserController {
             employeModel.setEmail(request.getEmail());
             employeModel.setJobTitle("");
            // employeModel.setBirthdate(dob.toInstant());
-            //employeModel.setGender(request.getGender());
+            employeModel.setGender("");
 
             employeModel.setIndigenousFlag(false);
 
@@ -219,6 +226,7 @@ public class UserController {
 
             userModels.setApppassword(customPasswordEncoder.encode(password));
             userModels.setDisableFlag(false);
+            userModels.setUserId(request.getEmail());
             userModels =  userService.save(userModels);
 
             String mangerType = "Line Managre";
@@ -253,10 +261,15 @@ public class UserController {
             response.put("employeeNo",request.getEmployeeNo());
             response.put("employeeName",request.getFirstName()+" "+request.getLastName());
             response.put("email",request.getEmail());
-            response.put("role",request.getRoleName());
-            response.put("department",userModels.getEmployeId().getDepartments().getDescription());
+            //response.put("role",request.getRoleName());
+            //response.put("department",userModels.getEmployeId().getDepartments().getDescription());
 
-            userService.updateTemporary(request.getEmail());
+            try{
+                String redisStatus = userService.updateTemporary(request.getEmail());
+                response.put("rdis_status",redisStatus);
+            }catch (Exception e){
+                response.put("rdis_status",e.getMessage());
+            }
 
 
         } catch (Exception e) {
