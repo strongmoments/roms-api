@@ -25,6 +25,10 @@ public class EmployeService {
     @Autowired
     private LoggedInUserDetails loggedIn;
 
+    public Optional<Employe> findById(String employeeId){
+        return employeesRepository.findById(employeeId);
+
+    }
     public Employe save(Employe employeModel){
         return employeModel = employeesRepository.save(employeModel);
 

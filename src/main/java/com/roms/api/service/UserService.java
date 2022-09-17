@@ -8,6 +8,7 @@ import com.roms.api.model.*;
 import com.roms.api.repository.UsersRepository;
 import com.roms.api.requestInput.EmployeePayLoad;
 import com.roms.api.utils.LoggedInUserDetails;
+import org.codehaus.plexus.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
@@ -100,6 +101,8 @@ public class UserService  {
 
     public String saveTemporary(EmployeePayLoad employeePayLoad) {
             RestTemplate restTemplate = new RestTemplate();
+            String URL  = "http://localhost:8081/addUser";
+
             HttpHeaders headers = new HttpHeaders();
             headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
             UUID uuid=UUID.randomUUID();
@@ -108,11 +111,24 @@ public class UserService  {
             employeePayLoad.setStatus(1);
             HttpEntity<EmployeePayLoad> entity = new HttpEntity<EmployeePayLoad>(employeePayLoad,headers);
             String response = restTemplate.exchange(
-                    "http://localhost:8081/addUser", HttpMethod.POST, entity, String.class).getBody();
+                    URL, HttpMethod.POST, entity, String.class).getBody();
             if("success".equalsIgnoreCase(response)){
                 notificationService.sendNotification(employeePayLoad);
             }
             return response;
+    }
+    public String updateTemporary(String emailId) {
+        RestTemplate restTemplate = new RestTemplate();
+        String URL  = "http://localhost:8081/updateUser";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+        EmployeePayLoad employeePayLoad = EmployeePayLoad.builder().email(emailId).orgId(loggedIn.getOrg().getId()).build();
+        employeePayLoad.setStatus(2);
+        HttpEntity<EmployeePayLoad> entity = new HttpEntity<EmployeePayLoad>(employeePayLoad,headers);
+        String response = restTemplate.exchange(
+                URL, HttpMethod.POST, entity, String.class).getBody();
+        return response;
     }
 
 
@@ -126,8 +142,14 @@ public class UserService  {
 
         Map<String,Object> loggedInUserDetails =(Map<String,Object>) SecurityContextHolder.getContext().getAuthentication().getDetails();
         Users loggedInUser = (Users) loggedInUserDetails.get("userId");
+        Optional<Roles> rolseDetails = null;
+        if(StringUtils.isNotBlank(usersModel.getRole().getId())){
+            rolseDetails = roleService.findById(usersModel.getRole().getId());
 
-        Optional<Roles> rolseDetails = roleService.findByRoleName(usersModel.getRole().getName());
+        }else {
+            rolseDetails = roleService.findByRoleName(usersModel.getRole().getName());
+        }
+
         if(!rolseDetails.isEmpty()){
             Employe employeModel = usersModel.getEmployeId();
             employeModel.setCreateDate(Instant.now());

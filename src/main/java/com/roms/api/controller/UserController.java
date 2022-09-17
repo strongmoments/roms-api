@@ -5,13 +5,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.roms.api.config.CustomPasswordEncoder;
 import com.roms.api.constant.Constant;
 import com.roms.api.model.*;
+import com.roms.api.requestInput.AddUserInput;
 import com.roms.api.service.*;
 import com.roms.api.utils.LoggedInUserDetails;
+
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import com.roms.api.kafka.KafkaProducer;
+import org.codehaus.plexus.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +56,9 @@ public class UserController {
     private UserService userService;
 
     @Autowired
+    private EmployeService employeService;
+
+    @Autowired
     private LoggedInUserDetails loggedIn;
     @Autowired
     private ClientProjectSubteamService clientProjectSubteamService;
@@ -82,9 +88,6 @@ public class UserController {
 
     @Autowired
     private RoleService roleService;
-
-
-
 
     Map<String,LocationType> locationTypeMap;
     Map<String,Location> locationMap;
@@ -143,40 +146,119 @@ public class UserController {
     }
 
 
-    @Secured("ROLE_ADMIN")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(value = "/add", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public ResponseEntity<?> addLayeredBrand(@RequestBody Users userModel) {
+    public ResponseEntity<?> addLayeredBrand(@RequestBody AddUserInput request) {
         logger.info(("Process add new brand"));
         Map<String, Object> response = new HashMap<>();
         try {
-            //kafkaProducer.postUser(postBrandTopic, kafkaGroupId, userModel);
-            String roleName = userModel.getRole().getName();
-            Roles roles = new Roles();
-            roles.setName(roleName);
-            roles =  roleService.save(roles);
-            userModel.setRole(roles);
 
+            Users userModels = new Users();
             Departments departments = new Departments();
-            departments.setCode(userModel.getEmployeId().getDepartments().getDescription());
-            departments.setDescription(userModel.getEmployeId().getDepartments().getDescription());
-            departments = departmentService.save(departments);
-            userModel.getEmployeId().setDepartments(departments);
-
             EmployeType employeType = new EmployeType();
-            employeType.setName(userModel.getEmployeId().getEmployeType().getName());
-            employeType = employeTypeService.save(employeType);
-            userModel.getEmployeId().setEmployeType(employeType);
 
-            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+            Employe employeModel = new Employe();
+
+            employeModel.setManagerFlag(request.isManager());
+            employeModel.setFirstName(request.getFirstName());
+            employeModel.setEmployeeNo(request.getEmployeeNo());
+            employeModel.setLastName(request.getLastName());
+            employeModel.setMiddleName("");
+            employeModel.setPhone(request.getPhone());
+            employeModel.setEmail(request.getEmail());
+            employeModel.setJobTitle("");
+           // employeModel.setBirthdate(dob.toInstant());
+            //employeModel.setGender(request.getGender());
+
+            employeModel.setIndigenousFlag(false);
+
+
+            userModels.setEmployeId(employeModel);
+
+            //kafkaProducer.postUser(postBrandTopic, kafkaGroupId, userModel);
+            Roles roles = new Roles();
+            if(StringUtils.isBlank(request.getRoleId()) ){
+                String roleName = request.getRoleName();
+
+                roles.setName(roleName);
+                roles =  roleService.save(roles);
+                userModels.setRole(roles);
+            }{
+                roles.setId(request.getRoleId());
+                userModels.setRole(roles);
+            }
+
+
+
+            if( StringUtils.isBlank(request.getDepartmentId())){
+                departments.setCode(request.getDepartmentName());
+                departments.setDescription(request.getDepartmentName());
+                departments = departmentService.save(departments);
+                userModels.getEmployeId().setDepartments(departments);
+            }else{
+                departments.setId(request.getDepartmentId());
+                userModels.getEmployeId().setDepartments(departments);
+            }
+
+
+
+            if(StringUtils.isBlank(request.getEmployTypeId())){
+                employeType.setName(request.getEmployType());
+                employeType = employeTypeService.save(employeType);
+                userModels.getEmployeId().setEmployeType(employeType);
+            }else{
+                employeType.setId(request.getEmployTypeId());
+                userModels.getEmployeId().setEmployeType(employeType);
+            }
+
+
+           /* SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
             Instant dob = sdf.parse("11-11-1960").toInstant();
-            userModel.getEmployeId().setBirthdate(dob);
+            userModel.getEmployeId().setBirthdate(dob);*/
+            Random random = new Random();
+            String password  = request.getFirstName()+"@"+random.nextInt(100,1000);
 
-            String password  = "roms@123";
-            userModel.setApppassword(customPasswordEncoder.encode(password));
-            userModel.setDisableFlag(false);
-            userModel =  userService.save(userModel);
+            userModels.setApppassword(customPasswordEncoder.encode(password));
+            userModels.setDisableFlag(false);
+            userModels =  userService.save(userModels);
+
+            String mangerType = "Line Managre";
+            EmployeeManagerType managerTypes = new EmployeeManagerType();
+            managerTypes.setCode(mangerType.toLowerCase());
+            managerTypes.setType(mangerType);
+            managerTypes =  employeeManagerTypeService.save(managerTypes);
+
+            // mangermapping
+            if(StringUtils.isNotBlank(request.getManagerId())){
+                String managerId = request.getManagerId();
+                EmployeeManagers mangerMapping = new EmployeeManagers();
+                mangerMapping.setEmploye(userModels.getEmployeId());
+                Optional<Employe> managerModel = employeService.findById(managerId);
+                if(managerModel.isPresent()){
+                    mangerMapping.setManagers(managerModel.get());
+                    mangerMapping.setEmployeeManagerType(managerTypes);
+                     employeeManagerService.save(mangerMapping);
+                    response.put("managerName",managerModel.get().getFirstName()+" "+managerModel.get().getLastName());
+                }else{
+                    response.put("managerName","");
+                }
+
+            }else{
+                response.put("managerName","");
+            }
+
+
             response.put("status","success");
+            response.put("password",password);
+            response.put("userName",request.getEmail());
+            response.put("employeeNo",request.getEmployeeNo());
+            response.put("employeeName",request.getFirstName()+" "+request.getLastName());
+            response.put("email",request.getEmail());
+            response.put("role",request.getRoleName());
+            response.put("department",userModels.getEmployeId().getDepartments().getDescription());
+
+            userService.updateTemporary(request.getEmail());
+
+
         } catch (Exception e) {
             logger.error("An error occurred! {}", e.getMessage());
             response.put("status", "error");
