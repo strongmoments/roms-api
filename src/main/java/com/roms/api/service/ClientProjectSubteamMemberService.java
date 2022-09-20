@@ -64,9 +64,7 @@ public class ClientProjectSubteamMemberService {
         }
     }
 
-    public List<ClientProjectSubteamMember> findAllEmployeeByNameOrNumber(SearchInput employeeSearch){
-             Employe employee = new Employe();
-                employee.setFirstName(employeeSearch.getSearchKey());
-            return clientProjectSubteamMemberRepository.findAllByEmployeeFirstNameLikeAndOrganisation(employeeSearch.getSearchKey(), loggedIn.getOrg());
+    public List<ClientProjectSubteamMember> findAllEmployeeByFirstNameOrNumber(String searchText){
+            return clientProjectSubteamMemberRepository.findAllByEmployeeEmployeeNoContainsIgnoreCaseAndManagerFlagOrEmployeeFirstNameContainsIgnoreCaseAndManagerFlagAndOrganisation(searchText,false,searchText,false, loggedIn.getOrg());
     }
 }

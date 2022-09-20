@@ -81,11 +81,7 @@ public class EmployeeController {
         return new ResponseEntity<>(requestedPage.get(), HttpStatus.OK);
     }
 
-    @PostMapping(value = "/searchoperatorfromteam")
-    public ResponseEntity<?> searchOperatorFromSubteamMember(@RequestBody SearchInput employeeSearch) throws ChangeSetPersister.NotFoundException {
-        List<ClientProjectSubteamMember> requestedPage =  clientProjectSubteamMemberService.findAllEmployeeByNameOrNumber(employeeSearch);
-        return new ResponseEntity<>(requestedPage, HttpStatus.OK);
-    }
+
 
     @GetMapping(value = "/load")
     public ResponseEntity<?> loadAllEmployee(
