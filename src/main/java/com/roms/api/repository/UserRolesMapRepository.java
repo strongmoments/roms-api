@@ -1,5 +1,6 @@
 package com.roms.api.repository;
 
+import com.roms.api.model.Organisation;
 import com.roms.api.model.UserRolesMap;
 import com.roms.api.model.Users;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,4 +14,7 @@ public interface UserRolesMapRepository extends JpaRepository<UserRolesMap,Strin
 
       @Query("SELECT u FROM UserRolesMap u WHERE u.userId.id =?1")
       List<UserRolesMap> findAllByUserId(String userId);
+
+      List<UserRolesMap> findAllByRoleIdNameAndOrganisation(String roleName, Organisation org);
+
 }

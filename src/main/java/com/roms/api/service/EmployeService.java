@@ -25,7 +25,23 @@ public class EmployeService {
     @Autowired
     private LoggedInUserDetails loggedIn;
 
+    public Optional<Employe> findById(String employeeId){
+        return employeesRepository.findById(employeeId);
+
+    }
     public Employe save(Employe employeModel){
+        return employeModel = employeesRepository.save(employeModel);
+
+    }
+
+    public List<Employe> findAllManagers(){
+        return employeesRepository.findAllByManagerFlagAndOrganisation(true,loggedIn.getOrg());
+
+    }
+
+    public Employe update(Employe employeModel){
+        employeModel.setUpdateBy(loggedIn.getUser());
+        employeModel.setLastUpdateDate(Instant.now());
         return employeModel = employeesRepository.save(employeModel);
 
     }

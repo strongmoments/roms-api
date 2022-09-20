@@ -22,9 +22,8 @@ public class Departments extends CommonFields implements Serializable {
     @Column(name="notes")
     private String notes;
 
-    @OneToOne()
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "location_idx",referencedColumnName = "id")
-    @Fetch(FetchMode.SELECT)
     private Location location;
 
     public String getCode() {

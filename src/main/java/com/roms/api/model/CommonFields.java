@@ -1,6 +1,7 @@
 package com.roms.api.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.GenericGenerator;
@@ -12,6 +13,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @MappedSuperclass
+@JsonIgnoreProperties
 public abstract  class CommonFields {
 
     @Id
@@ -29,17 +31,15 @@ public abstract  class CommonFields {
     @Column(name = "create_date")
     public Instant createDate;
 
-    @OneToOne()
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "create_by",referencedColumnName = "id")
-    @Fetch(FetchMode.SELECT)
     private Users createBy;
 
     @Column(name = "last_update_date")
     public Instant lastUpdateDate;
 
-    @OneToOne()
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "update_by",referencedColumnName = "id")
-    @Fetch(FetchMode.SELECT)
     private Users updateBy;
 
 
@@ -85,6 +85,7 @@ public abstract  class CommonFields {
         this.createDate = createDate;
     }
 
+    @JsonIgnore
     public Users getCreateBy() {
         return createBy;
     }
@@ -101,6 +102,7 @@ public abstract  class CommonFields {
         this.lastUpdateDate = lastUpdateDate;
     }
 
+    @JsonIgnore
     public Users getUpdateBy() {
         return updateBy;
     }

@@ -8,6 +8,9 @@ app:
       data-file-location: data
       data-file-name: yellow_tripdata_2021-01.csv
 spring:
+  jackson:
+    serialization:
+      fail-on-self-references : false
   main:
     allow-circular-references: true
   kafka:
@@ -19,16 +22,17 @@ spring:
 
   jpa:
     generate-ddl: true
-    open-in-view: false
+
     show-sql: true
     properties:
       hibernate:
         ddl-auto: create
+        enable_lazy_load_no_trans: true
         jdbc:
           lob:
             non_contextual_creation: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
-        show-sql: true
+        show-sql: false
   datasource:
     url: jdbc:postgresql://localhost:5432/roms
     username: teamsm
@@ -67,4 +71,4 @@ common:
 
 ROLE_ADMIN: '{"dashboard":["mytask","mystaff","inspection"],"mytask":[],"mystaff":[],"timeoff":["applyleave", "history"],"operations":["assets","inspection"],"reports":[]}'
 ROLE_EMPLOYEE: '{"dashboard":["mytask","mystaff","inspection"],"mytask":[],"mystaff":[],"timeoff":["applyleave", "history"],"operations":["assets","inspection"]}'
-
+ROLE_SUPERVISOR: '{"dashboard":["mytask","mystaff","inspection"],"mytask":[],"mystaff":[],"timeoff":["applyleave", "history"],"operations":["assets","inspection"],"reports":["leave_export","resign_export","add_user"]}'

@@ -1,5 +1,7 @@
 package com.roms.api.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.GenericGenerator;
@@ -15,6 +17,7 @@ import java.time.Instant;
 import java.util.Collection;
 
 
+@JsonIgnoreProperties("hibernatelazyinitializer")
 @Entity
 @Table(name ="users")
 public class Users  extends CommonFields implements Serializable, UserDetails {
@@ -42,6 +45,9 @@ public class Users  extends CommonFields implements Serializable, UserDetails {
 
     @Column(name="end_date")
     public Instant endDate;
+
+    @Column(name="last_login")
+    public Instant lastLogin;
 
     @Column(name="password_expiry_flag")
     private boolean passwordExpiryFlag;
@@ -157,5 +163,13 @@ public class Users  extends CommonFields implements Serializable, UserDetails {
     @Override
     public boolean isEnabled() {
         return disableFlag == false ? true : false;
+    }
+
+    public Instant getLastLogin() {
+        return lastLogin;
+    }
+
+    public void setLastLogin(Instant lastLogin) {
+        this.lastLogin = lastLogin;
     }
 }

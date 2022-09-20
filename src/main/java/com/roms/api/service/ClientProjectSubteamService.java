@@ -25,8 +25,9 @@ public class ClientProjectSubteamService {
       return  clientProjectSubteamRepository.findAllByOrganisation(loggedIn.getOrg());
     }
 
-    public List<ClientProjectSubteam> searChBySubTeamName(SearchInput searchInput){
-        return  clientProjectSubteamRepository.findAllByTeamNameStartingWithAndOrganisation(searchInput.getSearchKey(),loggedIn.getOrg());
+    public List<ClientProjectSubteam> searChBySubTeamName(String searchText){
+       // searchText = "%"+searchText+"%";
+        return  clientProjectSubteamRepository.findAllByTeamNameContainsIgnoreCaseAndOrganisation(searchText,loggedIn.getOrg());
     }
 
 

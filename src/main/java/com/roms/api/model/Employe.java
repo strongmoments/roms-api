@@ -1,4 +1,5 @@
 package com.roms.api.model;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.GenericGenerator;
@@ -9,6 +10,7 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.util.UUID;
 
+@JsonIgnoreProperties("hibernatelazyinitializer")
 @Entity
 @Table(name ="Employees")
 public class Employe extends CommonFields implements Serializable {
@@ -62,6 +64,9 @@ public class Employe extends CommonFields implements Serializable {
     @Column(name = "indigenous_flag", nullable = false)
     private boolean indigenousFlag;
 
+    @Column(name="manager_flag")
+    private boolean managerFlag;
+
     @OneToOne()
     @JoinColumn(name = "employee_typeIdx",referencedColumnName = "id")
     @Fetch(FetchMode.SELECT)
@@ -72,6 +77,9 @@ public class Employe extends CommonFields implements Serializable {
     @JoinColumn(name = "department_idx",referencedColumnName = "id")
     @Fetch(FetchMode.SELECT)
     private Departments departments;
+
+    @Transient
+    private String orgId;
 
 
     @Column(name = "profile_image")
@@ -234,6 +242,22 @@ public class Employe extends CommonFields implements Serializable {
 
     public void setDepartments(Departments departments) {
         this.departments = departments;
+    }
+
+    public String getOrgId() {
+        return orgId;
+    }
+
+    public void setOrgId(String orgId) {
+        this.orgId = orgId;
+    }
+
+    public boolean isManagerFlag() {
+        return managerFlag;
+    }
+
+    public void setManagerFlag(boolean managerFlag) {
+        this.managerFlag = managerFlag;
     }
 }
 

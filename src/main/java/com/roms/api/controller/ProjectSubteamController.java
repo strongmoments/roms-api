@@ -3,6 +3,7 @@ package com.roms.api.controller;
 import com.roms.api.model.ClientProjectSubteam;
 import com.roms.api.model.ClientProjectSubteamMember;
 import com.roms.api.requestInput.SearchInput;
+import com.roms.api.service.ClientProjectSubteamMemberService;
 import com.roms.api.service.ClientProjectSubteamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister;
@@ -20,9 +21,14 @@ public class ProjectSubteamController {
     @Autowired
     private ClientProjectSubteamService clientProjectSubteamService;
 
-    @PostMapping(value = "/search")
-    public ResponseEntity<?> searchProjectSubTeam(@RequestBody SearchInput employeeSearch) throws ChangeSetPersister.NotFoundException {
-        List<ClientProjectSubteam> requestedPage =  clientProjectSubteamService.searChBySubTeamName(employeeSearch);
+    @Autowired
+    private ClientProjectSubteamMemberService clientProjectSubteamMemberService;
+
+    @GetMapping(value = "/search")
+    public ResponseEntity<?> searchProjectSubTeam(@RequestParam(value ="name", defaultValue = "") String searchText) throws ChangeSetPersister.NotFoundException {
+        List<ClientProjectSubteam> requestedPage =  clientProjectSubteamService.searChBySubTeamName(searchText);
         return new ResponseEntity<>(requestedPage, HttpStatus.OK);
     }
+
+
 }

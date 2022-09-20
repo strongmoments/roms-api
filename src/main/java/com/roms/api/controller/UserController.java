@@ -5,13 +5,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.roms.api.config.CustomPasswordEncoder;
 import com.roms.api.constant.Constant;
 import com.roms.api.model.*;
+import com.roms.api.requestInput.AddUserInput;
 import com.roms.api.service.*;
 import com.roms.api.utils.LoggedInUserDetails;
+
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import com.roms.api.kafka.KafkaProducer;
+import org.codehaus.plexus.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +56,9 @@ public class UserController {
     private UserService userService;
 
     @Autowired
+    private EmployeService employeService;
+
+    @Autowired
     private LoggedInUserDetails loggedIn;
     @Autowired
     private ClientProjectSubteamService clientProjectSubteamService;
@@ -74,6 +80,14 @@ public class UserController {
     @Autowired
     private EmployeTypeService employeTypeService;
 
+    @Autowired
+    private EmployeeManagerService employeeManagerService;
+
+    @Autowired
+    private EmployeeManagerTypeService employeeManagerTypeService;
+
+    @Autowired
+    private RoleService roleService;
 
     Map<String,LocationType> locationTypeMap;
     Map<String,Location> locationMap;
@@ -83,17 +97,181 @@ public class UserController {
     Map<String, EmployeType> employeTypeMap;
 
 
-
-
     @Secured("ROLE_ADMIN")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping(value = "/migrate", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ResponseEntity<?> migrateManager(@RequestBody Users userModel) {
+        logger.info(("Process add new brand"));
+        String mangerType = "Line Managre";
+        EmployeeManagerType managerTypes = new EmployeeManagerType();
+        managerTypes.setCode(mangerType.toLowerCase());
+        managerTypes.setType(mangerType);
+        managerTypes =  employeeManagerTypeService.save(managerTypes);
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Map<String, Employe> managerMap = new HashMap<>();
+
+            List<ClientProjectSubteamMember>  allMember = clientProjectSubteamMemberService.findAll();
+            allMember.forEach(obj->{
+                if(obj.isManagerFlag()){
+                    managerMap.put(obj.getClientProjectSubteam().getId(),obj.getEmployee());
+                }
+            });
+
+            for(ClientProjectSubteamMember obj : allMember){
+                EmployeeManagers mangerMapping = new EmployeeManagers();
+                mangerMapping.setEmploye(obj.getEmployee());
+                if(null == managerMap.get(obj.getClientProjectSubteam().getId())){
+                    continue;
+                }
+                mangerMapping.setManagers(managerMap.get(obj.getClientProjectSubteam().getId()));
+                mangerMapping.setEmployeeManagerType(managerTypes);
+                if(!mangerMapping.getManagers().getId().equalsIgnoreCase(mangerMapping.getEmploye().getId())){
+                    employeeManagerService.save(mangerMapping);
+                }
+
+
+            }
+
+
+
+
+        } catch (Exception e) {
+            logger.error("An error occurred! {}", e.getMessage());
+            response.put("status", "error");
+            response.put("error", e.getMessage());
+        }
+        response.put("status","success");
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+
     @PostMapping(value = "/add", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public ResponseEntity<?> addLayeredBrand(@RequestBody Users userModel) {
+    public ResponseEntity<?> addLayeredBrand(@RequestBody AddUserInput request) {
         logger.info(("Process add new brand"));
         Map<String, Object> response = new HashMap<>();
         try {
+
+            if(userService.doesUserExist(request.getEmail())){
+                response.put("status","error");
+                response.put("error","already_exist");
+                return new ResponseEntity<>(response, HttpStatus.OK);
+
+            }
+            Users userModels = new Users();
+            userModels.setAuthenticatonType("jwt");
+            Departments departments = new Departments();
+            EmployeType employeType = new EmployeType();
+
+            Employe employeModel = new Employe();
+
+            employeModel.setManagerFlag(request.isManager());
+            employeModel.setFirstName(request.getFirstName());
+            employeModel.setEmployeeNo(request.getEmployeeNo());
+            employeModel.setLastName(request.getLastName());
+            employeModel.setMiddleName("");
+            employeModel.setPhone(request.getPhone());
+            employeModel.setEmail(request.getEmail());
+            employeModel.setJobTitle("");
+           // employeModel.setBirthdate(dob.toInstant());
+            employeModel.setGender("");
+
+            employeModel.setIndigenousFlag(false);
+
+
+            userModels.setEmployeId(employeModel);
+
             //kafkaProducer.postUser(postBrandTopic, kafkaGroupId, userModel);
-            userService.save(userModel);
+            Roles roles = new Roles();
+            if(StringUtils.isBlank(request.getRoleId()) ){
+                String roleName = request.getRoleName();
+
+                roles.setName(roleName);
+                roles =  roleService.save(roles);
+                userModels.setRole(roles);
+            }else{
+                roles.setId(request.getRoleId());
+                userModels.setRole(roles);
+            }
+
+
+
+            if( StringUtils.isBlank(request.getDepartmentId())){
+                departments.setCode(request.getDepartmentName());
+                departments.setDescription(request.getDepartmentName());
+                departments = departmentService.save(departments);
+                userModels.getEmployeId().setDepartments(departments);
+            }else{
+                departments.setId(request.getDepartmentId());
+                userModels.getEmployeId().setDepartments(departments);
+            }
+
+
+
+            if(StringUtils.isBlank(request.getEmployTypeId())){
+                employeType.setName(request.getEmployType());
+                employeType = employeTypeService.save(employeType);
+                userModels.getEmployeId().setEmployeType(employeType);
+            }else{
+                employeType.setId(request.getEmployTypeId());
+                userModels.getEmployeId().setEmployeType(employeType);
+            }
+
+
+           /* SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+            Instant dob = sdf.parse("11-11-1960").toInstant();
+            userModel.getEmployeId().setBirthdate(dob);*/
+            Random random = new Random();
+            String password  = request.getFirstName()+"@"+random.nextInt(100,1000);
+
+            userModels.setApppassword(customPasswordEncoder.encode(password));
+            userModels.setDisableFlag(false);
+            userModels.setUserId(request.getEmail());
+            userModels =  userService.save(userModels);
+
+            String mangerType = "Line Managre";
+            EmployeeManagerType managerTypes = new EmployeeManagerType();
+            managerTypes.setCode(mangerType.toLowerCase());
+            managerTypes.setType(mangerType);
+            managerTypes =  employeeManagerTypeService.save(managerTypes);
+
+            // mangermapping
+            if(StringUtils.isNotBlank(request.getManagerId())){
+                String managerId = request.getManagerId();
+                EmployeeManagers mangerMapping = new EmployeeManagers();
+                mangerMapping.setEmploye(userModels.getEmployeId());
+                Optional<Employe> managerModel = employeService.findById(managerId);
+                if(managerModel.isPresent()){
+                    mangerMapping.setManagers(managerModel.get());
+                    mangerMapping.setEmployeeManagerType(managerTypes);
+                     employeeManagerService.save(mangerMapping);
+                    response.put("managerName",managerModel.get().getFirstName()+" "+managerModel.get().getLastName());
+                }else{
+                    response.put("managerName","");
+                }
+
+            }else{
+                response.put("managerName","");
+            }
+
+
+            response.put("status","success");
+            response.put("password",password);
+            response.put("userName",request.getEmail());
+            response.put("employeeNo",request.getEmployeeNo());
+            response.put("employeeName",request.getFirstName()+" "+request.getLastName());
+            response.put("email",request.getEmail());
+            //response.put("role",request.getRoleName());
+            //response.put("department",userModels.getEmployeId().getDepartments().getDescription());
+
+            try{
+                String redisStatus = userService.updateTemporary(request.getEmail());
+                response.put("rdis_status",redisStatus);
+            }catch (Exception e){
+                response.put("rdis_status",e.getMessage());
+            }
+
+
         } catch (Exception e) {
             logger.error("An error occurred! {}", e.getMessage());
             response.put("status", "error");
@@ -378,7 +556,7 @@ public class UserController {
                 userModel.setEmployeId(employeModel);
                 userModel.setUserId(email);
                 userModel.setAuthenticatonType("JWT");
-                String passwords  = "roms@"+random.nextInt(100,1000);
+                String passwords  = "admin";//"roms@"+random.nextInt(100,1000);
                 userModel.setApppassword(customPasswordEncoder.encode(passwords));
 
                 userModel = userService.save(userModel);
@@ -440,6 +618,22 @@ public class UserController {
             ;               });
         return headerIndex;
 
+    }
+
+    @GetMapping(value = "/loadPendingUsers")
+    public ResponseEntity<?> loadLeaveType() {
+        Map<String, Object> response = new HashMap<>();
+        ArrayList obj = new ArrayList();
+        try {
+
+            response.put("data",userService.loadPendinRegistration());
+        } catch (Exception e){
+            logger.error("An error occurred! {}", e.getMessage());
+            response.put("status","error");
+            response.put("error",e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 }
