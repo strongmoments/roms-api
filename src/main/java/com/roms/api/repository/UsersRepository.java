@@ -16,7 +16,7 @@ import java.util.UUID;
 
 @Repository
 public interface UsersRepository extends JpaRepository<Users, String> {
-    public Optional<Users> findByUserIdAndOrganisation(String userId, Organisation orgId);
+    public Optional<Users> findByUserIdEqualsIgnoreCaseAndOrganisation(String userId, Organisation orgId);
 
     @Query("SELECT u.userId FROM Users u WHERE u.organisation.id =?1")
     List<String> findAllUserIdByOrganisation(String orgId);

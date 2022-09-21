@@ -27,23 +27,22 @@ public class AdduserNotifcationServiceImpl extends NotificationService {
     private EmployeeDeviceService employeeDeviceService;
 
     @Override
-    public void sendNotification(EmployeePayLoad employeePayLoad) {
+    public void sendNotification(EmployeePayLoad employeePayLoad) throws InterruptedException {
 
 
             RestTemplate restTemplate = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();
             headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-            List<Employe> employes = userRolesMapService.findAllEmployeeByRoleName("ROLE_SUPERVISOR",employeePayLoad.getOrgId());
-            if (!employes.isEmpty()) {
-                List<String> allDevices = new ArrayList<>();
-                    List<EmployeeDevices> notificatinDevices = employeeDeviceService.findAllByEmployee(employes.get(0).getId(),employeePayLoad.getOrgId());
-                    if(!notificatinDevices.isEmpty()){
+            List<Employe> employess = userRolesMapService.findAllEmployeeByRoleName("ROLE_SUPERVISOR",employeePayLoad.getOrgId());
+            if (!employess.isEmpty()) {
+                for(Employe employes : employess ) {
+                    List<String> allDevices = new ArrayList<>();
+                    List<EmployeeDevices> notificatinDevices = employeeDeviceService.findAllByEmployee(employes.getId(), employeePayLoad.getOrgId());
+                    if (!notificatinDevices.isEmpty()) {
                         notificatinDevices.forEach(obj -> {
                             allDevices.add(obj.getNotificationDeviceToken());
                         });
                     }
-
-
 
 
                     PushNotificationPayload requestPayload = new PushNotificationPayload();
@@ -51,7 +50,7 @@ public class AdduserNotifcationServiceImpl extends NotificationService {
                     requestPayload.setFrom("");
                     requestPayload.setType("adduser_request");
                     requestPayload.setMessage(fromName + " has applied for registration");
-                    requestPayload.setUsername(employes.get(0).getId());
+                    requestPayload.setUsername(employes.getId());
                     Map<String, Object> obj = new HashMap<>();
                     obj.put("profileImage", "");
                     String time = String.valueOf(Instant.now().toEpochMilli());
@@ -64,7 +63,8 @@ public class AdduserNotifcationServiceImpl extends NotificationService {
 
                     restTemplate.exchange(
                             "http://localhost:8081/sendNotification", HttpMethod.POST, entity, String.class).getBody();
-
+                    Thread.sleep(500);
+                }
             }
 
     }

@@ -53,7 +53,7 @@ public class UserService  {
 
      public Optional<Users> findByUsername(String username,String orgId) {
 
-        return usersRepository.findByUserIdAndOrganisation(username,getOrganisation(orgId));
+        return usersRepository.findByUserIdEqualsIgnoreCaseAndOrganisation(username,getOrganisation(orgId));
     }
 
     public List<String> findAllUserIdByOrganisation(String orgId){
@@ -99,7 +99,7 @@ public class UserService  {
         return dataList;
     }
 
-    public String saveTemporary(EmployeePayLoad employeePayLoad) {
+    public String saveTemporary(EmployeePayLoad employeePayLoad) throws InterruptedException {
             RestTemplate restTemplate = new RestTemplate();
             String URL  = "http://localhost:8081/addUser";
 
@@ -189,12 +189,21 @@ public class UserService  {
     public boolean doesUserExist(String userId){
         Map<String,String> loggedInDetails  = (Map<String,String>)SecurityContextHolder.getContext().getAuthentication().getDetails();
 
-        if(usersRepository.findByUserIdAndOrganisation(userId, getOrganisation(loggedInDetails.get("orgId"))).isEmpty()){
+        if(usersRepository.findByUserIdEqualsIgnoreCaseAndOrganisation(userId, getOrganisation(loggedInDetails.get("orgId"))).isEmpty()){
            return false;
         }else{
             return  true;
         }
     }
+
+    public boolean doesUserExist(String userId,String orgId){
+        if(usersRepository.findByUserIdEqualsIgnoreCaseAndOrganisation(userId, getOrganisation(orgId)).isEmpty()){
+            return false;
+        }else{
+            return  true;
+        }
+    }
+
 
 
     private  Organisation getOrganisation(String orgId){

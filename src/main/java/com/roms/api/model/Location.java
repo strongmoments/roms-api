@@ -23,7 +23,7 @@ public class Location extends CommonFields implements Serializable {
     private String address;
 
     @Column(name="geocode")
-    private String geoCdoe;
+    private String geoCode;
 
     @OneToOne()
     @JoinColumn(name = "location_type_idx",referencedColumnName = "id")
@@ -54,19 +54,19 @@ public class Location extends CommonFields implements Serializable {
         this.address = address;
     }
 
-    public String getGeoCdoe() {
-        return geoCdoe;
-    }
-
-    public void setGeoCdoe(String geoCdoe) {
-        this.geoCdoe = geoCdoe;
-    }
-
     public LocationType getLocationType() {
         return locationType;
     }
 
     public void setLocationType(LocationType locationType) {
         this.locationType = locationType;
+    }
+
+    public String getGeoCode() {
+        return geoCode;
+    }
+
+    public void setGeoCode(String geoCode) {
+        this.geoCode = geoCode;
     }
 }

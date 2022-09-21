@@ -72,3 +72,15 @@ common:
 ROLE_ADMIN: '{"dashboard":["mytask","mystaff","inspection"],"mytask":[],"mystaff":[],"timeoff":["applyleave", "history"],"operations":["assets","inspection"],"reports":[]}'
 ROLE_EMPLOYEE: '{"dashboard":["mytask","mystaff","inspection"],"mytask":[],"mystaff":[],"timeoff":["applyleave", "history"],"operations":["assets","inspection"]}'
 ROLE_SUPERVISOR: '{"dashboard":["mytask","mystaff","inspection"],"mytask":[],"mystaff":[],"timeoff":["applyleave", "history"],"operations":["assets","inspection"],"reports":["leave_export","resign_export","add_user"]}'
+
+minio:
+  bucket:
+    name: test
+  default:
+    folder: /
+  access:
+    name: minioadmin
+    secret: minioadmin
+  url: http://13.211.215.135:9000
+
+

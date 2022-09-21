@@ -4,6 +4,7 @@ package com.roms.api.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.roms.api.config.CustomPasswordEncoder;
 import com.roms.api.constant.Constant;
+import com.roms.api.dto.FileDto;
 import com.roms.api.model.*;
 import com.roms.api.requestInput.AddUserInput;
 import com.roms.api.service.*;
@@ -87,6 +88,8 @@ public class UserController {
     private EmployeeManagerTypeService employeeManagerTypeService;
 
     @Autowired
+    private MinioService minioService;
+    @Autowired
     private RoleService roleService;
 
     Map<String,LocationType> locationTypeMap;
@@ -166,12 +169,12 @@ public class UserController {
             Employe employeModel = new Employe();
 
             employeModel.setManagerFlag(request.isManager());
-            employeModel.setFirstName(request.getFirstName());
-            employeModel.setEmployeeNo(request.getEmployeeNo());
-            employeModel.setLastName(request.getLastName());
+            employeModel.setFirstName(request.getFirstName().trim());
+            employeModel.setEmployeeNo(request.getEmployeeNo().trim());
+            employeModel.setLastName(request.getLastName().trim());
             employeModel.setMiddleName("");
             employeModel.setPhone(request.getPhone());
-            employeModel.setEmail(request.getEmail());
+            employeModel.setEmail(request.getEmail().trim());
             employeModel.setJobTitle("");
            // employeModel.setBirthdate(dob.toInstant());
             employeModel.setGender("");
@@ -222,11 +225,11 @@ public class UserController {
             Instant dob = sdf.parse("11-11-1960").toInstant();
             userModel.getEmployeId().setBirthdate(dob);*/
             Random random = new Random();
-            String password  = request.getFirstName()+"@"+random.nextInt(100,1000);
+            String password  = request.getFirstName().trim()+"@"+random.nextInt(100,1000);
 
             userModels.setApppassword(customPasswordEncoder.encode(password));
             userModels.setDisableFlag(false);
-            userModels.setUserId(request.getEmail());
+            userModels.setUserId(request.getEmail().trim());
             userModels =  userService.save(userModels);
 
             String mangerType = "Line Managre";
@@ -281,13 +284,19 @@ public class UserController {
     }
 
     @RequestMapping(value = "/uploadPic" , method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE  })
-    public ResponseEntity<Map<String,Object>> uploadPic(@RequestParam(value="files") MultipartFile[] filse) throws IOException {
+    public ResponseEntity<Map<String,Object>> uploadPic(@RequestParam(value="files") MultipartFile filse) throws IOException {
 
-        Map<String, Object> response = new HashMap();
+       Map<String, Object> response = new HashMap();
         ObjectMapper mapper = new ObjectMapper();
         Map<String, MultipartFile> imageData = new HashMap();
         try {
-            for (MultipartFile file : filse) {
+            FileDto fileDto = FileDto.builder()
+                            .file(filse).build();
+
+            fileDto =  minioService.uploadFile(fileDto);
+            response.put("data",fileDto);
+
+           /* for (MultipartFile file : filse) {
                 String fileName = file.getOriginalFilename();
                 imageData.put(fileName, file);
             }
@@ -309,7 +318,7 @@ public class UserController {
                         response.put("error", e.getMessage());
                     }
                 }
-            });
+            });*/
         } catch(Exception ee){
             ee.printStackTrace();
             response.put("error", ee.getMessage());
@@ -395,7 +404,7 @@ public class UserController {
             location.setCode(code);
             location.setDescription(desc);
             location.setAddress(address);
-            location.setGeoCdoe(geoCode);
+            location.setGeoCode(geoCode);
             LocationType locationType = locationTypeMap.get(locationTypeCoe);
             location.setLocationType(locationType);
             location = locationService.save(location);

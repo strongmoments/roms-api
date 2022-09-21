@@ -117,6 +117,11 @@ public class JwtAuthenticationController {
     public ResponseEntity<?> requestUser(@RequestBody EmployeePayLoad employe) throws Exception {
 
         Map<String,Object> response = new HashMap<>();
+        if(userService.doesUserExist(employe.getEmail(),employe.getOrgId())){
+            response.put("status","error");
+            response.put("error","already_requested");
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
         String resonse  = userService.saveTemporary(employe);
         response.put("status",resonse);
         return ResponseEntity.ok(response);

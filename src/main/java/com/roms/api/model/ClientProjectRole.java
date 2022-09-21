@@ -25,6 +25,12 @@ public class ClientProjectRole extends  CommonFields implements  Serializable {
     @Column(name="base_award",nullable=false)
     private double baseAward;
 
+    @OneToOne()
+    @JoinColumn(name = "project_idx",referencedColumnName = "id")
+    @Fetch(FetchMode.SELECT)
+    private ClientProject clientProject;
+
+
     public String getRoleName() {
         return roleName;
     }

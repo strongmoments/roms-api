@@ -27,7 +27,7 @@ public abstract class NotificationService {
     private LoggedInUserDetails loggedIn;
 
     public  void sendNotification(String  eventId){}
-    public  void sendNotification(EmployeePayLoad employeePayLoad){}
+    public  void sendNotification(EmployeePayLoad employeePayLoad) throws InterruptedException {}
 
 
     public  void sendApprovedOrRejectNotification(String eventId,String message,String type){}
