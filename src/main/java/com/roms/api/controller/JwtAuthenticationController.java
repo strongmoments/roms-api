@@ -119,7 +119,7 @@ public class JwtAuthenticationController {
         Map<String,Object> response = new HashMap<>();
         if(userService.doesUserExist(employe.getEmail(),employe.getOrgId())){
             response.put("status","error");
-            response.put("error","already_requested");
+            response.put("error","already_exist");
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
         String resonse  = userService.saveTemporary(employe);
