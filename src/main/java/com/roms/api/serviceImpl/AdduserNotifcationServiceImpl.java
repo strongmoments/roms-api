@@ -57,6 +57,7 @@ public class AdduserNotifcationServiceImpl extends NotificationService {
                     obj.put("time", time);
                     obj.put("devices", allDevices);
                     obj.put("eventId", employeePayLoad.getId());
+                    obj.put("data",employeePayLoad);
                     requestPayload.setBody(obj);
 
                     HttpEntity<PushNotificationPayload> entity = new HttpEntity<PushNotificationPayload>(requestPayload, headers);
