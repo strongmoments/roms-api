@@ -33,8 +33,11 @@ public class DashBoardController {
 
         AtomicInteger counter = new AtomicInteger();
         dobList.forEach(date ->{
-            Period age = Period.between(LocalDate.ofInstant(date, ZoneId.of("UTC+10:00")), LocalDate.ofInstant(Instant.now(),ZoneId.of("UTC+10:00")));
-            counter.addAndGet(age.getYears());
+            if(date != null){
+                Period age = Period.between(LocalDate.ofInstant(date, ZoneId.of("UTC+10:00")), LocalDate.ofInstant(Instant.now(),ZoneId.of("UTC+10:00")));
+                counter.addAndGet(age.getYears());
+            }
+
         });
         response.put("employeeCount",totalEmployee);
         if(totalEmployee == 0){
