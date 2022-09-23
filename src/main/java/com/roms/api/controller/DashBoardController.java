@@ -32,8 +32,10 @@ public class DashBoardController {
         List<Instant>  dobList = employeService.findDobOfEmployees();
 
         AtomicInteger counter = new AtomicInteger();
+        AtomicReference<Integer> countwithoutNull = new AtomicReference<>(0);
         dobList.forEach(date ->{
             if(date != null){
+                countwithoutNull.getAndSet(countwithoutNull.get() + 1);
                 Period age = Period.between(LocalDate.ofInstant(date, ZoneId.of("UTC+10:00")), LocalDate.ofInstant(Instant.now(),ZoneId.of("UTC+10:00")));
                 counter.addAndGet(age.getYears());
             }
@@ -43,7 +45,7 @@ public class DashBoardController {
         if(totalEmployee == 0){
             totalEmployee =1L;
         }
-        response.put("employeeDobAverage",counter.get()/totalEmployee);
+        response.put("employeeDobAverage",counter.get()/countwithoutNull.get());
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
