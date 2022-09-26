@@ -19,6 +19,7 @@ import org.codehaus.plexus.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -86,6 +87,10 @@ public class UserController {
 
     @Autowired
     private EmployeeManagerTypeService employeeManagerTypeService;
+
+    @Autowired
+    @Qualifier("addusernotification")
+    private NotificationService notificationService;
 
     @Autowired
     private MinioService minioService;
@@ -225,7 +230,8 @@ public class UserController {
             Instant dob = sdf.parse("11-11-1960").toInstant();
             userModel.getEmployeId().setBirthdate(dob);*/
             Random random = new Random();
-            String password  = request.getFirstName().trim()+"@"+random.nextInt(100,1000);
+          //  String password  = request.getFirstName().trim()+"_"+random.nextInt(100,1000);
+            String password  = request.getFirstName().trim()+random.nextInt(10000,100000);
 
             userModels.setApppassword(customPasswordEncoder.encode(password));
             userModels.setDisableFlag(false);
@@ -269,6 +275,12 @@ public class UserController {
 
             try{
                 String redisStatus = userService.updateTemporary(request.getEmail());
+                if(request.isNotifyBySms()){
+                   String smsesponse = notificationService.sendsms(request.getPhone(),getSmsContent(request.getFirstName(),request.getEmail(),password));
+                    response.put("sms",smsesponse);
+                }else{
+                    response.put("sms","not_send");
+                }
                 response.put("rdis_status",redisStatus);
             }catch (Exception e){
                 response.put("rdis_status",e.getMessage());
@@ -643,6 +655,18 @@ public class UserController {
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    public  String getSmsContent(String fName, String userName, String password){
+        StringBuilder sb = new StringBuilder();
+        sb.append("Hi,");
+        sb.append(fName);
+        sb.append("\nYour account at ROMS has been successfully created!");
+        sb.append("\nUsername : ");sb.append(userName);
+        sb.append("\nPassword : ");sb.append(password);
+        sb.append("\nUse the credentials to login to ROMS cloud app or Android app  https://roms.rtl.com.au/assets/ROMS_PRODUCTION.apk to begin your onboarding process.");
+        sb.append("\nThank you.");
+        return sb.toString();
     }
 
 }

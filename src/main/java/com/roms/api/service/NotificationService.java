@@ -28,6 +28,9 @@ public abstract class NotificationService {
 
     public  void sendNotification(String  eventId){}
     public  void sendNotification(EmployeePayLoad employeePayLoad) throws InterruptedException {}
+    public  String sendsms(String toNumber ,String message)  {return "";}
+
+
 
 
     public  void sendApprovedOrRejectNotification(String eventId,String message,String type){}

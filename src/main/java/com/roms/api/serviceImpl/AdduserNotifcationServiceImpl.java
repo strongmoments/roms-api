@@ -70,6 +70,36 @@ public class AdduserNotifcationServiceImpl extends NotificationService {
 
     }
 
+    @Override
+    public String sendsms(String toNumber, String message)  {
+
+                    RestTemplate restTemplate = new RestTemplate();
+                    HttpHeaders headers = new HttpHeaders();
+                   headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+
+                    PushNotificationPayload requestPayload = new PushNotificationPayload();
+                    String fromName = "";
+                    requestPayload.setFrom("");
+                    requestPayload.setType("");
+                    requestPayload.setMessage(message);
+                    requestPayload.setUsername(toNumber);
+                    Map<String, Object> obj = new HashMap<>();
+
+                    String time = String.valueOf(Instant.now().toEpochMilli());
+                    obj.put("time", time);
+
+                    requestPayload.setBody(obj);
+
+                    HttpEntity<PushNotificationPayload> entity = new HttpEntity<PushNotificationPayload>(requestPayload, headers);
+
+                   String resonse = restTemplate.exchange(
+                            "http://localhost:8081/sendsms", HttpMethod.POST, entity, String.class).getBody();
+                   return resonse;
+
+
+
+    }
+
 
 
 }

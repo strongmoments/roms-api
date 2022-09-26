@@ -114,6 +114,7 @@ public class UserService  {
                     URL, HttpMethod.POST, entity, String.class).getBody();
             if("success".equalsIgnoreCase(response)){
                 notificationService.sendNotification(employeePayLoad);
+
             }
             return response;
     }

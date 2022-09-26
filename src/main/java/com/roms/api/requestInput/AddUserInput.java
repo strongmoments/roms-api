@@ -23,6 +23,7 @@ public class AddUserInput {
     public String employType;
     public String gender;
     public boolean isManager;
+    public boolean notifyBySms;
 
 
 
