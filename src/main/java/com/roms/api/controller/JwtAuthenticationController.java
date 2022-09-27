@@ -123,7 +123,13 @@ public class JwtAuthenticationController {
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
         String resonse  = userService.saveTemporary(employe);
-        response.put("status",resonse);
+        if(!"success".equalsIgnoreCase(resonse)){
+            response.put("status","error");
+            response.put("error",resonse);
+        }else{
+            response.put("status",resonse);
+        }
+
         return ResponseEntity.ok(response);
     }
 
