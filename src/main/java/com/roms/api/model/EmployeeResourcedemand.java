@@ -19,7 +19,7 @@ import java.util.Map;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name ="employee_licences")
+@Table(name ="employee_resource_demand")
 public class EmployeeResourcedemand extends CommonFields implements Serializable {
 
     @OneToOne(fetch = FetchType.EAGER)
@@ -48,9 +48,9 @@ public class EmployeeResourcedemand extends CommonFields implements Serializable
     @Column(name="minimum_experience")
     private String minimumExperiecne;
 
-    @Column(name = "skils", columnDefinition = "json")
+    @Column(name = "skils_map", columnDefinition = "json")
     @Convert(converter = ModelHashMapConverter.class)
-    private Map<String, List<Object>> skils;
+    private Map<String, List<Object>> skilsMap;
 
     @OneToOne()
     @JoinColumn(name = "clientproject_idx",referencedColumnName = "id")

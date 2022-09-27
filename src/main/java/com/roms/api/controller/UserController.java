@@ -659,12 +659,13 @@ public class UserController {
 
     public  String getSmsContent(String fName, String userName, String password){
         StringBuilder sb = new StringBuilder();
-        sb.append("Hi,");
+        sb.append("Hi ");
         sb.append(fName);
+        sb.append(",");
         sb.append("\nYour account at ROMS has been successfully created!");
         sb.append("\nUsername : ");sb.append(userName);
         sb.append("\nPassword : ");sb.append(password);
-        sb.append("\nUse the credentials to login to ROMS cloud app or Android app  https://roms.rtl.com.au/assets/ROMS_PRODUCTION.apk to begin your onboarding process.");
+        sb.append("\nUse the credentials to login to ROMS cloud app or Android app to begin your onboarding process.");
         sb.append("\nThank you.");
         return sb.toString();
     }
