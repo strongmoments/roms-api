@@ -662,11 +662,12 @@ public class UserController {
         sb.append("Hi ");
         sb.append(fName);
         sb.append(",");
-        sb.append("\nYour account at ROMS has been successfully created!");
+        sb.append("Welcome to the new RTL ROMS app.");
+        sb.append("\nYou can access the app either using the Cloud site or the Android app");
+        sb.append("\nYour account details");
         sb.append("\nUsername : ");sb.append(userName);
         sb.append("\nPassword : ");sb.append(password);
-        sb.append("\nUse the credentials to login to ROMS cloud app or Android app to begin your onboarding process.");
-        sb.append("\nThank you.");
+        sb.append("\nYou can revisit the Registration page to access login link.Regards,ROMS teamp.s. please do not reply to this message. contact RTL for further support.");
         return sb.toString();
     }
 
