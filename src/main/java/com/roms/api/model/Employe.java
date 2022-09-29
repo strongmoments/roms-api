@@ -43,6 +43,9 @@ public class Employe extends CommonFields implements Serializable {
     @Column(name = "pronoun")
     private String pronoun;
 
+    @Column(name = "salut")
+    private String salut;
+
     @Column(name = "phone")
     private String  phone;
 
@@ -62,7 +65,7 @@ public class Employe extends CommonFields implements Serializable {
     private Instant endDate;
 
     @Column(name = "indigenous_flag", nullable = false)
-    private boolean indigenousFlag;
+    private int indigenousFlag;
 
     @Column(name="manager_flag")
     private boolean managerFlag;
@@ -197,11 +200,11 @@ public class Employe extends CommonFields implements Serializable {
         this.endDate = endDate;
     }
 
-    public boolean isIndigenousFlag() {
+    public int getIndigenousFlag() {
         return indigenousFlag;
     }
 
-    public void setIndigenousFlag(boolean indigenousFlag) {
+    public void setIndigenousFlag(int indigenousFlag) {
         this.indigenousFlag = indigenousFlag;
     }
 
@@ -258,6 +261,14 @@ public class Employe extends CommonFields implements Serializable {
 
     public void setManagerFlag(boolean managerFlag) {
         this.managerFlag = managerFlag;
+    }
+
+    public String getSalut() {
+        return salut;
+    }
+
+    public void setSalut(String salut) {
+        this.salut = salut;
     }
 }
 

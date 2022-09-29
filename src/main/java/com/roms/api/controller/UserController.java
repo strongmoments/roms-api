@@ -184,7 +184,7 @@ public class UserController {
            // employeModel.setBirthdate(dob.toInstant());
             employeModel.setGender("");
 
-            employeModel.setIndigenousFlag(false);
+            employeModel.setIndigenousFlag(0);
 
 
             userModels.setEmployeId(employeModel);
@@ -564,7 +564,7 @@ public class UserController {
                 employeModel.setGender(gender);
                 employeModel.setDepartments(departmentsMap.get(departmentCode));
                 employeModel.setEmployeType(employeTypeMap.get(employeTypeCode));
-                employeModel.setIndigenousFlag(false);
+                employeModel.setIndigenousFlag(0);
 
 
 
