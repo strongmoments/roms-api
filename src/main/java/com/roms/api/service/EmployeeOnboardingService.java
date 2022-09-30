@@ -57,4 +57,21 @@ public class EmployeeOnboardingService {
 
         return responseAsStrign;
     }
+
+
+    public String loadAll(){
+        List<Object> dataList = new ArrayList<>();
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+
+        String employeeid = logged.getUser().getEmployeId().getId();
+
+        HttpEntity<String> entity = new HttpEntity<String>("",headers);
+        String responseAsStrign =  restTemplate.exchange(                "http://localhost:8081/v1/employee/onboard/allOnboardingStatus", HttpMethod.GET, entity, String.class).getBody();
+
+
+
+        return responseAsStrign;
+    }
 }

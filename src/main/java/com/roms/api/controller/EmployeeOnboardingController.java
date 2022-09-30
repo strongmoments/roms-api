@@ -58,4 +58,27 @@ public class EmployeeOnboardingController {
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+
+    @GetMapping(value = "/loadAll", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> loadAll() {
+        Map<String, Object> response = new HashMap();
+        try {
+            ObjectMapper obj = new ObjectMapper();
+            String responses =   employeeOnboardingService.loadAll();
+            if(StringUtils.isBlank(responses) || "null".equalsIgnoreCase(responses)){
+                response.put("status","error");
+                response.put("error","not_found");
+
+            }else{
+                response.put("status","success");
+                response.put("data",obj.readValue(responses, HashMap.class));
+            }
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            response.put("error", e.getMessage());
+            response.put("status", "error");
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

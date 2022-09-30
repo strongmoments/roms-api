@@ -35,4 +35,11 @@ public class DigitalAssets extends CommonFields implements Serializable {
     @Column(name = "size" )
     private Long size;
 
+    @Column(name = "reference_id" )
+    private String referenceId;
+
+    @Column(name = "reference_type" )
+    private String referenceType;
+
+
 }
