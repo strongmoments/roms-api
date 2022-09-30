@@ -24,6 +24,12 @@ public class EmployeeOnboardingController {
     @Autowired
     private EmployeeOnboardingService employeeOnboardingService;
 
+    @PostMapping(value = "/personal", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> save(@RequestBody() OnboardingPersonalDetailInput personalDetail) {
+        Map<String, Object> response = new HashMap();
+      //  employeeOnboardingService.oboardPersonalDetail(personalDetail, response);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
     @PostMapping(value = "/personal/next", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> next(@RequestBody() OnboardingPersonalDetailInput personalDetail) {

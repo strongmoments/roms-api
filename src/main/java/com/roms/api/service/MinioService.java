@@ -2,6 +2,8 @@ package com.roms.api.service;
 
 import com.roms.api.controller.DepartmentController;
 import com.roms.api.dto.FileDto;
+import com.roms.api.model.DigitalAssets;
+import com.roms.api.utils.LoggedInUserDetails;
 import io.minio.*;
 import io.minio.errors.*;
 import io.minio.http.Method;
@@ -26,13 +28,21 @@ public class MinioService {
 
     @Autowired
     private MinioClient minioClient;
+    @Autowired
+    private LoggedInUserDetails loggedIn;
 
-    @Value("${minio.bucket.name}")
-    private String bucketName;
+    @Autowired
+    private DigitalAssetService digitalAssetService;
 
-    public FileDto uploadFile(FileDto request) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
+
+
+    public DigitalAssets uploadFile(FileDto request) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
+        String bucketName = loggedIn.getUser().getEmployeId().getId();
+
         try {
-
+            if(!doesBucketExist(bucketName)){
+                createBuckets(bucketName);
+            }
           minioClient.putObject(PutObjectArgs.builder()
                     .bucket(bucketName)
                     .object(request.getFile().getOriginalFilename())
@@ -42,13 +52,13 @@ public class MinioService {
         } catch (Exception e) {
             logger.error("error when upload file minio : ", e);
         }
-        return FileDto.builder()
-                .title(request.getTitle())
-                .description(request.getDescription())
+       String fileUrl = getPreSignedUrl(request.getFile().getOriginalFilename(),bucketName);
+        DigitalAssets digitalAsset = DigitalAssets.builder().url(fileUrl)
+                .fileType(request.getFile().getContentType())
                 .size(request.getFile().getSize())
-                .url(getPreSignedUrl(request.getFile().getOriginalFilename(),bucketName))
-                .filename(request.getFile().getOriginalFilename())
+                .fileName(request.getFile().getOriginalFilename())
                 .build();
+        return digitalAssetService.save(digitalAsset);
     }
     private String getPreSignedUrl(String fileName,String bucketName) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
       return   minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder().method(Method.GET).bucket(bucketName).object(fileName).build());
@@ -65,10 +75,19 @@ public class MinioService {
 
     }
 
-    public void  createBuckets() {
+    public boolean doesBucketExist(String bucketName) {
+        try {
+            return minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).region(bucketName).build());
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+
+    }
+
+    public void  createBuckets(String bucketName) {
         try {
 
-         minioClient.makeBucket( MakeBucketArgs.builder().bucket("test").region("test").build());
+         minioClient.makeBucket( MakeBucketArgs.builder().bucket(bucketName).region(bucketName).build());
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }

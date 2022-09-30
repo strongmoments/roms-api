@@ -30,8 +30,11 @@ public class OnboardingPersonalDetailInput implements Serializable {
     private String step;
     private String completionProgress;
     private int indigenousFlag;
-    private List<AddressInput> addresses;
-    private MultipartFile profileImage;
+    private AddressInput tempAddress;
+    private AddressInput permanentAddress;
+    private String profileImageId;
+    private String profileImageURL;
+
 
 
 

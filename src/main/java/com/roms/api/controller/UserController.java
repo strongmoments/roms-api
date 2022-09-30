@@ -305,8 +305,8 @@ public class UserController {
             FileDto fileDto = FileDto.builder()
                             .file(filse).build();
 
-            fileDto =  minioService.uploadFile(fileDto);
-            response.put("data",fileDto);
+
+            response.put("data",minioService.uploadFile(fileDto));
 
            /* for (MultipartFile file : filse) {
                 String fileName = file.getOriginalFilename();
