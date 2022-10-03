@@ -1,5 +1,6 @@
 package com.roms.api.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,14 +16,14 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@JsonIgnoreProperties("hibernatelazyinitializer")
 @Entity
 @Table(name ="leave_attachments")
 public class LeaveAttachments extends CommonFields implements Serializable {
 
-    @ManyToOne()
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "leave_request_idx",referencedColumnName = "id")
-    @Fetch(FetchMode.SELECT)
+    @JsonBackReference
     private LeaveRequest leaveRequestId;
 
     @OneToOne()

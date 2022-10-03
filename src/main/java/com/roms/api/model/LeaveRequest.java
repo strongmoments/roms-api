@@ -1,4 +1,6 @@
 package com.roms.api.model;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.roms.api.utils.InstantConverter;
 import org.hibernate.annotations.Fetch;
@@ -66,7 +68,8 @@ public class LeaveRequest extends CommonFields implements Serializable {
     @Fetch(FetchMode.SELECT)
     private Employe approver;
 
-    @OneToMany(mappedBy="leaveRequestId")
+    @OneToMany(mappedBy="leaveRequestId", fetch = FetchType.LAZY)
+    @JsonManagedReference
     private Set<LeaveAttachments> attachments;
 
 
