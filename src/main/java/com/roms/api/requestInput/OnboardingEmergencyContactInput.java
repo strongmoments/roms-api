@@ -9,6 +9,7 @@ import java.io.Serializable;
 @Builder
 public class OnboardingEmergencyContactInput implements Serializable {
     private String id;
+    private String relationship;
     private String step;
     private String completionProgress;
     public String firstName;
