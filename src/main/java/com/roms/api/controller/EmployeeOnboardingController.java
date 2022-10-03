@@ -14,7 +14,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -144,16 +146,22 @@ public class EmployeeOnboardingController {
     @GetMapping(value = "/loadAll", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> loadAll() {
         Map<String, Object> response = new HashMap();
+        List<Object> objList = new ArrayList<>();
         try {
             ObjectMapper obj = new ObjectMapper();
             String responses =   employeeOnboardingService.loadAll();
             if(StringUtils.isBlank(responses) || "null".equalsIgnoreCase(responses)){
+
                 response.put("status","error");
                 response.put("error","not_found");
 
             }else{
+                Map<String,Object> object = obj.readValue(responses, HashMap.class);
+                for(Object key : object.keySet()){
+                    objList.add(object.get(key));
+                }
                 response.put("status","success");
-                response.put("data",obj.readValue(responses, HashMap.class));
+                response.put("data",objList);
             }
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
