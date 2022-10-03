@@ -13,6 +13,9 @@ public class OnboardingLicenceInput implements Serializable {
     private String completionProgress;
     private String licenceImageId;
     private String licenceImageURL;
+    private String licenceBackImageId;
+    private String licenceBackImageURL;
+    private String issuedIn;
     private String licenceNumber;
     private String expiryDate;
     private int declarationStatus;
