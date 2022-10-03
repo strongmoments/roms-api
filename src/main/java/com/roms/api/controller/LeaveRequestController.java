@@ -1,13 +1,10 @@
 package com.roms.api.controller;
 
-import com.roms.api.model.Employe;
-import com.roms.api.model.LeaveRequest;
-import com.roms.api.model.Users;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.roms.api.dto.FileDto;
+import com.roms.api.model.*;
 import com.roms.api.requestInput.LeaveRequestSearchInput;
-import com.roms.api.service.ClientProjectSubteamMemberService;
-import com.roms.api.service.LeaveRequestService;
-import com.roms.api.service.LeaveTypeService;
-import com.roms.api.service.NotificationService;
+import com.roms.api.service.*;
 import com.roms.api.utils.LoggedInUserDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,8 +18,10 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.xml.crypto.Data;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -50,6 +49,41 @@ public class LeaveRequestController {
     @Qualifier("leavenotification")
     private NotificationService notificationService;
 
+    @Autowired
+    private LeaveAttachmentService leaveAttachmentService;
+
+
+
+    @Autowired
+    private MinioService minioService;
+
+
+    @RequestMapping(value = "/uploaddoc" , method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE  })
+    public ResponseEntity<Map<String,Object>> uploadFile(@RequestParam String leaveRequestId, @RequestParam(value="files") MultipartFile[] filse) throws IOException {
+
+        Map<String, Object> response = new HashMap();
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, MultipartFile> imageData = new HashMap();
+        try {
+            List<DigitalAssets> digitalAsset = new ArrayList<>();
+            for (MultipartFile file : filse) {
+                FileDto fileDto = FileDto.builder()
+                        .file(file).build();
+                DigitalAssets digitalAssets = minioService.uploadFile(fileDto);
+                LeaveRequest leaveRequest = new LeaveRequest();
+                leaveRequest.setId(leaveRequestId);
+                LeaveAttachments leaveAttachments = LeaveAttachments.builder().digitalAssets(digitalAssets).leaveRequestId(leaveRequest).build();
+                leaveAttachmentService.save(leaveAttachments);
+            }
+            response.put("status", "success");
+
+        } catch (Exception ee) {
+            ee.printStackTrace();
+            response.put("status", "error");
+            response.put("error", ee.getMessage());
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
     @PostMapping(value = "/request", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<?> requestLeave(@RequestBody LeaveRequest leaveRequest) throws ParseException {
@@ -61,9 +95,10 @@ public class LeaveRequestController {
             leaveRequest.setStartDateTime(sdf.parse(leaveRequest.getStrStartDateTime()).toInstant());
             leaveRequest.setEndDateTime(sdf.parse(leaveRequest.getStrEndDateTime()).toInstant());
             LeaveRequest leaveRequests = leaveRequestService.applyLeave(leaveRequest);
-            if(leaveRequest != null && leaveRequest.getId() != null)
-            notificationService.sendNotification(leaveRequest.getId());
-
+            if(leaveRequest != null && leaveRequest.getId() != null){
+                notificationService.sendNotification(leaveRequest.getId());
+            }
+            response.put("leaveRequestId",leaveRequest.getId());
         }catch (Exception e){
             logger.error("Error while applying leave {} ",  e.getMessage());
             response.put("error", e.getMessage());

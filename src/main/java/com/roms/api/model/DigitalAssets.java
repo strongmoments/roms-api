@@ -22,8 +22,8 @@ import java.io.Serializable;
 @Table(name ="digital_assets")
 public class DigitalAssets extends CommonFields implements Serializable {
 
-    @Column(name = "url" )
-    @Lob
+    @Column(name = "url" , columnDefinition="TEXT")
+   // @Lob
     private String url;
 
     @Column(name = "file_name" )

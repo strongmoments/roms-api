@@ -8,6 +8,7 @@ import javax.persistence.*;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.Set;
 
 
 @Entity
@@ -64,6 +65,9 @@ public class LeaveRequest extends CommonFields implements Serializable {
     @JoinColumn(name="approver_idx",referencedColumnName="id")
     @Fetch(FetchMode.SELECT)
     private Employe approver;
+
+    @OneToMany(mappedBy="leaveRequestId")
+    private Set<LeaveAttachments> attachments;
 
 
     public Instant getApplyDate() {
@@ -177,5 +181,13 @@ public class LeaveRequest extends CommonFields implements Serializable {
 
     public void setTotalDay(Integer totalDay) {
         this.totalDay = totalDay;
+    }
+
+    public Set<LeaveAttachments> getAttachments() {
+        return attachments;
+    }
+
+    public void setAttachments(Set<LeaveAttachments> attachments) {
+        this.attachments = attachments;
     }
 }

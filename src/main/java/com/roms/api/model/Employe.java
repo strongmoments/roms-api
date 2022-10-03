@@ -88,6 +88,12 @@ public class Employe extends CommonFields implements Serializable {
     @Column(name = "profile_image")
     private byte[] profileImage;
 
+    @OneToOne()
+    @JoinColumn(name = "profile_pic_idx",referencedColumnName = "id")
+    @Fetch(FetchMode.SELECT)
+    private DigitalAssets profilePic;
+
+
     public  Employe(){
         
     }
@@ -269,6 +275,14 @@ public class Employe extends CommonFields implements Serializable {
 
     public void setSalut(String salut) {
         this.salut = salut;
+    }
+
+    public DigitalAssets getProfilePic() {
+        return profilePic;
+    }
+
+    public void setProfilePic(DigitalAssets profilePic) {
+        this.profilePic = profilePic;
     }
 }
 
