@@ -2,10 +2,7 @@ package com.roms.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.roms.api.model.EmployeeLicence;
-import com.roms.api.requestInput.OnboardingBankingInput;
-import com.roms.api.requestInput.OnboardingEmergencyContactInput;
-import com.roms.api.requestInput.OnboardingLicenceInput;
-import com.roms.api.requestInput.OnboardingPersonalDetailInput;
+import com.roms.api.requestInput.*;
 import com.roms.api.service.EmployeeLicenceService;
 import com.roms.api.service.EmployeeOnboardingService;
 import org.codehaus.plexus.util.StringUtils;
@@ -31,6 +28,13 @@ public class EmployeeOnboardingController {
 
 
 
+    @PostMapping(value = "/tfn", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> TFN(@RequestBody() OnboardingTFNInput personalDetail) {
+        Map<String, Object> response = new HashMap();
+        response.put("status","success");
+        //  employeeOnboardingService.oboardPersonalDetail(personalDetail, response);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
     @PostMapping(value = "/banking", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> banking(@RequestBody() OnboardingBankingInput personalDetail) {
         Map<String, Object> response = new HashMap();
@@ -87,6 +91,13 @@ public class EmployeeOnboardingController {
     public ResponseEntity<?> next(@RequestBody() OnboardingBankingInput personalDetail) {
         Map<String, Object> response = new HashMap();
         employeeOnboardingService.onboardBanking(personalDetail, response);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/tfn/next", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> tfnNext(@RequestBody() OnboardingTFNInput personalDetail) {
+        Map<String, Object> response = new HashMap();
+        employeeOnboardingService.onboardTFN(personalDetail, response);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -181,6 +192,27 @@ public class EmployeeOnboardingController {
         }
     }
 
+    @GetMapping(value = "/tfn/load", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> loadTFN() {
+        Map<String, Object> response = new HashMap();
+        try {
+            ObjectMapper obj = new ObjectMapper();
+            String responses =   employeeOnboardingService.loadONboardedStatus("tfn");
+            if(StringUtils.isBlank(responses) || "null".equalsIgnoreCase(responses)){
+                response.put("status","error");
+                response.put("error","not_found");
+
+            }else{
+                response.put("status","success");
+                response.put("data",obj.readValue(responses, HashMap.class));
+            }
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            response.put("error", e.getMessage());
+            response.put("status", "error");
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
     @GetMapping(value = "/loadAll", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> loadAll() {
         Map<String, Object> response = new HashMap();
@@ -208,4 +240,6 @@ public class EmployeeOnboardingController {
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+
 }
