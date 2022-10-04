@@ -7,8 +7,7 @@ import java.io.Serializable;
 
 @Data
 @Builder
-public class CurrentFundInput implements Serializable {
-
+public class SelfFundInput implements Serializable {
     private String abn;
     private String fundName;
     private String address;
@@ -16,11 +15,10 @@ public class CurrentFundInput implements Serializable {
     private String state;
     private String postCode;
     private String fundPhone;
-    private String usi;
-    private String accountName;
-    private String membername;
+    private String esa;
+    private String bsbCode;
+    private String accountNumber;
+    private boolean tncAcceptance;
     private String attachmentId;
     private String attachmentURL;
-
-
 }

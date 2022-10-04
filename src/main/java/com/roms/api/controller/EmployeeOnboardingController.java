@@ -28,6 +28,14 @@ public class EmployeeOnboardingController {
 
 
 
+    @PostMapping(value = "/superannuation", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> superannuation(@RequestBody() OnboardingSuperannuationInput personalDetail) {
+        Map<String, Object> response = new HashMap();
+        response.put("status","success");
+        //  employeeOnboardingService.oboardPersonalDetail(personalDetail, response);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     @PostMapping(value = "/tfn", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> TFN(@RequestBody() OnboardingTFNInput personalDetail) {
         Map<String, Object> response = new HashMap();
@@ -98,6 +106,13 @@ public class EmployeeOnboardingController {
     public ResponseEntity<?> tfnNext(@RequestBody() OnboardingTFNInput personalDetail) {
         Map<String, Object> response = new HashMap();
         employeeOnboardingService.onboardTFN(personalDetail, response);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/superannuation/next", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> tfnNext(@RequestBody() OnboardingSuperannuationInput personalDetail) {
+        Map<String, Object> response = new HashMap();
+        employeeOnboardingService.onboardsuperannuation(personalDetail, response);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -198,6 +213,28 @@ public class EmployeeOnboardingController {
         try {
             ObjectMapper obj = new ObjectMapper();
             String responses =   employeeOnboardingService.loadONboardedStatus("tfn");
+            if(StringUtils.isBlank(responses) || "null".equalsIgnoreCase(responses)){
+                response.put("status","error");
+                response.put("error","not_found");
+
+            }else{
+                response.put("status","success");
+                response.put("data",obj.readValue(responses, HashMap.class));
+            }
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            response.put("error", e.getMessage());
+            response.put("status", "error");
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value = "/superannuation/load", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> loadsuperannuation() {
+        Map<String, Object> response = new HashMap();
+        try {
+            ObjectMapper obj = new ObjectMapper();
+            String responses =   employeeOnboardingService.loadONboardedStatus("superannuation");
             if(StringUtils.isBlank(responses) || "null".equalsIgnoreCase(responses)){
                 response.put("status","error");
                 response.put("error","not_found");
