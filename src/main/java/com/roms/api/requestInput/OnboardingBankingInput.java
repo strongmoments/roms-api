@@ -13,5 +13,7 @@ public class OnboardingBankingInput implements Serializable {
     private Integer payslipByEmail;
     private BankDetailsInput defaultBank;
     private BankDetailsInput secondaryBank;
+    private String step;
+    private String completionProgress;
 
 }
