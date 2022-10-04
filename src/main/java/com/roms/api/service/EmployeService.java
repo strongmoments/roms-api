@@ -1,9 +1,9 @@
 package com.roms.api.service;
 
 
-import com.roms.api.model.Employe;
-import com.roms.api.model.Organisation;
+import com.roms.api.model.*;
 import com.roms.api.repository.EmployeRepository;
+import com.roms.api.requestInput.OnboardingPersonalDetailInput;
 import com.roms.api.utils.LoggedInUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -12,8 +12,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
@@ -24,6 +26,13 @@ public class EmployeService {
 
     @Autowired
     private LoggedInUserDetails loggedIn;
+
+    @Autowired
+    private EmployeeAddressService employeeAddressService;
+
+    @Autowired EmployeeProfileImageService employeeProfileImageService;
+
+
 
     public Optional<Employe> findById(String employeeId){
         return employeesRepository.findById(employeeId);
@@ -36,6 +45,63 @@ public class EmployeService {
 
     public List<Employe> findAllManagers(){
         return employeesRepository.findAllByManagerFlagAndOrganisation(true,loggedIn.getOrg());
+
+    }
+
+    public Employe update(OnboardingPersonalDetailInput request){
+       Employe employeModel = loggedIn.getUser().getEmployeId();
+        employeModel.setFirstName(request.getFirstName());
+        employeModel.setEmployeeNo(request.getEmployeeNo());
+        employeModel.setLastName(request.getLastName());
+        employeModel.setEmail(request.getEmail());
+        employeModel.setPhone(request.getPhone());
+        employeModel.setMiddleName(request.getMiddleName());
+        employeModel.setNickName(request.getNickName());
+        employeModel.setPhoneticName(request.getPhoneticName());
+        employeModel.setJobTitle(request.getJobTitle());
+        employeModel.setPronoun(request.getPronoun());
+        employeModel.setSalut(request.getSalut());
+        try{
+            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+            Instant dob = sdf.parse(request.getBirthdate()).toInstant();
+            employeModel.setBirthdate(dob);
+        }catch (Exception e){
+
+        }
+
+        employeModel.setGender(request.getGender());
+        employeModel.setIndigenousFlag(request.getIndigenousFlag());
+        employeModel.setLastUpdateDate(Instant.now());
+        employeModel.setUpdateBy(loggedIn.getUser());
+        employeModel = employeesRepository.save(employeModel);
+
+        EmployeeAddress employeePermanentAddress = EmployeeAddress.builder()
+                .type(1)
+                .suburb(request.getPermanentAddress().getSuburb())
+                .state(request.getPermanentAddress().getState())
+                .postcode(request.getPermanentAddress().getPostcode())
+                .employe(employeModel)
+                .build();
+
+        employeeAddressService.save(employeePermanentAddress);
+        EmployeeAddress employeeTempddress = EmployeeAddress.builder()
+                .type(2)
+                .suburb(request.getTempAddress().getSuburb())
+                .state(request.getTempAddress().getState())
+                .postcode(request.getTempAddress().getPostcode())
+                .employe(employeModel)
+                .build();
+        employeeAddressService.save(employeeTempddress);
+
+        DigitalAssets digitalAssets = DigitalAssets.builder().build();
+        digitalAssets.setId(request.getProfileImageId());
+        EmployeeProfileImage employeeProfileImage = EmployeeProfileImage.builder().
+                employe(employeModel)
+                        .digitalAssets(digitalAssets).
+                build();
+
+        employeeProfileImageService.save(employeeProfileImage);
+        return employeModel;
 
     }
 

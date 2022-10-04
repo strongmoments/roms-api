@@ -18,7 +18,16 @@ import java.io.Serializable;
 public class EmployeeAddress extends CommonFields implements Serializable {
 
     @Column(name = "type")
-    private int type;
+    private int type; // 1 permanent, 2 tem address
+
+    @Column(name = "address")
+    private String address;
+    @Column(name = "suburb")
+    private String  suburb;
+    @Column(name = "state")
+    private String  state;
+    @Column(name = "postcode")
+    private String  postcode;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employee_idx",referencedColumnName = "id")

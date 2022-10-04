@@ -1,5 +1,6 @@
 package com.roms.api.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.GenericGenerator;
@@ -8,6 +9,7 @@ import javax.persistence.*;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.Set;
 import java.util.UUID;
 
 @JsonIgnoreProperties("hibernatelazyinitializer")
@@ -83,19 +85,13 @@ public class Employe extends CommonFields implements Serializable {
 
     @Transient
     private String orgId;
-
-
-    @Column(name = "profile_image")
-    private byte[] profileImage;
-
-    @OneToOne()
-    @JoinColumn(name = "profile_pic_idx",referencedColumnName = "id")
-    @Fetch(FetchMode.SELECT)
-    private DigitalAssets profilePic;
+    @OneToMany(mappedBy="employe", fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private Set<EmployeeProfileImage> profileImage;
 
 
     public  Employe(){
-        
+
     }
 
     public Employe(String id) {
@@ -214,13 +210,6 @@ public class Employe extends CommonFields implements Serializable {
         this.indigenousFlag = indigenousFlag;
     }
 
-    public byte[] getProfileImage() {
-        return profileImage;
-    }
-
-    public void setProfileImage(byte[] profileImage) {
-        this.profileImage = profileImage;
-    }
     public Instant getCreateDate() {
         return createDate;
     }
@@ -277,12 +266,12 @@ public class Employe extends CommonFields implements Serializable {
         this.salut = salut;
     }
 
-    public DigitalAssets getProfilePic() {
-        return profilePic;
+    public Set<EmployeeProfileImage> getProfileImage() {
+        return profileImage;
     }
 
-    public void setProfilePic(DigitalAssets profilePic) {
-        this.profilePic = profilePic;
+    public void setProfileImage(Set<EmployeeProfileImage> profileImage) {
+        this.profileImage = profileImage;
     }
 }
 

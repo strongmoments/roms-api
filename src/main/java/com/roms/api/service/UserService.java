@@ -62,7 +62,7 @@ public class UserService  {
 
     public void uploadProfilePic(Employe employe, MultipartFile file) throws IOException {
 
-        employe.setProfileImage(file.getBytes());
+       // employe.setProfileImage(file.getBytes());
         employeService.save(employe);
     }
     public Users updateLastLogin(Users usersModel) {

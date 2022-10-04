@@ -1,8 +1,10 @@
 package com.roms.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.roms.api.model.Employe;
 import com.roms.api.model.EmployeeLicence;
 import com.roms.api.requestInput.*;
+import com.roms.api.service.EmployeService;
 import com.roms.api.service.EmployeeLicenceService;
 import com.roms.api.service.EmployeeOnboardingService;
 import org.codehaus.plexus.util.StringUtils;
@@ -26,11 +28,15 @@ public class EmployeeOnboardingController {
     @Autowired
     private EmployeeOnboardingService employeeOnboardingService;
 
+    @Autowired
+    private EmployeService employeService;
+
 
 
     @PostMapping(value = "/superannuation", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> superannuation(@RequestBody() OnboardingSuperannuationInput personalDetail) {
         Map<String, Object> response = new HashMap();
+
         response.put("status","success");
         //  employeeOnboardingService.oboardPersonalDetail(personalDetail, response);
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -61,7 +67,17 @@ public class EmployeeOnboardingController {
     @PostMapping(value = "/personal", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> save(@RequestBody() OnboardingPersonalDetailInput personalDetail) {
         Map<String, Object> response = new HashMap();
-        response.put("status","success");
+        try {
+                Employe employe = employeService.update(personalDetail);
+                if(employe != null && employe.getId() != null){
+                    // send notification
+                }
+                    response.put("status","success");
+        } catch (Exception e) {
+            response.put("error", e.getMessage());
+            response.put("status", "error");
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
       //  employeeOnboardingService.oboardPersonalDetail(personalDetail, response);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
