@@ -1,12 +1,9 @@
 package com.roms.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.roms.api.model.Employe;
-import com.roms.api.model.EmployeeLicence;
+import com.roms.api.model.*;
 import com.roms.api.requestInput.*;
-import com.roms.api.service.EmployeService;
-import com.roms.api.service.EmployeeLicenceService;
-import com.roms.api.service.EmployeeOnboardingService;
+import com.roms.api.service.*;
 import org.codehaus.plexus.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,16 +26,35 @@ public class EmployeeOnboardingController {
     private EmployeeOnboardingService employeeOnboardingService;
 
     @Autowired
+    private EmployeeBankService employeeBankService;
+
+    @Autowired
+    private  EmployeeTFNService employeeTFNService;
+
+    @Autowired
+    private EmployeeSuperannuationService employeeSuperannuationService;
+    @Autowired
     private EmployeService employeService;
+
+    @Autowired
+    private EmployeeEmergencyContactService employeeEmergencyContactService;
 
 
 
     @PostMapping(value = "/superannuation", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> superannuation(@RequestBody() OnboardingSuperannuationInput personalDetail) {
+    public ResponseEntity<?> superannuation(@RequestBody() OnboardingSuperannuationInput onboardingSuperannuationInput) {
         Map<String, Object> response = new HashMap();
-
-        response.put("status","success");
-        //  employeeOnboardingService.oboardPersonalDetail(personalDetail, response);
+        try{
+            response.put("status","success");
+            EmployeeSuperannuation employeeSuperannuation = employeeSuperannuationService.saveFromOnboarding(onboardingSuperannuationInput);
+            if(employeeSuperannuation != null && employeeSuperannuation.getId() != null){
+                employeeOnboardingService.onboardsuperannuation(onboardingSuperannuationInput, response);
+            }
+        } catch (Exception e) {
+            response.put("error", e.getMessage());
+            response.put("status", "error");
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -62,17 +78,35 @@ public class EmployeeOnboardingController {
     }
 
     @PostMapping(value = "/tfn", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> TFN(@RequestBody() OnboardingTFNInput personalDetail) {
+    public ResponseEntity<?> TFN(@RequestBody() OnboardingTFNInput onboardingTFNInput) {
         Map<String, Object> response = new HashMap();
-        response.put("status","success");
-        //  employeeOnboardingService.oboardPersonalDetail(personalDetail, response);
+        try{
+            response.put("status","success");
+            EmployeeTFN employeeTFN = employeeTFNService.saveFromOnboarding(onboardingTFNInput);
+            if(employeeTFN != null && employeeTFN.getId() != null){
+                employeeOnboardingService.onboardTFN(onboardingTFNInput, response);
+            }
+        } catch (Exception e) {
+            response.put("error", e.getMessage());
+            response.put("status", "error");
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @PostMapping(value = "/banking", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> banking(@RequestBody() OnboardingBankingInput personalDetail) {
+    public ResponseEntity<?> banking(@RequestBody() OnboardingBankingInput onboardingBankingInput) {
         Map<String, Object> response = new HashMap();
-        response.put("status","success");
-        //  employeeOnboardingService.oboardPersonalDetail(personalDetail, response);
+        try{
+            response.put("status","success");
+            EmployeeBanks employeeBanks = employeeBankService.saveFromOnboarding(onboardingBankingInput);
+            if(employeeBanks != null && employeeBanks.getId() != null){
+                employeeOnboardingService.onboardBanking(onboardingBankingInput, response);
+            }
+        } catch (Exception e) {
+            response.put("error", e.getMessage());
+            response.put("status", "error");
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @PostMapping(value = "/licence", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -91,21 +125,30 @@ public class EmployeeOnboardingController {
                 if(employe != null && employe.getId() != null){
                     // send notification
                 }
-                    response.put("status","success");
+                response.put("status","success");
         } catch (Exception e) {
             response.put("error", e.getMessage());
             response.put("status", "error");
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-      //  employeeOnboardingService.oboardPersonalDetail(personalDetail, response);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping(value = "/emergency", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> save(@RequestBody() OnboardingEmergencyContactInput personalDetail) {
+    public ResponseEntity<?> save(@RequestBody() OnboardingEmergencyContactInput onboardingEmergencyContactInput) {
         Map<String, Object> response = new HashMap();
-        response.put("status","success");
-        //  employeeOnboardingService.oboardPersonalDetail(personalDetail, response);
+        try{
+            response.put("status","success");
+            EmployeeEmergencyContact emergencyContact =employeeEmergencyContactService.saveFromOnboarding(onboardingEmergencyContactInput);
+            if(emergencyContact != null && emergencyContact.getId() != null){
+                employeeOnboardingService.oboardEmergencyDetail(onboardingEmergencyContactInput, response);
+            }
+        } catch (Exception e) {
+            response.put("error", e.getMessage());
+            response.put("status", "error");
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

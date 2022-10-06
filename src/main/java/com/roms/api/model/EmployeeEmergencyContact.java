@@ -14,11 +14,25 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name ="employee_address")
-public class EmployeeAddress extends CommonFields implements Serializable {
+@Table(name ="employee_emergency_contact")
+public class EmployeeEmergencyContact extends CommonFields implements Serializable {
 
-    @Column(name = "type")
-    private int type; // 1 permanent, 2 temp and 3 for both  address
+    @Column(name = "relationship" )
+    private String relationship;
+    @Column(name = "first_name" )
+    public String firstName;
+    @Column(name = "last_name" )
+    public String lastName;
+    @Column(name = "middle_name" )
+    private String middleName;
+    @Column(name = "salut" )
+    private String salut;
+    @Column(name = "email" )
+    public String email;
+    @Column(name = "phone" )
+    public String phone;
+    @Column(name = "mobile" )
+    public String mobile;
 
     @Column(name = "address")
     private String address;
