@@ -42,6 +42,25 @@ public class EmployeeOnboardingController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+
+    @PostMapping(value = "/membership", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> membership(@RequestBody() OnboardingMembershipInput personalDetail) {
+        Map<String, Object> response = new HashMap();
+
+        response.put("status","success");
+        //  employeeOnboardingService.oboardPersonalDetail(personalDetail, response);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/feedback", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> feedback(@RequestBody() OnboardingFeedBackInput personalDetail) {
+        Map<String, Object> response = new HashMap();
+
+        response.put("status","success");
+        //  employeeOnboardingService.oboardPersonalDetail(personalDetail, response);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     @PostMapping(value = "/tfn", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> TFN(@RequestBody() OnboardingTFNInput personalDetail) {
         Map<String, Object> response = new HashMap();
