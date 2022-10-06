@@ -128,6 +128,7 @@ public class UserService  {
         employeePayLoad.setId(loggedIn.getUser().getEmployeId().getId());
         employeePayLoad.setRegistrationDate(String.valueOf(Instant.now().toEpochMilli()));
         employeePayLoad.setStatus(2);
+        employeePayLoad.setOrgId(loggedIn.getOrg().getId());
         HttpEntity<EmployeePayLoad> entity = new HttpEntity<EmployeePayLoad>(employeePayLoad,headers);
         String response = restTemplate.exchange(
                 URL, HttpMethod.POST, entity, String.class).getBody();
