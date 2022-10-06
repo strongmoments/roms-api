@@ -118,13 +118,15 @@ public class UserService  {
             }
             return response;
     }
-    public String updateTemporary(String emailId) {
+    public String updateTemporary(EmployeePayLoad employeePayLoad) {
         RestTemplate restTemplate = new RestTemplate();
         String URL  = "http://localhost:8081/updateUser";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-        EmployeePayLoad employeePayLoad = EmployeePayLoad.builder().email(emailId).orgId(loggedIn.getOrg().getId()).build();
+
+        employeePayLoad.setId(loggedIn.getUser().getEmployeId().getId());
+        employeePayLoad.setRegistrationDate(String.valueOf(Instant.now().toEpochMilli()));
         employeePayLoad.setStatus(2);
         HttpEntity<EmployeePayLoad> entity = new HttpEntity<EmployeePayLoad>(employeePayLoad,headers);
         String response = restTemplate.exchange(

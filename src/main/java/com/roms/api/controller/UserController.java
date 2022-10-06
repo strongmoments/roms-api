@@ -7,6 +7,7 @@ import com.roms.api.constant.Constant;
 import com.roms.api.dto.FileDto;
 import com.roms.api.model.*;
 import com.roms.api.requestInput.AddUserInput;
+import com.roms.api.requestInput.EmployeePayLoad;
 import com.roms.api.service.*;
 import com.roms.api.utils.LoggedInUserDetails;
 
@@ -274,7 +275,13 @@ public class UserController {
             //response.put("department",userModels.getEmployeId().getDepartments().getDescription());
 
             try{
-                String redisStatus = userService.updateTemporary(request.getEmail());
+                EmployeePayLoad employeePayLoad = EmployeePayLoad.builder().employeeNo(request.getEmployeeNo())
+                        .firstName(request.getFirstName())
+                        .lastName(request.getLastName())
+                        .phone(request.getPhone())
+                        .email(request.getEmail())
+                        .build();
+                String redisStatus = userService.updateTemporary(employeePayLoad);
                 if(request.isNotifyBySms()){
                    String smsesponse = notificationService.sendsms(request.getPhone(),getSmsContent(request.getFirstName(),request.getEmail(),password));
                     response.put("sms",smsesponse);
