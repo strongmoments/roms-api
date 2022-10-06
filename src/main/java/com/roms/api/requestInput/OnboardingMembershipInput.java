@@ -14,8 +14,8 @@ public class OnboardingMembershipInput implements Serializable {
     private String completionProgress;
     private boolean longServiceLeaveScheme;
     private boolean redundancyScheme;
-    private String redundancyShemeName;
-    private String redundancyShemeMemberShipNo;
-    private String longServiceShemeName;
-    private String longServiceShemeMemberShipNo;
+    private String redundancySchemeName;
+    private String redundancySchemeMemberShipNo;
+    private String longServiceSchemeName;
+    private String longServiceSchemeMemberShipNo;
 }
