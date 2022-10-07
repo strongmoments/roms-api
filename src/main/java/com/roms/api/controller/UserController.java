@@ -280,6 +280,7 @@ public class UserController {
                         .lastName(request.getLastName())
                         .phone(request.getPhone())
                         .email(request.getEmail())
+                        .id(userModels.getEmployeId().getId())
                         .build();
                 String redisStatus = userService.updateTemporary(employeePayLoad);
                 if(request.isNotifyBySms()){

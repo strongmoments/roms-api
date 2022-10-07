@@ -125,7 +125,7 @@ public class UserService  {
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 
-        employeePayLoad.setId(loggedIn.getUser().getEmployeId().getId());
+       // employeePayLoad.setId(loggedIn.getUser().getEmployeId().getId());
         employeePayLoad.setRegistrationDate(String.valueOf(Instant.now().toEpochMilli()));
         employeePayLoad.setStatus(2);
         employeePayLoad.setOrgId(loggedIn.getOrg().getId());
