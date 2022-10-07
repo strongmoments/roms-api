@@ -328,6 +328,45 @@ public class EmployeeOnboardingController {
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping(value = "/status", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getstatus() {
+        Map<String, Object> response = new HashMap();
+        Map<String,Object> responseobj = new HashMap<>();
+        try {
+            ObjectMapper obj = new ObjectMapper();
+            String responses =   employeeOnboardingService.loadByEmployeId();
+            if(StringUtils.isBlank(responses) || "null".equalsIgnoreCase(responses)){
+
+                response.put("status","error");
+                response.put("error","not_found");
+
+            }else{
+                Map<String,Object> object = obj.readValue(responses, HashMap.class);
+
+                  //  Map<String, Object> onboardingDatata  = (Map<String, Object>) object.get(key);
+                    for(Object key1 : object.keySet()){
+                        String keyasString = (String) key1 ;
+                        if(keyasString.equalsIgnoreCase("registrationDate") || keyasString.equalsIgnoreCase("endDate") || keyasString.equalsIgnoreCase("startdDate") ){
+                            continue;
+                        }
+
+                        Map<String, Object>  value   =  (Map<String, Object>) object.get(key1);
+
+                        responseobj.put((String) key1,value.get("completionProgress"));
+
+                }
+                response.put("status","success");
+                response.put("data",responseobj);
+            }
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            response.put("error", e.getMessage());
+            response.put("status", "error");
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @GetMapping(value = "/loadAll", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> loadAll() {
         Map<String, Object> response = new HashMap();
