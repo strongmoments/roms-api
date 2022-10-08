@@ -99,7 +99,7 @@ public class EmployeeController {
     public ResponseEntity<?> loadAllEmployee(
             @RequestParam(value ="page", defaultValue = "0") int page,
             @RequestParam(value ="size", defaultValue = "3") int size,
-            @RequestParam(value ="size", defaultValue = "") String empName){
+            @RequestParam(value ="empName", defaultValue = "") String empName){
 
         logger.info(("Process add new brand"));
         Map<String, Object> response = new HashMap<>();
