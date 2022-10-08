@@ -10,7 +10,9 @@ import com.roms.api.model.LeaveRequest;
 import com.roms.api.requestInput.SearchInput;
 import com.roms.api.service.ClientProjectSubteamMemberService;
 import com.roms.api.service.EmployeService;
+import com.roms.api.service.EmployeeAddressService;
 import com.roms.api.service.EmployeeDeviceService;
+import org.codehaus.plexus.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +53,8 @@ public class EmployeeController {
     @Autowired
     private EmployeeDeviceService employeeDeviceService;
 
+    @Autowired
+    private EmployeeAddressService employeeAddressService;
     @PostMapping(value = "/adddevice", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<?> requestLeave(@RequestBody EmployeeDevices employeeDevices) throws ParseException {
         Map<String,Object> response = new HashMap<>();
@@ -81,17 +85,32 @@ public class EmployeeController {
         return new ResponseEntity<>(requestedPage.get(), HttpStatus.OK);
     }
 
+    @GetMapping(value = "/personalinfo/{employeeId}")
+    public ResponseEntity<?> loadPersonalInfo(@PathVariable("employeeId") String employeeId){
+        Map<String, Object> response = new HashMap<>();
+        Optional<Employe> requestedPage =  employeService.findByEmployeeId(employeeId);
+        response.put("personal",requestedPage.get());
+        response.put("address",employeeAddressService.findAllByEmployeId(employeeId));
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
 
     @GetMapping(value = "/load")
     public ResponseEntity<?> loadAllEmployee(
             @RequestParam(value ="page", defaultValue = "0") int page,
-            @RequestParam(value ="size", defaultValue = "3") int size){
+            @RequestParam(value ="size", defaultValue = "3") int size,
+            @RequestParam(value ="size", defaultValue = "") String empName){
 
         logger.info(("Process add new brand"));
         Map<String, Object> response = new HashMap<>();
         try {
-           Page<Employe> requestedPage =  employeService.findAll(page,size);
+           Page<Employe> requestedPage = null;
+           if(StringUtils.isBlank(empName)){
+               requestedPage = employeService.findAll(page,size);
+           }else{
+               requestedPage = employeService.findAllFilterByName(page,size,empName);
+           }
+
             response.put("totalElement", requestedPage.getTotalElements());
             response.put("totalPage", requestedPage.getTotalPages());
             response.put("numberOfelement", requestedPage.getNumberOfElements());

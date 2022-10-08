@@ -122,6 +122,14 @@ public class EmployeService {
         return employeesRepository.findAllByOrganisation(new Organisation(loggedInUserDetails.get("orgId").toString()),pageble);
     }
 
+    public Page<Employe> findAllFilterByName(int page, int size, String searchText){
+        PageRequest pageble  = PageRequest.of(page, size, Sort.by("lastName","firstName").ascending());
+        Map<String,Object> loggedInUserDetails =(Map<String,Object>) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        return employeesRepository.findAllByOrganisationAndFirstNameContainsIgnoreCaseOrLastNameContainsIgnoreCase(new Organisation(loggedInUserDetails.get("orgId").toString()),searchText,searchText, pageble);
+    }
+
+
+
     public Long getTotalEmployeeCount(){
        return employeesRepository.countAllByOrganisation(loggedIn.getOrg());
     }
