@@ -64,16 +64,15 @@ public class EmployeeOnboardingController {
         Map<String, Object> response = new HashMap();
 
         response.put("status","success");
-        //  employeeOnboardingService.oboardPersonalDetail(personalDetail, response);
+          employeeOnboardingService.onboardMembership(personalDetail, response);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping(value = "/feedback", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> feedback(@RequestBody() OnboardingFeedBackInput personalDetail) {
         Map<String, Object> response = new HashMap();
-
         response.put("status","success");
-        //  employeeOnboardingService.oboardPersonalDetail(personalDetail, response);
+        employeeOnboardingService.onboardFeedback(personalDetail, response);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

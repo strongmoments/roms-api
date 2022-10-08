@@ -123,6 +123,46 @@ public class EmployeeOnboardingService {
 
     }
 
+    public void onboardMembership(OnboardingMembershipInput paylod, Map<String,Object> responses ){
+        try{
+            RestTemplate restTemplate = new RestTemplate();
+            String URL  = "http://localhost:8081/v1/employee/onboard/membership";
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+            HttpEntity<OnboardingMembershipInput> entity = new HttpEntity<OnboardingMembershipInput>(paylod,headers);
+            paylod.setId(logged.getUser().getEmployeId().getId());
+            String response = restTemplate.exchange(
+                    URL, HttpMethod.POST, entity, String.class).getBody();
+            responses.put("status","success");
+
+        }catch (Exception e){
+            responses.put("status","error");
+            responses.put("error",e.getMessage());
+        }
+
+    }
+
+    public void onboardFeedback(OnboardingFeedBackInput paylod, Map<String,Object> responses ){
+        try{
+            RestTemplate restTemplate = new RestTemplate();
+            String URL  = "http://localhost:8081/v1/employee/onboard/feedback";
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+            HttpEntity<OnboardingFeedBackInput> entity = new HttpEntity<OnboardingFeedBackInput>(paylod,headers);
+            paylod.setId(logged.getUser().getEmployeId().getId());
+            String response = restTemplate.exchange(
+                    URL, HttpMethod.POST, entity, String.class).getBody();
+            responses.put("status","success");
+
+        }catch (Exception e){
+            responses.put("status","error");
+            responses.put("error",e.getMessage());
+        }
+
+    }
+
 
     public void onboardsuperannuation(OnboardingSuperannuationInput paylod, Map<String,Object> responses ){
         try{
