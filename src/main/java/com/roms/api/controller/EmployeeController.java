@@ -2,16 +2,12 @@ package com.roms.api.controller;
 
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.roms.api.dto.FileDto;
 import com.roms.api.kafka.KafkaProducer;
-import com.roms.api.model.ClientProjectSubteamMember;
-import com.roms.api.model.Employe;
-import com.roms.api.model.EmployeeDevices;
-import com.roms.api.model.LeaveRequest;
+import com.roms.api.model.*;
 import com.roms.api.requestInput.SearchInput;
-import com.roms.api.service.ClientProjectSubteamMemberService;
-import com.roms.api.service.EmployeService;
-import com.roms.api.service.EmployeeAddressService;
-import com.roms.api.service.EmployeeDeviceService;
+import com.roms.api.service.*;
 import org.codehaus.plexus.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +19,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -55,6 +53,38 @@ public class EmployeeController {
 
     @Autowired
     private EmployeeAddressService employeeAddressService;
+
+    @Autowired
+    private MinioService minioService;
+
+    @Autowired
+    private EmployeeProfileImageService employeeProfileImageService;
+
+    @RequestMapping(value = "/uploadpic" , method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE  })
+    public ResponseEntity<Map<String,Object>> uploadFile(@RequestParam String id, @RequestParam(value="file") MultipartFile[] filse) throws IOException {
+
+        Map<String, Object> response = new HashMap();
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, MultipartFile> imageData = new HashMap();
+        try {
+            List<DigitalAssets> digitalAsset = new ArrayList<>();
+            for (MultipartFile file : filse) {
+                FileDto fileDto = FileDto.builder()
+                        .file(file).build();
+                DigitalAssets digitalAssets = minioService.uploadFile(fileDto);
+                employeService.uploadPic(digitalAssets);
+
+            }
+            response.put("status", "success");
+
+        } catch (Exception ee) {
+            ee.printStackTrace();
+            response.put("status", "error");
+            response.put("error", ee.getMessage());
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     @PostMapping(value = "/adddevice", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<?> requestLeave(@RequestBody EmployeeDevices employeeDevices) throws ParseException {
         Map<String,Object> response = new HashMap<>();

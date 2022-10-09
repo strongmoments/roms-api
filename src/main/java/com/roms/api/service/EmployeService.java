@@ -34,6 +34,19 @@ public class EmployeService {
 
 
 
+
+    public void uploadPic(DigitalAssets digitalAssets){
+
+    EmployeeProfileImage  employeeImage =  employeeProfileImageService.findEmployeImage();
+        if(employeeImage != null){
+            employeeImage.setDigitalAssets(digitalAssets);
+            employeeProfileImageService.update(employeeImage);
+        }
+
+    }
+
+
+
     public Optional<Employe> findById(String employeeId){
         return employeesRepository.findById(employeeId);
 
