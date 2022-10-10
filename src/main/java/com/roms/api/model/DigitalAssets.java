@@ -29,6 +29,9 @@ public class DigitalAssets extends CommonFields implements Serializable {
     @Column(name = "file_name" )
     private String fileName;
 
+    @Column(name = "bucketName" )
+    private String bucketName;
+
     @Column(name = "file_type" )
     private String fileType;
 
@@ -40,6 +43,7 @@ public class DigitalAssets extends CommonFields implements Serializable {
 
     @Column(name = "reference_type" )
     private String referenceType;
+
 
 
 }

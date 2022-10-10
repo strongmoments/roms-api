@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
@@ -34,7 +35,20 @@ public class MinioService {
     @Autowired
     private DigitalAssetService digitalAssetService;
 
+    public InputStream getObject(String filename,String bucketName) {
+        InputStream stream;
+        try {
+            stream = minioClient.getObject(GetObjectArgs.builder()
+                    .bucket(bucketName)
+                    .object(filename)
+                    .build());
+        } catch (Exception e) {
+            logger.error("error when get list objects from minio: ", e);
+            return null;
+        }
 
+        return stream;
+    }
 
     public DigitalAssets uploadFile(FileDto request) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
         String bucketName = loggedIn.getUser().getEmployeId().getId();
@@ -56,12 +70,14 @@ public class MinioService {
         DigitalAssets digitalAsset = DigitalAssets.builder().url(fileUrl)
                 .fileType(request.getFile().getContentType())
                 .size(request.getFile().getSize())
+                .bucketName(bucketName)
                 .fileName(request.getFile().getOriginalFilename())
                 .build();
         return digitalAssetService.save(digitalAsset);
     }
     private String getPreSignedUrl(String fileName,String bucketName) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
-      return   minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder().method(Method.GET).bucket(bucketName).object(fileName).build());
+      return  new StringBuilder().append("/").append("v1/files").append("?").append("id=").append(bucketName).append("&").append("fileName=").append(fileName).toString();
+        // minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder().method(Method.GET).bucket(bucketName).object(fileName).build());
 
     }
 

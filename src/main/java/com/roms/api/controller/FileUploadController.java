@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.roms.api.dto.FileDto;
 import com.roms.api.model.DigitalAssets;
 import com.roms.api.service.MinioService;
+import org.apache.commons.compress.utils.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -48,6 +49,18 @@ public class FileUploadController {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @GetMapping(value = "")
+    public ResponseEntity<?> loadApliedLeaveByLeaveStatus(
+            @RequestParam(value ="fileName", defaultValue = "") String fileName,
+            @RequestParam(value ="id", defaultValue = "") String bucketName) throws IOException {
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(IOUtils.toByteArray(minioService.getObject(fileName,bucketName)));
+
+    }
+
 }
 
 
