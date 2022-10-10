@@ -41,6 +41,12 @@ public class EmployeService {
         if(employeeImage != null){
             employeeImage.setDigitalAssets(digitalAssets);
             employeeProfileImageService.update(employeeImage);
+        }else{
+            EmployeeProfileImage employeeImage1 = new EmployeeProfileImage();
+            employeeImage1.setEmploye(loggedIn.getUser().getEmployeId());
+            employeeImage1.setDigitalAssets(digitalAssets);
+            employeeProfileImageService.save(employeeImage1);
+
         }
 
     }

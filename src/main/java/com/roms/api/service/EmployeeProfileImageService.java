@@ -22,6 +22,7 @@ public class EmployeeProfileImageService {
     public EmployeeProfileImage save(EmployeeProfileImage employeeProfileImage){
         employeeProfileImage.setCreateBy(loggedIn.getUser());
         employeeProfileImage.setCreateDate(Instant.now());
+        employeeProfileImage.setOrganisation(loggedIn.getOrg());
         return employeeProfileImageRepository.save(employeeProfileImage);
 
     }
