@@ -76,8 +76,8 @@ public class MinioService {
         return digitalAssetService.save(digitalAsset);
     }
     private String getPreSignedUrl(String fileName,String bucketName) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
-      return  new StringBuilder().append("/").append("v1/files").append("?").append("id=").append(bucketName).append("&").append("fileName=").append(fileName).toString();
-        // minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder().method(Method.GET).bucket(bucketName).object(fileName).build());
+      //return  new StringBuilder().append("/").append("v1/files").append("?").append("id=").append(bucketName).append("&").append("fileName=").append(fileName).toString();
+        return minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder().method(Method.GET).bucket(bucketName).object(fileName).build());
 
     }
 
