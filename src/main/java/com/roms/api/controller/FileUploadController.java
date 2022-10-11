@@ -56,7 +56,7 @@ public class FileUploadController {
             @RequestParam(value ="id", defaultValue = "") String bucketName) throws IOException {
 
         return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .contentType(MediaType.valueOf(MediaType.APPLICATION_OCTET_STREAM_VALUE))
                 .body(IOUtils.toByteArray(minioService.getObject(fileName,bucketName)));
 
     }
