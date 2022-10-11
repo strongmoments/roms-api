@@ -6,6 +6,7 @@ import com.roms.api.model.DigitalAssets;
 import com.roms.api.service.MinioService;
 import org.apache.commons.compress.utils.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -53,11 +54,17 @@ public class FileUploadController {
     @GetMapping(value = "")
     public ResponseEntity<?> loadApliedLeaveByLeaveStatus(
             @RequestParam(value ="fileName", defaultValue = "") String fileName,
-            @RequestParam(value ="id", defaultValue = "") String bucketName) throws IOException {
+            @RequestParam(value ="id", defaultValue = "") String bucketName,
+    @RequestParam(value ="type", defaultValue = "") String type) throws IOException {
 
-        return ResponseEntity.ok()
-                .contentType(MediaType.valueOf(MediaType.APPLICATION_OCTET_STREAM_VALUE))
-                .body(IOUtils.toByteArray(minioService.getObject(fileName,bucketName)));
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType(type));
+
+        headers.add("Content-Disposition", "inline; filename=" + fileName);
+
+        ResponseEntity<byte[]> returnValue = new ResponseEntity<>(IOUtils.toByteArray(minioService.getObject(fileName,bucketName)), headers, HttpStatus.OK);
+
+        return returnValue;
 
     }
 
