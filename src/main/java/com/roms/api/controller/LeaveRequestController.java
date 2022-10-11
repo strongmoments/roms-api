@@ -309,4 +309,54 @@ public class LeaveRequestController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+
+    @PostMapping(value = "/loadCurrent")
+    public ResponseEntity<?> loadCurrentLeaves(
+            @RequestBody LeaveRequestSearchInput leaveRequestSearchInput,
+            @RequestParam(value ="page", defaultValue = "0") int page,
+            @RequestParam(value ="size", defaultValue = "3") int size) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+        Instant fromDate = sdf.parse(leaveRequestSearchInput.getFromDate()).toInstant();
+        Instant toDate = sdf.parse(leaveRequestSearchInput.getToDate()).toInstant();
+        Integer leaveStatus = Integer.parseInt(leaveRequestSearchInput.getStatus());
+
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Page<LeaveRequest> requestedPage = null;
+            if(!(StringUtils.isEmpty(leaveRequestSearchInput.getDepartmentId()) )&& !(StringUtils.isEmpty(leaveRequestSearchInput.getEmployeeTypeId())) && leaveStatus >0){
+                requestedPage = leaveRequestService.findAllCurrentLeaveTransactionByEmployeeTypeAndDepartmentAndLeaveStatus(page, size,fromDate,toDate, leaveRequestSearchInput.getEmployeeTypeId(),leaveRequestSearchInput.getDepartmentId(), leaveStatus);
+            }else if(!(StringUtils.isEmpty(leaveRequestSearchInput.getDepartmentId()) ) && StringUtils.isEmpty(leaveRequestSearchInput.getEmployeeTypeId()) && leaveStatus >0){
+                requestedPage = leaveRequestService.findAllCurrentLeaveTransactionByDepartmentAndLeaveStatus(page, size,fromDate,toDate,leaveRequestSearchInput.getDepartmentId(),leaveStatus);
+            }else if(StringUtils.isEmpty(leaveRequestSearchInput.getDepartmentId())  && !(StringUtils.isEmpty(leaveRequestSearchInput.getEmployeeTypeId())) && leaveStatus>0 ){
+                requestedPage = leaveRequestService.findAllCurrentLeaveTransactionByEmployeeTypeAndLeaveStatus(page, size,fromDate,toDate,leaveRequestSearchInput.getEmployeeTypeId(),leaveStatus);
+            }else if(!(StringUtils.isEmpty(leaveRequestSearchInput.getDepartmentId()) )&& !(StringUtils.isEmpty(leaveRequestSearchInput.getEmployeeTypeId())) ){
+                requestedPage = leaveRequestService.findAllCurrentLeaveTransactionByEmployeeTypeAndDepartment(page, size,fromDate,toDate, leaveRequestSearchInput.getEmployeeTypeId(),leaveRequestSearchInput.getDepartmentId());
+            }else if(!(StringUtils.isEmpty(leaveRequestSearchInput.getDepartmentId()) ) && StringUtils.isEmpty(leaveRequestSearchInput.getEmployeeTypeId()) ){
+                requestedPage = leaveRequestService.findAllCurrentLeaveTransactionByDepartment(page, size,fromDate,toDate,leaveRequestSearchInput.getDepartmentId());
+            }else if(StringUtils.isEmpty(leaveRequestSearchInput.getDepartmentId())  && !(StringUtils.isEmpty(leaveRequestSearchInput.getEmployeeTypeId())) ){
+                requestedPage = leaveRequestService.findAllCurrentLeaveTransactionByEmployeeType(page, size,fromDate,toDate,leaveRequestSearchInput.getEmployeeTypeId());
+            }else {
+                if(leaveStatus>0){
+                    requestedPage = leaveRequestService.findAllCurrentLeaveTransactionByLeaveStatus( page, size,fromDate,toDate,leaveStatus);
+                }else{
+                    requestedPage = leaveRequestService.findAllCurrentLeaveTransaction(page, size, fromDate,toDate);
+                }
+
+            }
+
+            response.put("totalElement", requestedPage.getTotalElements());
+            response.put("totalPage", requestedPage.getTotalPages());
+            response.put("numberOfelement", requestedPage.getNumberOfElements());
+            response.put("currentPageNmber", requestedPage.getNumber());
+            response.put("data", requestedPage.getContent());
+        } catch (Exception e){
+            logger.error("An error occurred! {}", e.getMessage());
+            response.put("status","error");
+            response.put("error",e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+
 }

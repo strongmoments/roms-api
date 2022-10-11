@@ -105,6 +105,64 @@ public class LeaveRequestService {
 
 
 
+
+    public Page<LeaveRequest> findAllCurrentLeaveTransaction(int page, int size,Instant fromdDate, Instant toDate){
+        PageRequest pageble  = PageRequest.of(page, size, Sort.by("applyDate").descending());
+        return leaveRequestRepository.findAllByEndDateTimeBetweenAndOrganisationOrderByApplyDateDesc(fromdDate, toDate,loggedIn.getOrg(),pageble);
+    }
+
+    public Page<LeaveRequest> findAllCurrentLeaveTransactionByLeaveStatus(int page, int size,Instant fromdDate, Instant toDate,Integer leaveStatus){
+        PageRequest pageble  = PageRequest.of(page, size, Sort.by("applyDate").descending());
+        return leaveRequestRepository.findAllByLeaveStatusAndEndDateTimeBetweenAndOrganisationOrderByApplyDateDesc(leaveStatus,fromdDate,toDate,loggedIn.getOrg(),pageble);
+    }
+
+    public Page<LeaveRequest> findAllCurrentLeaveTransactionByDepartment(int page, int size,Instant fromdDate, Instant toDate, String departmentId){
+        PageRequest pageble  = PageRequest.of(page, size, Sort.by("applyDate").descending());
+        Departments departments = new Departments();
+        departments.setId(departmentId);
+        return leaveRequestRepository.findAllByEmployeDepartmentsAndEndDateTimeBetweenAndOrganisationOrderByApplyDateDesc(departments,fromdDate,toDate,loggedIn.getOrg(),pageble);
+    }
+
+    public Page<LeaveRequest> findAllCurrentLeaveTransactionByDepartmentAndLeaveStatus(int page, int size,Instant fromdDate, Instant toDate, String departmentId, Integer leaveStatus){
+        PageRequest pageble  = PageRequest.of(page, size, Sort.by("applyDate").descending());
+        Departments departments = new Departments();
+        departments.setId(departmentId);
+        return leaveRequestRepository.findAllByEmployeDepartmentsAndEndDateTimeBetweenAndOrganisationAndLeaveStatusOrderByApplyDateDesc(departments,fromdDate,toDate,loggedIn.getOrg(),leaveStatus,pageble);
+    }
+    public Page<LeaveRequest> findAllCurrentLeaveTransactionByEmployeeType(int page, int size,Instant fromdDate, Instant toDate,String employeeTypeId){
+        PageRequest pageble  = PageRequest.of(page, size, Sort.by("applyDate").descending());
+        EmployeType employeType = new EmployeType();
+        employeType.setId(employeeTypeId);
+        return leaveRequestRepository.findAllByEmployeEmployeTypeAndEndDateTimeBetweenAndOrganisationOrderByApplyDateDesc(employeType,fromdDate, toDate,loggedIn.getOrg(),pageble);
+    }
+
+    public Page<LeaveRequest> findAllCurrentLeaveTransactionByEmployeeTypeAndLeaveStatus(int page, int size,Instant fromdDate, Instant toDate,String employeeTypeId,Integer leaveStatus){
+        PageRequest pageble  = PageRequest.of(page, size, Sort.by("applyDate").descending());
+        EmployeType employeType = new EmployeType();
+        employeType.setId(employeeTypeId);
+        return leaveRequestRepository.findAllByEmployeEmployeTypeAndEndDateTimeBetweenAndOrganisationAndLeaveStatusOrderByApplyDateDesc(employeType,fromdDate, toDate,loggedIn.getOrg(),leaveStatus,pageble);
+    }
+
+    public Page<LeaveRequest> findAllCurrentLeaveTransactionByEmployeeTypeAndDepartment(int page, int size, Instant fromdDate, Instant toDate,String employeeTypeId, String departmentId){
+        PageRequest pageble  = PageRequest.of(page, size, Sort.by("applyDate").descending());
+        EmployeType employeType = new EmployeType();
+        employeType.setId(employeeTypeId);
+        Departments departments = new Departments();
+        departments.setId(departmentId);
+        return leaveRequestRepository.findAllByEmployeEmployeTypeAndEmployeDepartmentsAndEndDateTimeBetweenAndOrganisationOrderByApplyDateDesc(employeType,departments,fromdDate,toDate,loggedIn.getOrg(),pageble);
+    }
+
+    public Page<LeaveRequest> findAllCurrentLeaveTransactionByEmployeeTypeAndDepartmentAndLeaveStatus(int page, int size, Instant fromdDate, Instant toDate,String employeeTypeId, String departmentId, int leaveStatus){
+        PageRequest pageble  = PageRequest.of(page, size, Sort.by("applyDate").descending());
+        EmployeType employeType = new EmployeType();
+        employeType.setId(employeeTypeId);
+        Departments departments = new Departments();
+        departments.setId(departmentId);
+        return leaveRequestRepository.findAllByEmployeEmployeTypeAndEmployeDepartmentsAndEndDateTimeBetweenAndOrganisationAndLeaveStatusOrderByApplyDateDesc(employeType,departments,fromdDate,toDate,loggedIn.getOrg() ,leaveStatus,pageble);
+    }
+
+
+
     public Page<LeaveRequest> findAllRecievedRequestByLeaveStatus(String approverId,int leaveStatus ,int page, int size){
         PageRequest pageble  = PageRequest.of(page, size, Sort.by("applyDate").descending());
         return leaveRequestRepository.findAllByApproverAndLeaveStatusAndOrganisationOrderByApplyDateDesc(new Employe(approverId), leaveStatus, loggedIn.getOrg(),pageble);
