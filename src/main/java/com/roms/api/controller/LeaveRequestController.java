@@ -266,7 +266,7 @@ public class LeaveRequestController {
             @RequestBody LeaveRequestSearchInput leaveRequestSearchInput,
             @RequestParam(value ="page", defaultValue = "0") int page,
             @RequestParam(value ="size", defaultValue = "3") int size) throws ParseException {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault());
         Instant fromDate = sdf.parse(leaveRequestSearchInput.getFromDate()).toInstant();
         Instant toDate = sdf.parse(leaveRequestSearchInput.getToDate()).toInstant();
         Integer leaveStatus = Integer.parseInt(leaveRequestSearchInput.getStatus());
@@ -315,7 +315,7 @@ public class LeaveRequestController {
             @RequestBody LeaveRequestSearchInput leaveRequestSearchInput,
             @RequestParam(value ="page", defaultValue = "0") int page,
             @RequestParam(value ="size", defaultValue = "3") int size) throws ParseException {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault());
         Instant fromDate = sdf.parse(leaveRequestSearchInput.getFromDate()).toInstant();
         Instant toDate = sdf.parse(leaveRequestSearchInput.getToDate()).toInstant();
         Integer leaveStatus = Integer.parseInt(leaveRequestSearchInput.getStatus());
