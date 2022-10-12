@@ -14,4 +14,5 @@ public class OnboardingCompleteInput implements Serializable {
     private String completionProgress;
     private String firstName;
     private String lastName;
+    private String profileImageURL;
 }

@@ -55,12 +55,8 @@ public class EmployeeOnboardingController {
         Map<String, Object> response = new HashMap();
         try{
             response.put("status","success");
-            EmployeePayLoad employeePayLoad = EmployeePayLoad.builder()
-                    .firstName(request.getFirstName())
-                    .lastName(request.getLastName())
-                    .id(loggedIn.getUser().getEmployeId().getId())
-                    .orgId(loggedIn.getOrg().getId()).build();
-            notificationService.sendNotification(employeePayLoad);
+            request.setId(loggedIn.getUser().getEmployeId().getId());
+            notificationService.sendNotification(request);
 
         } catch (Exception e) {
             response.put("error", e.getMessage());

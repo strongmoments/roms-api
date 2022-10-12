@@ -7,6 +7,7 @@ import com.roms.api.model.LeaveRequest;
 import com.roms.api.model.LeaveType;
 import com.roms.api.model.PushNotificationPayload;
 import com.roms.api.requestInput.EmployeePayLoad;
+import com.roms.api.requestInput.OnboardingCompleteInput;
 import com.roms.api.utils.LoggedInUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -28,6 +29,8 @@ public abstract class NotificationService {
 
     public  void sendNotification(String  eventId){}
     public  void sendNotification(EmployeePayLoad employeePayLoad) throws InterruptedException {}
+    public  void sendNotification(OnboardingCompleteInput employeePayLoad) throws InterruptedException {}
+
     public  String sendsms(String toNumber ,String message)  {return "";}
 
 

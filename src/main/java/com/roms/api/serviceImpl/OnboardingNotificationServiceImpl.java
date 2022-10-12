@@ -6,10 +6,12 @@ import com.roms.api.model.Employe;
 import com.roms.api.model.EmployeeDevices;
 import com.roms.api.model.PushNotificationPayload;
 import com.roms.api.requestInput.EmployeePayLoad;
+import com.roms.api.requestInput.OnboardingCompleteInput;
 import com.roms.api.service.EmployeeDeviceService;
 import com.roms.api.service.EmployeeOnboardingService;
 import com.roms.api.service.NotificationService;
 import com.roms.api.service.UserRolesMapService;
+import com.roms.api.utils.LoggedInUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -31,31 +33,38 @@ public class OnboardingNotificationServiceImpl extends NotificationService {
 
     @Autowired
     private  EmployeeOnboardingService employeeOnboardingService;
+
+    @Autowired
+    private LoggedInUserDetails loggedIn;
     @Override
-    public void sendNotification(EmployeePayLoad employeePayLoad) throws InterruptedException {
+    public void sendNotification(OnboardingCompleteInput employeePayLoad) throws InterruptedException {
 
 
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-        List<Employe> employess = userRolesMapService.findAllEmployeeByRoleName("ROLE_SUPERVISOR",employeePayLoad.getOrgId());
+        List<Employe> employess = userRolesMapService.findAllEmployeeByRoleName("ROLE_SUPERVISOR",loggedIn.getOrg().getId());
+
         if (!employess.isEmpty()) {
+
+            ObjectMapper jsonParser =new ObjectMapper();
+            String responses =   employeeOnboardingService.loadByEmployeId();
+            Map<String,Object> object = new HashMap<>();
+            try {
+                object = jsonParser.readValue(responses, HashMap.class);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+
             for(Employe employes : employess ) {
                 List<String> allDevices = new ArrayList<>();
-                List<EmployeeDevices> notificatinDevices = employeeDeviceService.findAllByEmployee(employes.getId(), employeePayLoad.getOrgId());
+                List<EmployeeDevices> notificatinDevices = employeeDeviceService.findAllByEmployee(employes.getId(), loggedIn.getOrg().getId());
                 if (!notificatinDevices.isEmpty()) {
                     notificatinDevices.forEach(obj -> {
                         allDevices.add(obj.getNotificationDeviceToken());
                     });
                 }
-                ObjectMapper jsonParser =new ObjectMapper();
-                String responses =   employeeOnboardingService.loadByEmployeId();
-                Map<String,Object> object = new HashMap<>();
-                try {
-                object = jsonParser.readValue(responses, HashMap.class);
-                } catch (JsonProcessingException e) {
-                    throw new RuntimeException(e);
-                }
+
 
                 PushNotificationPayload requestPayload = new PushNotificationPayload();
                 String fromName = employeePayLoad.getFirstName() + " " + employeePayLoad.getLastName();
@@ -64,7 +73,7 @@ public class OnboardingNotificationServiceImpl extends NotificationService {
                 requestPayload.setMessage(fromName + " has completed onboarding.");
                 requestPayload.setUsername(employes.getId());
                 Map<String, Object> obj = new HashMap<>();
-                obj.put("profileImage", "");
+                obj.put("profileImage", employeePayLoad.getProfileImageURL());
                 String time = String.valueOf(Instant.now().toEpochMilli());
                 obj.put("time", time);
                 obj.put("devices", allDevices);
