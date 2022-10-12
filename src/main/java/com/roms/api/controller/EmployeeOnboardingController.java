@@ -4,8 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.roms.api.model.*;
 import com.roms.api.requestInput.*;
 import com.roms.api.service.*;
+import com.roms.api.utils.LoggedInUserDetails;
 import org.codehaus.plexus.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +41,34 @@ public class EmployeeOnboardingController {
     @Autowired
     private EmployeeEmergencyContactService employeeEmergencyContactService;
 
+    @Autowired
+    private LoggedInUserDetails loggedIn;
+
+    @Autowired
+    @Qualifier("onboardingnotification")
+    private NotificationService notificationService;
+
+
+
+    @PostMapping(value = "/complete", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> complte(@RequestBody() OnboardingCompleteInput request) {
+        Map<String, Object> response = new HashMap();
+        try{
+            response.put("status","success");
+            EmployeePayLoad employeePayLoad = EmployeePayLoad.builder()
+                    .firstName(request.getFirstName())
+                    .lastName(request.getLastName())
+                    .id(loggedIn.getUser().getEmployeId().getId())
+                    .orgId(loggedIn.getOrg().getId()).build();
+            notificationService.sendNotification(employeePayLoad);
+
+        } catch (Exception e) {
+            response.put("error", e.getMessage());
+            response.put("status", "error");
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
 
     @PostMapping(value = "/superannuation", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -112,7 +142,7 @@ public class EmployeeOnboardingController {
     public ResponseEntity<?> save(@RequestBody() OnboardingLicenceInput personalDetail) {
         Map<String, Object> response = new HashMap();
         response.put("status","success");
-        //  employeeOnboardingService.oboardPersonalDetail(personalDetail, response);
+        employeeOnboardingService.oboardLicence(personalDetail, response);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -390,7 +420,7 @@ public class EmployeeOnboardingController {
                   //  Map<String, Object> onboardingDatata  = (Map<String, Object>) object.get(key);
                     for(Object key1 : object.keySet()){
                         String keyasString = (String) key1 ;
-                        if(keyasString.equalsIgnoreCase("registrationDate") || keyasString.equalsIgnoreCase("endDate") || keyasString.equalsIgnoreCase("startdDate") ){
+                        if(keyasString.equalsIgnoreCase("registrationDate") || keyasString.equalsIgnoreCase("endDate") || keyasString.equalsIgnoreCase("startdDate") || keyasString.equalsIgnoreCase("firstName") || keyasString.equalsIgnoreCase("lastName") || keyasString.equalsIgnoreCase("id") || keyasString.equalsIgnoreCase("empNo")){
                             continue;
                         }
 
