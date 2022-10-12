@@ -72,7 +72,7 @@ public class EmployeeController {
                 FileDto fileDto = FileDto.builder()
                         .file(file).build();
                 DigitalAssets digitalAssets = minioService.uploadFile(fileDto);
-                employeService.uploadPic(digitalAssets);
+                employeService.uploadPic(digitalAssets, id);
 
             }
             response.put("status", "success");

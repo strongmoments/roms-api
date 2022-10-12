@@ -35,15 +35,17 @@ public class EmployeService {
 
 
 
-    public void uploadPic(DigitalAssets digitalAssets){
+    public void uploadPic(DigitalAssets digitalAssets, String empployeeId){
+        Employe employe = new Employe();
+        employe.setId(empployeeId);
 
-    EmployeeProfileImage  employeeImage =  employeeProfileImageService.findEmployeImage();
+    EmployeeProfileImage  employeeImage =  employeeProfileImageService.findEmployeImage(employe);
         if(employeeImage != null){
             employeeImage.setDigitalAssets(digitalAssets);
             employeeProfileImageService.update(employeeImage);
         }else{
             EmployeeProfileImage employeeImage1 = new EmployeeProfileImage();
-            employeeImage1.setEmploye(loggedIn.getUser().getEmployeId());
+            employeeImage1.setEmploye(employe);
             employeeImage1.setDigitalAssets(digitalAssets);
             employeeProfileImageService.save(employeeImage1);
 

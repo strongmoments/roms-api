@@ -35,6 +35,9 @@ public class MinioService {
     @Autowired
     private DigitalAssetService digitalAssetService;
 
+    @Value("${minio.env}")
+    private String env;
+
     public InputStream getObject(String filename,String bucketName) {
         InputStream stream;
         try {
@@ -52,6 +55,7 @@ public class MinioService {
 
     public DigitalAssets uploadFile(FileDto request) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
         String bucketName = loggedIn.getUser().getEmployeId().getId();
+        bucketName = env+"-"+bucketName;
 
         try {
             if(!doesBucketExist(bucketName)){

@@ -34,12 +34,21 @@ public class EmployeeProfileImageService {
 
     }
 
-    public EmployeeProfileImage findEmployeImage(){
-      List<EmployeeProfileImage> employeeProfileImageList = employeeProfileImageRepository.findAllByEmployeAndOrganisation(loggedIn.getUser().getEmployeId(), loggedIn.getOrg());
+    public EmployeeProfileImage findEmployeImage(Employe employe){
+      List<EmployeeProfileImage> employeeProfileImageList = employeeProfileImageRepository.findAllByEmployeAndOrganisation(employe, loggedIn.getOrg());
       if(!employeeProfileImageList.isEmpty()){
         return employeeProfileImageList.get(0);
       }
       return  null;
+
+    }
+
+    public EmployeeProfileImage findEmployeImage(){
+        List<EmployeeProfileImage> employeeProfileImageList = employeeProfileImageRepository.findAllByEmployeAndOrganisation(loggedIn.getUser().getEmployeId(), loggedIn.getOrg());
+        if(!employeeProfileImageList.isEmpty()){
+            return employeeProfileImageList.get(0);
+        }
+        return  null;
 
     }
 }
