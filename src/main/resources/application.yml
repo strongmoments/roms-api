@@ -62,6 +62,7 @@ slidepass: slide
 
 server:
   port: 8080
+  name: http://test.rtl.com.au
 
 release:
   version: release-0.0.3
@@ -82,5 +83,7 @@ minio:
     name: minioadmin
     secret: minioadmin
   url: http://13.211.215.135:9000
+  env: uat
+  #url: http://media.rtl.com.au
 
 
