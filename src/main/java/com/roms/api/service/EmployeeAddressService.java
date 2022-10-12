@@ -22,6 +22,7 @@ public class EmployeeAddressService {
     public EmployeeAddress save(EmployeeAddress employeeAddress){
         employeeAddress.setCreateBy(loggedIn.getUser());
         employeeAddress.setCreateDate(Instant.now());
+        employeeAddress.setOrganisation(loggedIn.getOrg());
         return employeeAddressRepository.save(employeeAddress);
     }
 
