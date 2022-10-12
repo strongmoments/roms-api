@@ -19,6 +19,7 @@ public interface EmployeRepository extends JpaRepository<Employe,String> {
 
     Page<Employe> findAllByOrganisationAndFirstNameContainsIgnoreCaseOrLastNameContainsIgnoreCase(Organisation organisation,String searchText, String searchText2, PageRequest pageRequest);
     Long countAllByOrganisation(Organisation organisation);
+    Long countAllByOrganisationAndCreateDateBetween(Organisation organisation , Instant fromDate, Instant todate);
 
     @Query("SELECT p.birthdate from Employe p where p.organisation.id =?1")
     List<Instant> findBirthDateByOrganisation(String organisation);

@@ -153,6 +153,10 @@ public class EmployeService {
        return employeesRepository.countAllByOrganisation(loggedIn.getOrg());
     }
 
+    public Long getNewEmployeeCountBetween(Instant fromDate, Instant toDate){
+        return employeesRepository.countAllByOrganisationAndCreateDateBetween(loggedIn.getOrg(),fromDate,toDate);
+    }
+
     public List<Instant> findDobOfEmployees(){
         return employeesRepository.findBirthDateByOrganisation(loggedIn.getOrg().getId());
     }

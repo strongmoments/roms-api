@@ -11,6 +11,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,8 @@ public class DashBoardController {
         Long totalEmployee = employeService.getTotalEmployeeCount();
         totalEmployee = totalEmployee-1; // to remove admin user
         List<Instant>  dobList = employeService.findDobOfEmployees();
+        Instant toDate = Instant.now();
+        Instant fromDate = toDate.minus(30, ChronoUnit.DAYS);
 
         AtomicInteger counter = new AtomicInteger();
         AtomicReference<Integer> countwithoutNull = new AtomicReference<>(0);
@@ -46,6 +49,8 @@ public class DashBoardController {
             totalEmployee =1L;
         }
         response.put("employeeDobAverage",counter.get()/countwithoutNull.get());
+        response.put("starters",employeService.getNewEmployeeCountBetween(fromDate,toDate));
+
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
