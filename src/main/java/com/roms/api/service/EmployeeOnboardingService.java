@@ -184,6 +184,26 @@ public class EmployeeOnboardingService {
 
     }
 
+    public void onboarComplition(EmployeePayLoad paylod, Map<String,Object> responses ){
+        try{
+            RestTemplate restTemplate = new RestTemplate();
+            String URL  = "http://localhost:8081/v1/employee/onboard/complete";
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+            HttpEntity<EmployeePayLoad> entity = new HttpEntity<EmployeePayLoad>(paylod,headers);
+           // paylod.setId(logged.getUser().getEmployeId().getId());
+            String response = restTemplate.exchange(
+                    URL, HttpMethod.POST, entity, String.class).getBody();
+            responses.put("status","success");
+
+        }catch (Exception e){
+            responses.put("status","error");
+            responses.put("error",e.getMessage());
+        }
+
+    }
+
 
 
     public String loadONboardedStatus(String onboardingType){

@@ -59,6 +59,9 @@ public class EmployeeOnboardingController {
         try{
             response.put("status","success");
             request.setId(loggedIn.getUser().getEmployeId().getId());
+            EmployeePayLoad employeePayLoad = EmployeePayLoad.builder()
+                    .id(loggedIn.getUser().getEmployeId().getId()).build();
+            employeeOnboardingService.onboarComplition(employeePayLoad, response);
             notificationService.sendNotification(request);
 
         } catch (Exception e) {
