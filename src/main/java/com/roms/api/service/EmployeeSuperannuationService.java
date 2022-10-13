@@ -5,6 +5,7 @@ import com.roms.api.model.EmployeeSuperannuation;
 import com.roms.api.repository.EmployeeSuperannuationRepository;
 import com.roms.api.requestInput.OnboardingSuperannuationInput;
 import com.roms.api.utils.LoggedInUserDetails;
+import org.codehaus.plexus.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,13 +37,12 @@ public class EmployeeSuperannuationService {
         DigitalAssets digitalAssetSelfFundattachment= DigitalAssets.builder().build();
         digitalAssetSelfFundattachment.setId(request.getSelfManagedFund().getAttachmentId());
 
-        EmployeeSuperannuation EmployeeSuperannuationCurrentFund = EmployeeSuperannuation.builder()
+        EmployeeSuperannuation employeeSuperannuationCurrentFund = EmployeeSuperannuation.builder()
                 .fillSuperFundNow(request.isFillSuperFundNow())
-                .signature(digitalAssetsSignature)
                 .paidAsperMychoice(request.isPaidAsperMychoice())
                 .abn(request.getCurrentFund().getAbn())
                 //.date(request.getDate())
-                .currentFundAttachment(digitalAssetCurrentFundAttachment)
+
                 .membername(request.getCurrentFund().getMembername())
                 .fundType(1)
                 .accountName(request.getCurrentFund().getAccountName())
@@ -54,17 +54,23 @@ public class EmployeeSuperannuationService {
                 .fundName(request.getCurrentFund().getFundName())
                 .address(request.getCurrentFund().getAddress())
                 .build();
+           if(StringUtils.isNotBlank(request.getSignatureId())){
+               employeeSuperannuationCurrentFund.setSignature(digitalAssetsSignature);
+           }
+            if(StringUtils.isNotBlank(request.getCurrentFund().getAttachmentId())){
+                employeeSuperannuationCurrentFund.setCurrentFundAttachment(digitalAssetCurrentFundAttachment);
+            }
 
-            save(EmployeeSuperannuationCurrentFund);
+
+            save(employeeSuperannuationCurrentFund);
 
         EmployeeSuperannuation employeeSuperannuationSelfFund = EmployeeSuperannuation.builder()
                 .fillSuperFundNow(request.isFillSuperFundNow())
-                .signature(digitalAssetsSignature)
+
                 .paidAsperMychoice(request.isPaidAsperMychoice())
                 .abn(request.getSelfManagedFund().getAbn())
                 //.date(request.getDate())
-                .selfFundattachment(digitalAssetSelfFundattachment)
-               //
+
                 .fundType(2)
                 .accountNumber(request.getSelfManagedFund().getAccountNumber())
                 .esa(request.getSelfManagedFund().getEsa())
@@ -79,6 +85,14 @@ public class EmployeeSuperannuationService {
                 .esa(request.getSelfManagedFund().getEsa())
 
                 .build();
+
+        if(StringUtils.isNotBlank(request.getSignatureId())){
+            employeeSuperannuationSelfFund.setSignature(digitalAssetsSignature);
+        }
+
+        if(StringUtils.isNotBlank(request.getSelfManagedFund().getAttachmentId())){
+            employeeSuperannuationSelfFund.setSelfFundattachment(digitalAssetSelfFundattachment);
+        }
 
         return save(employeeSuperannuationSelfFund);
 

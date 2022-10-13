@@ -5,6 +5,7 @@ import com.roms.api.model.*;
 import com.roms.api.repository.EmployeRepository;
 import com.roms.api.requestInput.OnboardingPersonalDetailInput;
 import com.roms.api.utils.LoggedInUserDetails;
+import org.codehaus.plexus.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -114,14 +115,16 @@ public class EmployeService {
                 .build();
         employeeAddressService.save(employeeTempddress);
 
-        DigitalAssets digitalAssets = DigitalAssets.builder().build();
-        digitalAssets.setId(request.getProfileImageId());
-        EmployeeProfileImage employeeProfileImage = EmployeeProfileImage.builder().
-                employe(employeModel)
-                        .digitalAssets(digitalAssets).
-                build();
+        if(StringUtils.isNotBlank(request.getProfileImageId())){
+            DigitalAssets digitalAssets = DigitalAssets.builder().build();
+            digitalAssets.setId(request.getProfileImageId());
+            EmployeeProfileImage employeeProfileImage = EmployeeProfileImage.builder().
+                    employe(employeModel)
+                    .digitalAssets(digitalAssets).
+                    build();
+            employeeProfileImageService.save(employeeProfileImage);
+        }
 
-        employeeProfileImageService.save(employeeProfileImage);
         return employeModel;
 
     }
