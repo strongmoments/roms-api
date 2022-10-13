@@ -65,7 +65,7 @@ userslide: slide
 slidepass: slide
 
 server:
-  port: 8082
+  port: 8080
   name: http://test.rtl.com.au
 
 release:
