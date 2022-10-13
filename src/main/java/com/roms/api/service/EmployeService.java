@@ -82,6 +82,7 @@ public class EmployeService {
         employeModel.setPhoneticName(request.getPhoneticName());
         employeModel.setJobTitle(request.getJobTitle());
         employeModel.setPronoun(request.getPronoun());
+
         employeModel.setSalut(request.getSalut());
         try{
             SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
@@ -101,6 +102,7 @@ public class EmployeService {
 
         EmployeeAddress employeePermanentAddress = EmployeeAddress.builder()
                 .type(1)
+                .address(request.getPermanentAddress().getAddress())
                 .suburb(request.getPermanentAddress().getSuburb())
                 .state(request.getPermanentAddress().getState())
                 .postcode(request.getPermanentAddress().getPostcode())
@@ -115,6 +117,7 @@ public class EmployeService {
         EmployeeAddress employeeAddress2 = employeeAddressService.findByAddressType(2);
         EmployeeAddress employeeTempddress = EmployeeAddress.builder()
                 .type(2)
+                .address(request.getTempAddress().getAddress())
                 .suburb(request.getTempAddress().getSuburb())
                 .state(request.getTempAddress().getState())
                 .postcode(request.getTempAddress().getPostcode())
