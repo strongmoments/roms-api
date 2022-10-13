@@ -19,6 +19,10 @@ spring:
       producer:
         retries: 0
         acks: all
+  servlet:
+    multipart:
+      max-file-size: 15MB
+      max-request-size: 15MB
 
   jpa:
     generate-ddl: true
@@ -61,7 +65,7 @@ userslide: slide
 slidepass: slide
 
 server:
-  port: 8080
+  port: 8082
   name: http://test.rtl.com.au
 
 release:
