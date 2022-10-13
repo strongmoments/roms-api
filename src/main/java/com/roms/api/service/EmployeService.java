@@ -85,7 +85,7 @@ public class EmployeService {
 
         employeModel.setSalut(request.getSalut());
         try{
-            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
             Instant dob = sdf.parse(request.getBirthdate()).toInstant();
             employeModel.setBirthdate(dob);
         }catch (Exception e){
