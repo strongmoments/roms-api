@@ -6,6 +6,8 @@ import com.roms.api.requestInput.*;
 import com.roms.api.service.*;
 import com.roms.api.utils.LoggedInUserDetails;
 import org.codehaus.plexus.util.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -22,7 +24,7 @@ import java.util.Map;
 @CrossOrigin
 @RequestMapping(value = "/v1/employee/onboard")
 public class EmployeeOnboardingController {
-
+    public static final Logger logger = LoggerFactory.getLogger(EmployeeOnboardingController.class);
 
     @Autowired
     private EmployeeOnboardingService employeeOnboardingService;
@@ -52,6 +54,7 @@ public class EmployeeOnboardingController {
 
     @PostMapping(value = "/complete", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> complte(@RequestBody() OnboardingCompleteInput request) {
+        logger.info("cmplete: {}",request);
         Map<String, Object> response = new HashMap();
         try{
             response.put("status","success");
@@ -69,6 +72,7 @@ public class EmployeeOnboardingController {
 
     @PostMapping(value = "/superannuation", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> superannuation(@RequestBody() OnboardingSuperannuationInput onboardingSuperannuationInput) {
+        logger.info("superannuation: {}",onboardingSuperannuationInput);
         Map<String, Object> response = new HashMap();
         try{
             response.put("status","success");
@@ -87,6 +91,7 @@ public class EmployeeOnboardingController {
 
     @PostMapping(value = "/membership", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> membership(@RequestBody() OnboardingMembershipInput personalDetail) {
+        logger.info("membership: {}",personalDetail);
         Map<String, Object> response = new HashMap();
 
         response.put("status","success");
@@ -96,6 +101,7 @@ public class EmployeeOnboardingController {
 
     @PostMapping(value = "/feedback", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> feedback(@RequestBody() OnboardingFeedBackInput personalDetail) {
+        logger.info("feedback: {}",personalDetail);
         Map<String, Object> response = new HashMap();
         response.put("status","success");
         employeeOnboardingService.onboardFeedback(personalDetail, response);
@@ -104,6 +110,7 @@ public class EmployeeOnboardingController {
 
     @PostMapping(value = "/tfn", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> TFN(@RequestBody() OnboardingTFNInput onboardingTFNInput) {
+        logger.info("tfn: {}",onboardingTFNInput);
         Map<String, Object> response = new HashMap();
         try{
             response.put("status","success");
@@ -120,6 +127,7 @@ public class EmployeeOnboardingController {
     }
     @PostMapping(value = "/banking", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> banking(@RequestBody() OnboardingBankingInput onboardingBankingInput) {
+        logger.info("banking: {}",onboardingBankingInput);
         Map<String, Object> response = new HashMap();
         try{
             response.put("status","success");
@@ -136,6 +144,7 @@ public class EmployeeOnboardingController {
     }
     @PostMapping(value = "/licence", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> save(@RequestBody() OnboardingLicenceInput personalDetail) {
+        logger.info("licence: {}",personalDetail);
         Map<String, Object> response = new HashMap();
         response.put("status","success");
         employeeOnboardingService.oboardLicence(personalDetail, response);
@@ -144,6 +153,7 @@ public class EmployeeOnboardingController {
 
     @PostMapping(value = "/personal", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> save(@RequestBody() OnboardingPersonalDetailInput personalDetail) {
+        logger.info("personal: {}",personalDetail);
         Map<String, Object> response = new HashMap();
         try {
                 Employe employe = employeService.update(personalDetail);
@@ -161,6 +171,7 @@ public class EmployeeOnboardingController {
 
     @PostMapping(value = "/emergency", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> save(@RequestBody() OnboardingEmergencyContactInput onboardingEmergencyContactInput) {
+        logger.info("emergency: {}",onboardingEmergencyContactInput);
         Map<String, Object> response = new HashMap();
         try{
             response.put("status","success");
@@ -179,6 +190,7 @@ public class EmployeeOnboardingController {
 
     @PostMapping(value = "/personal/next", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> next(@RequestBody() OnboardingPersonalDetailInput personalDetail) {
+        logger.info("personal/next: {}",personalDetail);
         Map<String, Object> response = new HashMap();
         employeeOnboardingService.oboardPersonalDetail(personalDetail, response);
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -186,6 +198,7 @@ public class EmployeeOnboardingController {
 
     @PostMapping(value = "/emergency/next", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> next(@RequestBody() OnboardingEmergencyContactInput personalDetail) {
+        logger.info("emergency/next: {}",personalDetail);
         Map<String, Object> response = new HashMap();
         employeeOnboardingService.oboardEmergencyDetail(personalDetail, response);
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -193,6 +206,7 @@ public class EmployeeOnboardingController {
 
     @PostMapping(value = "/licence/next", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> next(@RequestBody() OnboardingLicenceInput personalDetail) {
+        logger.info("licence/next: {}",personalDetail);
         Map<String, Object> response = new HashMap();
         employeeOnboardingService.oboardLicence(personalDetail, response);
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -200,6 +214,7 @@ public class EmployeeOnboardingController {
 
     @PostMapping(value = "/banking/next", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> next(@RequestBody() OnboardingBankingInput personalDetail) {
+        logger.info("banking/next: {}",personalDetail);
         Map<String, Object> response = new HashMap();
         employeeOnboardingService.onboardBanking(personalDetail, response);
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -207,6 +222,7 @@ public class EmployeeOnboardingController {
 
     @PostMapping(value = "/tfn/next", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> tfnNext(@RequestBody() OnboardingTFNInput personalDetail) {
+        logger.info("tfn/next: {}",personalDetail);
         Map<String, Object> response = new HashMap();
         employeeOnboardingService.onboardTFN(personalDetail, response);
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -214,6 +230,7 @@ public class EmployeeOnboardingController {
 
     @PostMapping(value = "/superannuation/next", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> tfnNext(@RequestBody() OnboardingSuperannuationInput personalDetail) {
+        logger.info("superannuation/next: {}",personalDetail);
         Map<String, Object> response = new HashMap();
         employeeOnboardingService.onboardsuperannuation(personalDetail, response);
         return new ResponseEntity<>(response, HttpStatus.OK);

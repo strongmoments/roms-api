@@ -2,6 +2,7 @@ package com.roms.api.requestInput;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.ToString;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.Serializable;
@@ -10,6 +11,7 @@ import java.util.List;
 
 @Data
 @Builder
+@ToString
 public class OnboardingPersonalDetailInput implements Serializable {
     public String id;
     public String employeeNo;
