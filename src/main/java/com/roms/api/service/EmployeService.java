@@ -97,6 +97,8 @@ public class EmployeService {
         employeModel.setUpdateBy(loggedIn.getUser());
         employeModel = employeesRepository.save(employeModel);
 
+        EmployeeAddress employeeAddress1 = employeeAddressService.findByAddressType(1);
+
         EmployeeAddress employeePermanentAddress = EmployeeAddress.builder()
                 .type(1)
                 .suburb(request.getPermanentAddress().getSuburb())
@@ -104,8 +106,13 @@ public class EmployeService {
                 .postcode(request.getPermanentAddress().getPostcode())
                 .employe(employeModel)
                 .build();
+        if(employeeAddress1 != null){
+            employeePermanentAddress.setId(employeeAddress1.getId());
+        }
 
         employeeAddressService.save(employeePermanentAddress);
+
+        EmployeeAddress employeeAddress2 = employeeAddressService.findByAddressType(2);
         EmployeeAddress employeeTempddress = EmployeeAddress.builder()
                 .type(2)
                 .suburb(request.getTempAddress().getSuburb())
@@ -113,6 +120,9 @@ public class EmployeService {
                 .postcode(request.getTempAddress().getPostcode())
                 .employe(employeModel)
                 .build();
+        if(employeeAddress2 != null){
+            employeeTempddress.setId(employeeAddress2.getId());
+        }
         employeeAddressService.save(employeeTempddress);
 
         if(StringUtils.isNotBlank(request.getProfileImageId())){

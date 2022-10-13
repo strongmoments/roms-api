@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class EmployeeAddressService {
@@ -28,6 +29,15 @@ public class EmployeeAddressService {
 
     public List<EmployeeAddress> findAllByEmployeId(String employeeId){
        return employeeAddressRepository.findByEmployeAndOrganisation(new Employe(employeeId), loggedIn.getOrg());
+    }
+
+    public EmployeeAddress findByAddressType(int addresstype){
+       Optional<EmployeeAddress> employeeAddress =   employeeAddressRepository.findByEmployeAndOrganisationAndType(loggedIn.getUser().getEmployeId(), loggedIn.getOrg(),addresstype);
+       if(employeeAddress.isPresent()){
+           return employeeAddress.get();
+       }else {
+           return  null;
+       }
     }
 
 }

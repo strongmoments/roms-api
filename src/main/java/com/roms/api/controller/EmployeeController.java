@@ -120,7 +120,12 @@ public class EmployeeController {
         Map<String, Object> response = new HashMap<>();
         Optional<Employe> requestedPage =  employeService.findByEmployeeId(employeeId);
         response.put("personal",requestedPage.get());
-        response.put("address",employeeAddressService.findAllByEmployeId(employeeId));
+        List<EmployeeAddress> allAddress = new ArrayList<>();
+        employeeAddressService.findAllByEmployeId(employeeId).forEach( obj ->{
+            obj.setEmploye(null);
+            allAddress.add(obj) ;
+        });
+        response.put("address",allAddress);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
