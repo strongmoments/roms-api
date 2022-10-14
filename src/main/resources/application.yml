@@ -27,7 +27,7 @@ spring:
   jpa:
     generate-ddl: true
 
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
         ddl-auto: create
@@ -86,8 +86,8 @@ minio:
   access:
     name: minioadmin
     secret: minioadmin
-  #url: http://13.211.215.135:9000
-  env: prod
-  url: http://media.rtl.com.au:9000
+  url: http://13.211.215.135:9000
+  env: uat
+  #url: http://media.rtl.com.au:9000
 
 
