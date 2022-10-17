@@ -1,8 +1,6 @@
 package com.roms.api.service;
 
-import com.roms.api.model.EmployeeLicence;
 import com.roms.api.model.EmployeeToken;
-import com.roms.api.repository.EmployeeLicenceRepository;
 import com.roms.api.repository.EmployeeTokenRepository;
 import com.roms.api.utils.LoggedInUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;

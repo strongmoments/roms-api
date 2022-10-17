@@ -1,10 +1,7 @@
 package com.roms.api.controller;
 
-import com.roms.api.model.EmployeeLicence;
-import com.roms.api.model.EmployeeToken;
-import com.roms.api.repository.EmployeeLicenceRepository;
+import com.roms.api.model.EmployeeSkilsLicence;
 import com.roms.api.service.EmployeeLicenceService;
-import com.roms.api.service.EmployeeTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
@@ -25,10 +22,10 @@ public class EmployeeLicenceController {
 
 
     @PostMapping()
-    public ResponseEntity<?> saveCirtificate(@RequestBody() EmployeeLicence employeeCertificate){
+    public ResponseEntity<?> saveCirtificate(@RequestBody() EmployeeSkilsLicence employeeCertificate){
         Map<String,Object> response = new HashMap();
         try {
-            EmployeeLicence employeeToken1 =employeeLicenceService.save(employeeCertificate);
+            EmployeeSkilsLicence employeeToken1 =employeeLicenceService.save(employeeCertificate);
             response.put("status","success");
             response.put("id",employeeToken1.getId());
 
@@ -42,7 +39,7 @@ public class EmployeeLicenceController {
 
     @GetMapping(value = "/search")
     public ResponseEntity<?> searchByCirtificateCode(@RequestParam(value ="name", defaultValue = "") String searchText) throws ChangeSetPersister.NotFoundException {
-        List<EmployeeLicence> requestedPage =  employeeLicenceService.searchByLicenceCode(searchText);
+        List<EmployeeSkilsLicence> requestedPage =  employeeLicenceService.searchByLicenceCode(searchText);
         return new ResponseEntity<>(requestedPage, HttpStatus.OK);
     }
 }

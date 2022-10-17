@@ -24,6 +24,7 @@ public class AddUserInput {
     public String gender;
     public boolean isManager;
     public boolean notifyBySms;
+    public boolean onboardingRequired;
 
 
 

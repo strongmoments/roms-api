@@ -1,8 +1,6 @@
 package com.roms.api.service;
 
-import com.roms.api.model.EmployeeCertificate;
-import com.roms.api.model.EmployeeLicence;
-import com.roms.api.repository.EmployeeCertificateRepository;
+import com.roms.api.model.EmployeeSkilsLicence;
 import com.roms.api.repository.EmployeeLicenceRepository;
 import com.roms.api.utils.LoggedInUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +18,9 @@ public class EmployeeLicenceService {
     @Autowired
     private EmployeeLicenceRepository employeeLicenceRepository;
 
-    public EmployeeLicence save(EmployeeLicence model){
+    public EmployeeSkilsLicence save(EmployeeSkilsLicence model){
         model.setCode(model.getCode().toLowerCase());
-        Optional<EmployeeLicence> employeeCertificate1 = employeeLicenceRepository.findByCodeAndOrganisation(model.getCode() ,loggedIn.getOrg());
+        Optional<EmployeeSkilsLicence> employeeCertificate1 = employeeLicenceRepository.findByCodeAndOrganisation(model.getCode() ,loggedIn.getOrg());
         if( employeeCertificate1.isPresent()){
             return  employeeCertificate1.get();
         }else{
@@ -33,7 +31,7 @@ public class EmployeeLicenceService {
         }
     }
 
-    public List<EmployeeLicence> searchByLicenceCode(String searchText){
+    public List<EmployeeSkilsLicence> searchByLicenceCode(String searchText){
 
         return  employeeLicenceRepository.findAllByCodeContainingIgnoreCaseAndOrganisation(searchText,loggedIn.getOrg());
     }

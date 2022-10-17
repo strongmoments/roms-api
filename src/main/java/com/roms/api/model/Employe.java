@@ -72,6 +72,9 @@ public class Employe extends CommonFields implements Serializable {
     @Column(name="manager_flag")
     private boolean managerFlag;
 
+    @Column(name="onboarding_required")
+    public boolean onboardingRequired;
+
     @OneToOne()
     @JoinColumn(name = "employee_typeIdx",referencedColumnName = "id")
     @Fetch(FetchMode.SELECT)

@@ -1,6 +1,5 @@
 package com.roms.api.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,8 +17,8 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name ="employee_licences")
-public class EmployeeLicence  extends CommonFields implements Serializable {
+@Table(name ="employee_skils_licences")
+public class EmployeeSkilsLicence extends CommonFields implements Serializable {
 
     @Column(name = "code" )
     private String code;
