@@ -182,6 +182,7 @@ public class UserController {
             employeModel.setPhone(request.getPhone());
             employeModel.setEmail(request.getEmail().trim());
             employeModel.setJobTitle("");
+            employeModel.setOnboardingRequired(request.isOnboardingRequired());
            // employeModel.setBirthdate(dob.toInstant());
             employeModel.setGender("");
 

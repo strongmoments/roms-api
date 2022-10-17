@@ -276,6 +276,14 @@ public class Employe extends CommonFields implements Serializable {
     public void setProfileImage(Set<EmployeeProfileImage> profileImage) {
         this.profileImage = profileImage;
     }
+
+    public boolean isOnboardingRequired() {
+        return onboardingRequired;
+    }
+
+    public void setOnboardingRequired(boolean onboardingRequired) {
+        this.onboardingRequired = onboardingRequired;
+    }
 }
 
 
