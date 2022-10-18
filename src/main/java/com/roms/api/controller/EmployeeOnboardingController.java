@@ -50,6 +50,15 @@ public class EmployeeOnboardingController {
     @Qualifier("onboardingnotification")
     private NotificationService notificationService;
 
+    @Autowired
+    private  EmployeeMembershipService employeeMembershipService;
+
+    @Autowired
+    private  EmployeeFeedbackService employeeFeedbackService;
+
+    @Autowired
+    private EmployeeLicenceService employeeLicenceService;
+
 
 
     @PostMapping(value = "/complete", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -94,21 +103,35 @@ public class EmployeeOnboardingController {
 
 
     @PostMapping(value = "/membership", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> membership(@RequestBody() OnboardingMembershipInput personalDetail) {
-        logger.info("membership: {}",personalDetail);
+    public ResponseEntity<?> membership(@RequestBody() OnboardingMembershipInput onboardingMembershipInput) {
+        logger.info("membership: {}",onboardingMembershipInput);
         Map<String, Object> response = new HashMap();
-
+        try{
         response.put("status","success");
-          employeeOnboardingService.onboardMembership(personalDetail, response);
+        employeeMembershipService.saveOnboarding(onboardingMembershipInput);
+        employeeOnboardingService.onboardMembership(onboardingMembershipInput, response);
+    } catch (Exception e) {
+        response.put("error", e.getMessage());
+        response.put("status", "error");
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping(value = "/feedback", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> feedback(@RequestBody() OnboardingFeedBackInput personalDetail) {
-        logger.info("feedback: {}",personalDetail);
+    public ResponseEntity<?> feedback(@RequestBody() OnboardingFeedBackInput onboardingFeedBackInput) {
+        logger.info("feedback: {}",onboardingFeedBackInput);
         Map<String, Object> response = new HashMap();
+        try {
+
         response.put("status","success");
-        employeeOnboardingService.onboardFeedback(personalDetail, response);
+        employeeFeedbackService.saveOnboarding(onboardingFeedBackInput);
+        employeeOnboardingService.onboardFeedback(onboardingFeedBackInput, response);
+    } catch (Exception e) {
+        response.put("error", e.getMessage());
+        response.put("status", "error");
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -147,11 +170,18 @@ public class EmployeeOnboardingController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @PostMapping(value = "/licence", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> save(@RequestBody() OnboardingLicenceInput personalDetail) {
-        logger.info("licence: {}",personalDetail);
+    public ResponseEntity<?> save(@RequestBody() OnboardingLicenceInput onboardingLicenceInput) {
+        logger.info("licence: {}",onboardingLicenceInput);
         Map<String, Object> response = new HashMap();
+        try {
         response.put("status","success");
-        employeeOnboardingService.oboardLicence(personalDetail, response);
+        employeeLicenceService.saveOnboarding(onboardingLicenceInput);
+        employeeOnboardingService.oboardLicence(onboardingLicenceInput, response);
+    } catch (Exception e) {
+        response.put("error", e.getMessage());
+        response.put("status", "error");
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

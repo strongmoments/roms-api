@@ -1,7 +1,7 @@
 package com.roms.api.controller;
 
 import com.roms.api.model.EmployeeSkilsLicence;
-import com.roms.api.service.EmployeeLicenceService;
+import com.roms.api.service.EmployeeSkilsLicenceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
@@ -18,7 +18,7 @@ import java.util.Map;
 public class EmployeeLicenceController {
 
     @Autowired
-    private EmployeeLicenceService employeeLicenceService;
+    private EmployeeSkilsLicenceService employeeLicenceService;
 
 
     @PostMapping()
