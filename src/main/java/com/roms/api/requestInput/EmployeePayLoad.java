@@ -17,7 +17,7 @@ public class EmployeePayLoad {
     public String appliedOn;
     public String registrationDate;
     public String orgId;
-    public boolean onboardingRequired;
+
     public  int status;
 
 

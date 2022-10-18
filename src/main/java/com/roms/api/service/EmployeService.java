@@ -65,6 +65,18 @@ public class EmployeService {
 
     }
 
+    public void completeOnboarding(){
+        Optional<Employe> employeModel = employeesRepository.findById(loggedIn.getUser().getEmployeId().getId());
+        if(employeModel.isPresent()){
+            Employe employe = employeModel.get();
+            employe.setOnboardingFlag(2);// completed onboarding
+            employeesRepository.save(employe);
+
+        }
+
+
+    }
+
     public List<Employe> findAllManagers(){
         return employeesRepository.findAllByManagerFlagAndOrganisation(true,loggedIn.getOrg());
 

@@ -58,6 +58,7 @@ public class EmployeeOnboardingController {
         Map<String, Object> response = new HashMap();
         try{
             response.put("status","success");
+            employeService.completeOnboarding(); // update entry in database
             request.setId(loggedIn.getUser().getEmployeId().getId());
             EmployeePayLoad employeePayLoad = EmployeePayLoad.builder()
                     .id(loggedIn.getUser().getEmployeId().getId()).build();

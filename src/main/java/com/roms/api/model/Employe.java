@@ -72,8 +72,8 @@ public class Employe extends CommonFields implements Serializable {
     @Column(name="manager_flag")
     private boolean managerFlag;
 
-    @Column(name="onboarding_required")
-    public boolean onboardingRequired;
+    @Column(name="onboarding_flag")
+    public int onboardingFlag;
 
     @OneToOne()
     @JoinColumn(name = "employee_typeIdx",referencedColumnName = "id")
@@ -277,12 +277,12 @@ public class Employe extends CommonFields implements Serializable {
         this.profileImage = profileImage;
     }
 
-    public boolean isOnboardingRequired() {
-        return onboardingRequired;
+    public int getOnboardingFlag() {
+        return onboardingFlag;
     }
 
-    public void setOnboardingRequired(boolean onboardingRequired) {
-        this.onboardingRequired = onboardingRequired;
+    public void setOnboardingFlag(int onboardingFlag) {
+        this.onboardingFlag = onboardingFlag;
     }
 }
 
