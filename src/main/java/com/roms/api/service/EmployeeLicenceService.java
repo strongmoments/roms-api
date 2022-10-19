@@ -56,6 +56,7 @@ public class EmployeeLicenceService {
                 .issuedIn(request.getIssuedIn())
                 .licenceNumber(request.getLicenceNumber())
                 .declarationStatus(request.getDeclarationStatus())
+                .employe(loggedIn.getUser().getEmployeId())
                 .build();
         try{
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
