@@ -74,4 +74,8 @@ public class EmployeeSuperannuation extends CommonFields implements Serializable
     @JoinColumn(name = "signature_idx",referencedColumnName = "id")
     private DigitalAssets signature;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "employee_idx",referencedColumnName = "id")
+    private Employe employe;
+
 }

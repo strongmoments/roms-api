@@ -5,9 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 
 @Data
@@ -30,5 +28,8 @@ public class EmployeeTFN extends CommonFields implements Serializable {
     private boolean haveanyDebt;
     @Column(name = "tnc_status" )
     private boolean tncAcceptance;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "employee_idx",referencedColumnName = "id")
+    private Employe employe;
 
 }

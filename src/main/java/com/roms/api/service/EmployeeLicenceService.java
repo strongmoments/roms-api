@@ -2,6 +2,7 @@ package com.roms.api.service;
 
 
 import com.roms.api.model.DigitalAssets;
+import com.roms.api.model.Employe;
 import com.roms.api.model.EmployeeLicence;
 import com.roms.api.repository.EmployeeLicenceRepository;
 import com.roms.api.requestInput.OnboardingLicenceInput;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -84,5 +86,8 @@ public class EmployeeLicenceService {
 
     }
 
+    public List<EmployeeLicence> findLicenceByEmployeeId(String employeeId){
+        return employeeLicenceRepository.findAllByEmployeAndOrganisation(new Employe(employeeId), loggedIn.getOrg());
+    }
 
 }

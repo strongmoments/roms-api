@@ -55,7 +55,26 @@ public class EmployeeController {
     private EmployeeAddressService employeeAddressService;
 
     @Autowired
+    private EmployeeEmergencyContactService employeeEmergencyContactService;
+
+    @Autowired
     private MinioService minioService;
+
+    @Autowired
+    private EmployeeLicenceService licenceService;
+
+    @Autowired
+    private EmployeeBankService employeeBankService;
+
+    @Autowired
+    private EmployeeSuperannuationService employeeSuperannuationService;
+
+    @Autowired
+    private EmployeeTFNService employeeTFNService;
+
+    @Autowired
+    private EmployeeMembershipService employeeMembershipService;
+
 
     @Autowired
     private EmployeeProfileImageService employeeProfileImageService;
@@ -126,8 +145,31 @@ public class EmployeeController {
             allAddress.add(obj) ;
         });
         response.put("address",allAddress);
+        List<EmployeeEmergencyContact> emergencyContact =  employeeEmergencyContactService.findEmergencyContactByEmployeeId(employeeId);
+        response.put("emergencyContact",emergencyContact);
+
+        List<EmployeeLicence> licence = licenceService.findLicenceByEmployeeId(employeeId);
+        response.put("licence",licence);
+
+        List<EmployeeBanks>  bankingDetails = employeeBankService.findBankDetailsByEmployee(employeeId);
+        response.put("bankingDetails",bankingDetails);
+
+        List<EmployeeSuperannuation> superannuation =  employeeSuperannuationService.findSuperAnnuationByEmployeeId(employeeId);
+        response.put("superannuation",superannuation);
+
+        List<EmployeeTFN> tfn = employeeTFNService.findTFNbyEmployeeId(employeeId);
+        response.put("tfn",tfn);
+
+        List<EmployeeMembership> membership = employeeMembershipService.findMembershipByEmployeeId(employeeId);
+        response.put("membership",membership);
+
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+
+
+
+
 
 
     @GetMapping(value = "/load")

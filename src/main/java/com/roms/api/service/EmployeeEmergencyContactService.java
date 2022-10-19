@@ -1,5 +1,6 @@
 package com.roms.api.service;
 
+import com.roms.api.model.Employe;
 import com.roms.api.model.EmployeeEmergencyContact;
 import com.roms.api.repository.EmployeeEmergencyContactRepository;
 import com.roms.api.requestInput.OnboardingEmergencyContactInput;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.List;
 
 @Service
 public class EmployeeEmergencyContactService {
@@ -47,4 +49,10 @@ public class EmployeeEmergencyContactService {
         return save(employeeEmergencyContact);
 
     }
+
+    public List<EmployeeEmergencyContact>  findEmergencyContactByEmployeeId(String employId){
+       return  employeeEmergencyContactRepository.findAllByEmployeAndOrganisation(new Employe(employId),loggedIn.getOrg());
+    }
+
+
 }

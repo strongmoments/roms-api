@@ -52,7 +52,7 @@ public class FileUploadController {
     }
 
     @GetMapping(value = "")
-    public ResponseEntity<?> loadApliedLeaveByLeaveStatus(
+    public ResponseEntity<?> loadFile(
             @RequestParam(value ="fileName", defaultValue = "") String fileName,
             @RequestParam(value ="id", defaultValue = "") String bucketName,
     @RequestParam(value ="type", defaultValue = "") String type) throws IOException {

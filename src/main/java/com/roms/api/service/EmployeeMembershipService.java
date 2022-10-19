@@ -1,5 +1,6 @@
 package com.roms.api.service;
 
+import com.roms.api.model.Employe;
 import com.roms.api.model.EmployeeMembership;
 import com.roms.api.repository.EmployeeMembershipRepository;
 import com.roms.api.requestInput.OnboardingMembershipInput;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -55,6 +57,10 @@ public class EmployeeMembershipService {
         return save(employeeMembershipModel);
 
 
+    }
+
+    public List<EmployeeMembership> findMembershipByEmployeeId(String employeeId){
+        return employeeMembershipRepository.findAllByEmployeAndOrganisation(new Employe(employeeId), loggedIn.getOrg());
     }
 
 }

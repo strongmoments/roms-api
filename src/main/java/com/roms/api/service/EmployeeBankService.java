@@ -1,5 +1,6 @@
 package com.roms.api.service;
 
+import com.roms.api.model.Employe;
 import com.roms.api.model.EmployeeBanks;
 import com.roms.api.repository.EmployeeBankRepository;
 import com.roms.api.requestInput.OnboardingBankingInput;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.List;
 
 @Service
 public class EmployeeBankService {
@@ -51,5 +53,9 @@ public class EmployeeBankService {
             return save(employeeBanks2);
         }
         return  employeeBanks1;
+    }
+
+    public List<EmployeeBanks> findBankDetailsByEmployee(String employeeId){
+        return employeeBankRepository.findAllByEmployeAndOrganisation(new Employe(employeeId), loggedIn.getOrg());
     }
 }

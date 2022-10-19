@@ -10,11 +10,11 @@ import java.util.Map;
 
 @RestController
 @CrossOrigin
-@RequestMapping(value = "/v1/resourcedemand")
+@RequestMapping(value = "/v1/jobs/resource/demand")
 public class ResourceDemandController {
 
     @PostMapping()
-    public ResponseEntity<?> saveCirtificate(){
+    public ResponseEntity<?> saveJobResourceDemand(){
         Map<String,Object> response = new HashMap();
         try {
 

@@ -1,6 +1,7 @@
 package com.roms.api.service;
 
 import com.roms.api.model.DigitalAssets;
+import com.roms.api.model.Employe;
 import com.roms.api.model.EmployeeSuperannuation;
 import com.roms.api.repository.EmployeeSuperannuationRepository;
 import com.roms.api.requestInput.OnboardingSuperannuationInput;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.List;
 
 @Service
 public class EmployeeSuperannuationService {
@@ -41,6 +43,7 @@ public class EmployeeSuperannuationService {
                 .fillSuperFundNow(request.isFillSuperFundNow())
                 .paidAsperMychoice(request.isPaidAsperMychoice())
                 .abn(request.getCurrentFund().getAbn())
+                .employe(loggedIn.getUser().getEmployeId())
                 //.date(request.getDate())
 
                 .membername(request.getCurrentFund().getMembername())
@@ -69,6 +72,7 @@ public class EmployeeSuperannuationService {
 
                 .paidAsperMychoice(request.isPaidAsperMychoice())
                 .abn(request.getSelfManagedFund().getAbn())
+                .employe(loggedIn.getUser().getEmployeId())
                 //.date(request.getDate())
 
                 .fundType(2)
@@ -97,5 +101,9 @@ public class EmployeeSuperannuationService {
         return save(employeeSuperannuationSelfFund);
 
 
+    }
+
+    public List<EmployeeSuperannuation> findSuperAnnuationByEmployeeId(String employeeId){
+        return employeeSuperannuationRepository.findAllByEmployeAndOrganisation(new Employe(employeeId),loggedIn.getOrg());
     }
 }
