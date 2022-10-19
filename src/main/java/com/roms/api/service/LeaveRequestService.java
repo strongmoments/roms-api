@@ -113,7 +113,9 @@ public class LeaveRequestService {
 
     public Page<LeaveRequest> findAllCurrentLeaveTransactionByLeaveStatus(int page, int size,Instant fromdDate, Instant toDate,Integer leaveStatus){
         PageRequest pageble  = PageRequest.of(page, size, Sort.by("applyDate").descending());
-        return leaveRequestRepository.findAllByLeaveStatusAndEndDateTimeBetweenAndOrganisationOrderByApplyDateDesc(leaveStatus,fromdDate,toDate,loggedIn.getOrg(),pageble);
+        //return leaveRequestRepository.findAllByLeaveStatusAndEndDateTimeBetweenAndOrganisationOrderByApplyDateDesc(leaveStatus,fromdDate,toDate,loggedIn.getOrg(),pageble);
+        return leaveRequestRepository.findAllByLeaveStatusAndStartDateTimeLessThanEqualAndEndDateTimeGreaterThanEqualAndOrganisationOrderByApplyDateDesc(leaveStatus,fromdDate,toDate,loggedIn.getOrg(),pageble);
+
     }
 
     public Page<LeaveRequest> findAllCurrentLeaveTransactionByDepartment(int page, int size,Instant fromdDate, Instant toDate, String departmentId){
