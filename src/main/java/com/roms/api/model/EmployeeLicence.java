@@ -1,5 +1,6 @@
 package com.roms.api.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,6 +13,7 @@ import java.time.Instant;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIgnoreProperties("hibernatelazyinitializer")
 @Builder
 @Entity
 @Table(name ="employee_licences")

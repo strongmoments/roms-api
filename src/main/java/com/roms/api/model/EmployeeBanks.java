@@ -14,7 +14,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name ="employee_emergency_contact")
+@Table(name ="employee_banks")
 public class EmployeeBanks extends CommonFields implements Serializable {
 
     @Column(name = "secondary_account" )

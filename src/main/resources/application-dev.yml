@@ -11,6 +11,7 @@ spring:
   jackson:
     serialization:
       fail-on-self-references : false
+      FAIL_ON_EMPTY_BEANS: false
   main:
     allow-circular-references: true
   kafka:

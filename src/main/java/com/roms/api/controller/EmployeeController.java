@@ -145,22 +145,52 @@ public class EmployeeController {
             allAddress.add(obj) ;
         });
         response.put("address",allAddress);
-        List<EmployeeEmergencyContact> emergencyContact =  employeeEmergencyContactService.findEmergencyContactByEmployeeId(employeeId);
+        List<EmployeeEmergencyContact> emergencyContact =  new ArrayList<>();
+                 employeeEmergencyContactService.findEmergencyContactByEmployeeId(employeeId).forEach(
+                obj->{
+                    obj.setEmploye(null);
+                    emergencyContact.add(obj);
+                }
+        );
         response.put("emergencyContact",emergencyContact);
 
-        List<EmployeeLicence> licence = licenceService.findLicenceByEmployeeId(employeeId);
+
+        List<EmployeeLicence> licence = new ArrayList<>();
+        licenceService.findLicenceByEmployeeId(employeeId).forEach(obj->{
+            obj.setEmploye(null);
+            licence.add(obj);
+        });
         response.put("licence",licence);
 
-        List<EmployeeBanks>  bankingDetails = employeeBankService.findBankDetailsByEmployee(employeeId);
+        List<EmployeeBanks>  bankingDetails = new ArrayList<>();
+        employeeBankService.findBankDetailsByEmployee(employeeId).forEach(obj->{
+            obj.setEmploye(null);
+            bankingDetails.add(obj);
+        });
         response.put("bankingDetails",bankingDetails);
 
-        List<EmployeeSuperannuation> superannuation =  employeeSuperannuationService.findSuperAnnuationByEmployeeId(employeeId);
+
+        List<EmployeeSuperannuation> superannuation = new ArrayList<>();
+        employeeSuperannuationService.findSuperAnnuationByEmployeeId(employeeId).forEach(
+                obj->{
+                    obj.setEmploye(null);
+                    superannuation.add(obj);
+                }
+        );
         response.put("superannuation",superannuation);
 
-        List<EmployeeTFN> tfn = employeeTFNService.findTFNbyEmployeeId(employeeId);
+        List<EmployeeTFN> tfn = new ArrayList<>();
+        employeeTFNService.findTFNbyEmployeeId(employeeId).forEach(obj->{
+            obj.setEmploye(null);
+            tfn.add(obj);
+        });
         response.put("tfn",tfn);
 
-        List<EmployeeMembership> membership = employeeMembershipService.findMembershipByEmployeeId(employeeId);
+        List<EmployeeMembership> membership = new ArrayList<>();
+        employeeMembershipService.findMembershipByEmployeeId(employeeId).forEach(obj->{
+            obj.setEmploye(null);
+            membership.add(obj);
+        });
         response.put("membership",membership);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
