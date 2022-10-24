@@ -1,9 +1,6 @@
 package com.roms.api.service;
 
-import com.roms.api.model.Employe;
-import com.roms.api.model.Organisation;
-import com.roms.api.model.UserRolesMap;
-import com.roms.api.model.Users;
+import com.roms.api.model.*;
 import com.roms.api.repository.UserRolesMapRepository;
 import com.roms.api.utils.LoggedInUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserRolesMapService {
@@ -37,5 +35,14 @@ public class UserRolesMapService {
             employes.add(obj.getUserId().getEmployeId());
         });
         return employes;
+    }
+
+    public Roles getEmployeeRoles(String employeeId){
+        Optional<UserRolesMap>  userRolesMap = userRolesMapRepository.findByUserIdEmployeIdAndOrganisation(new Employe(employeeId),loggedIn.getOrg());
+        if(userRolesMap.isPresent()){
+           return userRolesMap.get().getRoleId();
+        }else {
+            return null;
+        }
     }
 }

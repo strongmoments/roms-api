@@ -79,6 +79,15 @@ public class EmployeeController {
     @Autowired
     private EmployeeProfileImageService employeeProfileImageService;
 
+    @Autowired
+    private  EmployeeManagerService employeeManagerService;
+
+    @Autowired
+    private  UserRolesMapService userRolesMapService;
+
+
+
+
     @RequestMapping(value = "/uploadpic" , method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE  })
     public ResponseEntity<Map<String,Object>> uploadFile(@RequestParam String id, @RequestParam(value="file") MultipartFile[] filse) throws IOException {
 
@@ -138,6 +147,11 @@ public class EmployeeController {
     public ResponseEntity<?> loadPersonalInfo(@PathVariable("employeeId") String employeeId){
         Map<String, Object> response = new HashMap<>();
         Optional<Employe> requestedPage =  employeService.findByEmployeeId(employeeId);
+
+        Instant terminationDate = null;
+        if(requestedPage.isPresent()){
+            terminationDate = requestedPage.get().getEndDate();
+        }
         response.put("personal",requestedPage.get());
         List<EmployeeAddress> allAddress = new ArrayList<>();
         employeeAddressService.findAllByEmployeId(employeeId).forEach( obj ->{
@@ -192,6 +206,30 @@ public class EmployeeController {
             membership.add(obj);
         });
         response.put("membership",membership);
+
+        // to fetch manager name
+        Optional<EmployeeManagers> employeeManagers = employeeManagerService.getManager(employeeId);
+        if(employeeManagers.isPresent()){
+            EmployeeManagers manger = employeeManagers.get();
+            String name  = manger.getManagers().getFirstName()+" "+manger.getManagers().getLastName();
+            response.put("managerName",name);
+        }else{
+            response.put("managerName","");
+        }
+
+        // to fetch role name
+        Roles  role = userRolesMapService.getEmployeeRoles(employeeId);
+        if(role == null){
+            response.put("role","");
+        }else{
+            response.put("role",role.getName());
+        }
+
+        response.put("terminationDate",terminationDate);
+        response.put("completionDate","");
+
+
+
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

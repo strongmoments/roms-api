@@ -191,5 +191,9 @@ public class EmployeService {
         return employeesRepository.findBirthDateByOrganisation(loggedIn.getOrg().getId());
     }
 
+    public List<Employe> loadAndFilterManager(String searchText){
+        return employeesRepository.findAllByOrganisationAndFirstNameContainsIgnoreCaseOrLastNameContainsIgnoreCaseAndManagerFlag(loggedIn.getOrg(),searchText, searchText, true);
+    }
+
 
 }
