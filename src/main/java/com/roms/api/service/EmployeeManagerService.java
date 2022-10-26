@@ -2,12 +2,14 @@ package com.roms.api.service;
 
 import com.roms.api.model.Employe;
 import com.roms.api.model.EmployeeManagers;
+import com.roms.api.model.EmployeeSkilsCirtificate;
 import com.roms.api.repository.EmployeeManagerRepository;
 import com.roms.api.utils.LoggedInUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -51,6 +53,11 @@ public class EmployeeManagerService {
             employeeManagerRepository.save(employeeManagers);
         }
 
+    }
+
+    public List<EmployeeManagers> searchByEmployeeName(String searchText){
+
+        return  employeeManagerRepository.findAllByManagersFirstNameContainingIgnoreCaseOrManagersLastNameContainingIgnoreCaseAndOrganisation(searchText,searchText, loggedIn.getOrg());
     }
 
 }

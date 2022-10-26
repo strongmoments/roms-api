@@ -1,10 +1,10 @@
 package com.roms.api.controller;
 
+import com.roms.api.model.Client;
 import com.roms.api.model.EmployeeManagers;
 import com.roms.api.model.EmployeeSkilsCirtificate;
-import com.roms.api.service.DepartmentService;
-import com.roms.api.service.EmployeService;
-import com.roms.api.service.EmployeeManagerService;
+import com.roms.api.repository.ClientRepository;
+import com.roms.api.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
@@ -17,33 +17,31 @@ import java.util.Map;
 
 @RestController
 @CrossOrigin
-@RequestMapping(value = "/v1/employee/managers")
-public class ManagerController {
+@RequestMapping(value = "/v1/client")
+public class ClientController {
 
     @Autowired
-    private EmployeService employeService;
+    private ClientService clientService;
 
-    @Autowired
-    private EmployeeManagerService employeeManagerService;
-
-    @GetMapping(value = "")
-    public ResponseEntity<?> loadDepartments() {
-        Map<String, Object> response = new HashMap<>();
+    @PostMapping()
+    public ResponseEntity<?> saveCirtificate(@RequestBody() Client client ){
+        Map<String,Object> response = new HashMap();
         try {
-            response.put("data",employeService.findAllManagers());
-        } catch (Exception e){
+            Client client1 =clientService.save(client);
+            response.put("status","success");
+            response.put("id",client1.getId());
 
-            response.put("status","error");
-            response.put("error",e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            response.put("error", e.getMessage());
+            response.put("status", "error");
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping(value = "/search")
     public ResponseEntity<?> searchByCirtificateCode(@RequestParam(value ="name", defaultValue = "") String searchText) throws ChangeSetPersister.NotFoundException {
-        List<EmployeeManagers> requestedPage =  employeeManagerService.searchByEmployeeName(searchText);
+        List<Client> requestedPage =  clientService.searchByClientName(searchText);
         return new ResponseEntity<>(requestedPage, HttpStatus.OK);
     }
-
 }

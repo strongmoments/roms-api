@@ -28,6 +28,10 @@ public class ClientProject extends CommonFields implements Serializable{
     @Column(name="end_Date")
     private Instant endDate;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "client_idx",referencedColumnName = "id")
+    private Client client;
+
     public String getName() {
         return name;
     }
@@ -50,5 +54,13 @@ public class ClientProject extends CommonFields implements Serializable{
 
     public void setEndDate(Instant endDate) {
         this.endDate = endDate;
+    }
+
+    public Client getClient() {
+        return client;
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
     }
 }
