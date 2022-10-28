@@ -26,4 +26,7 @@ public class ClientContract extends CommonFields implements Serializable {
     @JoinColumn(name = "client_idx",referencedColumnName = "id")
     private Client client;
 
+    public ClientContract(String contractId) {
+        super(contractId);
+    }
 }

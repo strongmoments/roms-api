@@ -176,6 +176,7 @@ public class UserController {
 
             employeModel.setManagerFlag(request.isManager());
             employeModel.setFirstName(request.getFirstName().trim());
+            employeModel.setTncFlag(false);
             employeModel.setEmployeeNo(request.getEmployeeNo().trim());
             employeModel.setLastName(request.getLastName().trim());
             employeModel.setMiddleName("");

@@ -1,14 +1,17 @@
 package com.roms.api.model;
 
 import com.roms.api.config.ModelHashMapConverter;
+import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
+import com.vladmihalcea.hibernate.type.json.JsonStringType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.*;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.List;
@@ -19,6 +22,10 @@ import java.util.Map;
 @AllArgsConstructor
 @Builder
 @Entity
+@TypeDefs({
+        @TypeDef(name = "json", typeClass = JsonStringType.class),
+        @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
+})
 @Table(name ="employee_resource_demand")
 public class EmployeeResourcedemand extends CommonFields implements Serializable {
 
@@ -42,15 +49,14 @@ public class EmployeeResourcedemand extends CommonFields implements Serializable
     private int type; // external or internal
 
 
-    @Column(name="classification")
-    private String classification;
 
     @Column(name="minimum_experience")
     private String minimumExperiecne;
 
+    @Type(type = "jsonb")
     @Column(name = "skils_map", columnDefinition = "json")
-    @Convert(converter = ModelHashMapConverter.class)
-    private Map<String, List<Object>> skilsMap;
+    /*@Convert(converter = ModelHashMapConverter.class)*/
+    private Map<String, Object> skilsMap;
 
     @OneToOne()
     @JoinColumn(name = "clientproject_idx",referencedColumnName = "id")
@@ -62,10 +68,14 @@ public class EmployeeResourcedemand extends CommonFields implements Serializable
     @Fetch(FetchMode.SELECT)
     private ClientProjectSubteam clientProjectSubteam;
 
-    @OneToOne()
-    @JoinColumn(name = "clientproject_role_idx",referencedColumnName = "id")
-    @Fetch(FetchMode.SELECT)
-    private ClientProjectRole clientProjectRole;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "client_idx",referencedColumnName = "id")
+    private Client client;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "client_contract_idx",referencedColumnName = "id")
+    private ClientContract clientContract;
+
 
     private String commitement;
 

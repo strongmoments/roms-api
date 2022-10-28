@@ -33,4 +33,7 @@ public class Client extends CommonFields implements Serializable {
     private Location location ;
 
 
+    public Client(String clientId) {
+        super(clientId);
+    }
 }

@@ -72,6 +72,9 @@ public class Employe extends CommonFields implements Serializable {
     @Column(name="manager_flag")
     private boolean managerFlag;
 
+    @Column(name="tnc_flag")
+    private boolean tncFlag;
+
     @Column(name="onboarding_flag")
     public int onboardingFlag;
 
@@ -283,6 +286,14 @@ public class Employe extends CommonFields implements Serializable {
 
     public void setOnboardingFlag(int onboardingFlag) {
         this.onboardingFlag = onboardingFlag;
+    }
+
+    public boolean isTncFlag() {
+        return tncFlag;
+    }
+
+    public void setTncFlag(boolean tncFlag) {
+        this.tncFlag = tncFlag;
     }
 }
 

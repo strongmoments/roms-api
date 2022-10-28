@@ -29,8 +29,23 @@ public class ClientProject extends CommonFields implements Serializable{
     private Instant endDate;
 
     @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "contract_idx",referencedColumnName = "id")
+    private ClientContract contract;
+
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_idx",referencedColumnName = "id")
     private Client client;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "location_idx",referencedColumnName = "id")
+    private Location location ;
+
+    public ClientProject() {
+    }
+    public ClientProject(String id) {
+        super(id);
+
+    }
 
     public String getName() {
         return name;
@@ -62,5 +77,21 @@ public class ClientProject extends CommonFields implements Serializable{
 
     public void setClient(Client client) {
         this.client = client;
+    }
+
+    public ClientContract getContract() {
+        return contract;
+    }
+
+    public void setContract(ClientContract contract) {
+        this.contract = contract;
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
     }
 }

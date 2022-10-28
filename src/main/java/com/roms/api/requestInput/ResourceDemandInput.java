@@ -27,19 +27,26 @@ public class ResourceDemandInput {
     private String perposedDate; //
     private String description;
     private int type; // external or internal
-    private String classification;
     private String minimumExperiecne;
-    private Map<String, List<String>> skils;
+    private Map<String, Object> skils;
     private String clientProjectName;
     private String clientProjectNameId;
     private String locationId;
     private String locationName;
-    private String contract;
+    private String contractName;
+    private String contractId;
+    private String clientId;
+    private String clientName;
     private String clientProjectRoleId;
     private String clientProjectRoleName;
-    private Double rate;
+    private String rate;
     private String clientProjectSubteamId;
     private String clientProjectSubteamName;
     private String commitment;
+
+    private String wageClassification;
+    private String wageRole;
+    private String awardType;
+
 
 }
