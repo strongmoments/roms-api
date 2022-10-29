@@ -29,13 +29,14 @@ public class ClientProjectService {
         return clientProjectRepository.save(model);
     }
 
-    public List<ClientProject> searchByContractName(String searchText, String clientId){
+    public List<ClientProject> searchByContractName(String searchText, String clientId, String contractId){
 
         Client client = new Client();
         client.setId(clientId);
+        ClientContract  contract = new ClientContract(contractId);
 
 
-        return  clientProjectRepository.findAllByNameContainingIgnoreCaseAndOrganisationAndClient(searchText,loggedIn.getOrg(), client);
+        return  clientProjectRepository.findAllByNameContainingIgnoreCaseAndOrganisationAndClientAndContract(searchText,loggedIn.getOrg(), client,contract);
     }
 
 

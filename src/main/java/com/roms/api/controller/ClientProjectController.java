@@ -38,9 +38,9 @@ public class ClientProjectController {
         }
     }
 
-    @GetMapping(value = "/search/{clientId}")
-    public ResponseEntity<?> searchByCirtificateCode(@PathVariable("clientId") String clientId, @RequestParam(value ="name", defaultValue = "") String searchText) throws ChangeSetPersister.NotFoundException {
-        List<ClientProject> requestedPage =  clientProjectService.searchByContractName(searchText,clientId);
+    @GetMapping(value = "/search/{clientId}/{contractId}")
+    public ResponseEntity<?> searchByCirtificateCode(@PathVariable("clientId") String clientId, @PathVariable("contractId") String contractId, @RequestParam(value ="name", defaultValue = "") String searchText) throws ChangeSetPersister.NotFoundException {
+        List<ClientProject> requestedPage =  clientProjectService.searchByContractName(searchText,clientId, contractId);
         return new ResponseEntity<>(requestedPage, HttpStatus.OK);
     }
 }

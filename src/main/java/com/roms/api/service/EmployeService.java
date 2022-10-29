@@ -166,13 +166,13 @@ public class EmployeService {
     }
 
     public Page<Employe> findAll(int page, int size){
-        PageRequest pageble  = PageRequest.of(page, size, Sort.by("lastName","firstName").ascending());
+        PageRequest pageble  = PageRequest.of(page, size, Sort.by("lastUpdateDate").descending());
         Map<String,Object> loggedInUserDetails =(Map<String,Object>) SecurityContextHolder.getContext().getAuthentication().getDetails();
         return employeesRepository.findAllByOrganisation(new Organisation(loggedInUserDetails.get("orgId").toString()),pageble);
     }
 
     public Page<Employe> findAllFilterByName(int page, int size, String searchText){
-        PageRequest pageble  = PageRequest.of(page, size, Sort.by("lastName","firstName").ascending());
+        PageRequest pageble  = PageRequest.of(page, size, Sort.by("lastUpdateDate").descending());
         Map<String,Object> loggedInUserDetails =(Map<String,Object>) SecurityContextHolder.getContext().getAuthentication().getDetails();
         return employeesRepository.findAllByOrganisationAndFirstNameContainsIgnoreCaseOrLastNameContainsIgnoreCase(new Organisation(loggedInUserDetails.get("orgId").toString()),searchText,searchText, pageble);
     }
