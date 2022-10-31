@@ -79,7 +79,7 @@ public class PasswordController {
             Optional<Users>  user =  userService.findByUsername(employeeId);
             if(!user.isEmpty()){
                 Users userModel = user.get();
-                String newPassword = generateRandomPassword(6);
+                String newPassword = generateRandomPassword(8);
 
                 String newPasswordEncoded  = customPasswordEncoder.encode(newPassword);
                     userModel.setApppassword(newPasswordEncoded);
