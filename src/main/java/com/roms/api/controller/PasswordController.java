@@ -71,7 +71,7 @@ public class PasswordController {
     }
 
 
-    @GetMapping(value = "/{employId}", consumes = {MediaType.APPLICATION_JSON_VALUE})
+    @GetMapping(value = "/reset/{employId}", consumes = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<?> update(@PathVariable("employeeId") String employeeId) throws ParseException {
         Map<String,Object> response = new HashMap<>();
         try {
