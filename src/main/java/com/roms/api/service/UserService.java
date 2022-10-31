@@ -55,6 +55,11 @@ public class UserService  {
         return usersRepository.findByUserIdEqualsIgnoreCaseAndOrganisation(username,loggedIn.getOrg());
     }
 
+    public Optional<Users> findById(String id) {
+
+        return usersRepository.findById(id);
+    }
+
      public Optional<Users> findByUsername(String username,String orgId) {
 
         return usersRepository.findByUserIdEqualsIgnoreCaseAndOrganisation(username,getOrganisation(orgId));

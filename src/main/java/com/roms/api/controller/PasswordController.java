@@ -76,7 +76,7 @@ public class PasswordController {
         Map<String,Object> response = new HashMap<>();
         try {
 
-            Optional<Users>  user =  userService.findByUsername(employeeId);
+            Optional<Users>  user =  userService.findById(employeeId);
             if(!user.isEmpty()){
                 Users userModel = user.get();
                 String newPassword = generateRandomPassword(8);
