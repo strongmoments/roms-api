@@ -55,9 +55,9 @@ public class UserService  {
         return usersRepository.findByUserIdEqualsIgnoreCaseAndOrganisation(username,loggedIn.getOrg());
     }
 
-    public Optional<Users> findById(String id) {
+    public Optional<Users> findByEmployeeId(String id) {
 
-        return usersRepository.findById(id);
+        return usersRepository.findByEmployeIdAndOrganisation(new Employe(id),loggedIn.getOrg());
     }
 
      public Optional<Users> findByUsername(String username,String orgId) {

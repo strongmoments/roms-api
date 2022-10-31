@@ -1,6 +1,7 @@
 package com.roms.api.requestInput;
 
 public class UpdatePassword {
+
     String oldPassword;
     String newPassword;
 
@@ -19,4 +20,5 @@ public class UpdatePassword {
     public void setNewPassword(String newPassword) {
         this.newPassword = newPassword;
     }
+
 }
