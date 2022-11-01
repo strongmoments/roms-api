@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class EmployeeBankService {
@@ -39,6 +40,10 @@ public class EmployeeBankService {
                 .bsbNumber(request.getDefaultBank().getBsbNumber())
                 .fixedAmount(request.getDefaultBank().getFixedAmount())
                 .build();
+        Optional<EmployeeBanks> employeeBanks =employeeBankRepository.findByEmployeAndOrganisationAndBankType(loggedIn.getUser().getEmployeId(),loggedIn.getOrg(),1);
+        if(employeeBanks.isPresent()){
+            employeeBanks1.setId(employeeBanks.get().getId());
+        }
         employeeBanks1 =  save(employeeBanks1);
         if(request.getSecondaryAccount() == 1){
             EmployeeBanks employeeBanks2 = EmployeeBanks.builder()
@@ -52,6 +57,10 @@ public class EmployeeBankService {
                     .bsbNumber(request.getSecondaryBank().getBsbNumber())
                     .fixedAmount(request.getSecondaryBank().getFixedAmount())
                     .build();
+             employeeBanks =employeeBankRepository.findByEmployeAndOrganisationAndBankType(loggedIn.getUser().getEmployeId(),loggedIn.getOrg(),2);
+            if(employeeBanks.isPresent()){
+                employeeBanks2.setId(employeeBanks.get().getId());
+            }
             return save(employeeBanks2);
         }
         return  employeeBanks1;

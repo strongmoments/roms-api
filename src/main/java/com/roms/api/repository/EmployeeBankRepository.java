@@ -7,9 +7,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface EmployeeBankRepository  extends JpaRepository<EmployeeBanks,String> {
 
     List<EmployeeBanks> findAllByEmployeAndOrganisation(Employe employe, Organisation organisation);
+
+
+    Optional<EmployeeBanks> findByEmployeAndOrganisationAndBankType(Employe employe, Organisation organisation,Integer banktype);
 }

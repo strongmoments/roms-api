@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class EmployeeSuperannuationService {
@@ -38,6 +39,7 @@ public class EmployeeSuperannuationService {
 
         DigitalAssets digitalAssetSelfFundattachment= DigitalAssets.builder().build();
         digitalAssetSelfFundattachment.setId(request.getSelfManagedFund().getAttachmentId());
+        Optional<EmployeeSuperannuation> model =  findSuperAnnuationByFundType(1);
 
         EmployeeSuperannuation employeeSuperannuationCurrentFund = EmployeeSuperannuation.builder()
                 .fillSuperFundNow(request.isFillSuperFundNow())
@@ -64,7 +66,9 @@ public class EmployeeSuperannuationService {
                 employeeSuperannuationCurrentFund.setCurrentFundAttachment(digitalAssetCurrentFundAttachment);
             }
 
-
+        if(model.isPresent()){
+            employeeSuperannuationCurrentFund.setId(model.get().getId());
+        }
             save(employeeSuperannuationCurrentFund);
 
         EmployeeSuperannuation employeeSuperannuationSelfFund = EmployeeSuperannuation.builder()
@@ -97,7 +101,10 @@ public class EmployeeSuperannuationService {
         if(StringUtils.isNotBlank(request.getSelfManagedFund().getAttachmentId())){
             employeeSuperannuationSelfFund.setSelfFundattachment(digitalAssetSelfFundattachment);
         }
-
+        model =  findSuperAnnuationByFundType(2);
+        if(model.isPresent()){
+            employeeSuperannuationSelfFund.setId(model.get().getId());
+        }
         return save(employeeSuperannuationSelfFund);
 
 
@@ -106,4 +113,9 @@ public class EmployeeSuperannuationService {
     public List<EmployeeSuperannuation> findSuperAnnuationByEmployeeId(String employeeId){
         return employeeSuperannuationRepository.findAllByEmployeAndOrganisation(new Employe(employeeId),loggedIn.getOrg());
     }
+
+    public Optional<EmployeeSuperannuation> findSuperAnnuationByFundType(Integer funType){
+        return employeeSuperannuationRepository.findByEmployeAndOrganisationAndFundType(loggedIn.getUser().getEmployeId(), loggedIn.getOrg(),funType);
+    }
+
 }

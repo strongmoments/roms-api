@@ -177,6 +177,21 @@ public class ResourceDemandController {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
 
+    }
+
+    @GetMapping("/{employeeId}")
+    public ResponseEntity<?> loadAllResourceDemand(@PathVariable("employeeId") String employeeId){
+        Map<String,Object> response = new HashMap();
+
+        try {
+            List<EmployeeResourcedemand> dataList = employeeResourcedemandService.findbyEmployeeId(employeeId);
+            response.put("data",dataList);
+        } catch (Exception e) {
+            response.put("error", e.getMessage());
+            response.put("status", "error");
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
 
     }
 }

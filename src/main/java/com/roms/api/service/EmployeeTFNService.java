@@ -27,6 +27,8 @@ public class EmployeeTFNService {
     }
 
     public EmployeeTFN saveFromOnboarding(OnboardingTFNInput request){
+
+        EmployeeTFN tfnModel =  findTfn();
         EmployeeTFN employeeTFN1 = EmployeeTFN.builder()
                 .haveTFN(request.isHaveTFN())
                 .employe(loggedIn.getUser().getEmployeId())
@@ -38,6 +40,9 @@ public class EmployeeTFNService {
                 .tncAcceptance(request.isTncAcceptance())
                 .taxPayerType(request.getTaxPayerType())
                 .build();
+        if(tfnModel != null){
+            employeeTFN1.setId(tfnModel.getId());
+        }
         return save(employeeTFN1);
 
     }
@@ -46,4 +51,11 @@ public class EmployeeTFNService {
        return  employeeTFNRepository.findAllByEmployeAndOrganisation(new Employe(employeeId),loggedIn.getOrg());
     }
 
+    public EmployeeTFN findTfn(){
+        List<EmployeeTFN> tfnDetails =   employeeTFNRepository.findAllByEmployeAndOrganisation(loggedIn.getUser().getEmployeId(),loggedIn.getOrg());
+        if(!tfnDetails.isEmpty()){
+            return  tfnDetails.get(0);
+        }
+        return  null;
+    }
 }

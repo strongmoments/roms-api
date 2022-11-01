@@ -1,5 +1,6 @@
 package com.roms.api.service;
 
+import com.roms.api.model.Employe;
 import com.roms.api.model.EmployeeResourcedemand;
 import com.roms.api.repository.EmployeeResourcedemandRepository;
 import com.roms.api.utils.LoggedInUserDetails;
@@ -29,6 +30,9 @@ public class EmployeeResourcedemandService  {
 
     public List<EmployeeResourcedemand> findAll(){
         return employeeResourcedemandRepository.findAllByOrganisation(loggedIn.getOrg());
+    }
+    public List<EmployeeResourcedemand> findbyEmployeeId(String employeeId){
+        return employeeResourcedemandRepository.findAllByOrganisationAndHiringManagerOrCreateByEmployeId(loggedIn.getOrg(), new Employe(employeeId),new Employe(employeeId));
     }
 
 

@@ -31,6 +31,7 @@ public class EmployeeEmergencyContactService {
     }
 
     public EmployeeEmergencyContact saveFromOnboarding(OnboardingEmergencyContactInput request){
+        EmployeeEmergencyContact model = findEmergencyContact();
         EmployeeEmergencyContact employeeEmergencyContact = EmployeeEmergencyContact.builder()
                 .phone(request.getPhone())
                 .email(request.getEmail())
@@ -46,12 +47,23 @@ public class EmployeeEmergencyContactService {
                 .postcode(request.getAddress().getPostcode())
                 .salut(request.getSalut())
                  .build();
+        if(model != null){
+            employeeEmergencyContact.setId(model.getId());
+        }
         return save(employeeEmergencyContact);
 
     }
 
     public List<EmployeeEmergencyContact>  findEmergencyContactByEmployeeId(String employId){
        return  employeeEmergencyContactRepository.findAllByEmployeAndOrganisation(new Employe(employId),loggedIn.getOrg());
+    }
+
+    public EmployeeEmergencyContact  findEmergencyContact(){
+        List<EmployeeEmergencyContact> emergencyContacts =   employeeEmergencyContactRepository.findAllByEmployeAndOrganisation(loggedIn.getUser().getEmployeId(), loggedIn.getOrg());
+        if(!emergencyContacts.isEmpty()){
+            return emergencyContacts.get(0);
+        }
+        return null;
     }
 
 
