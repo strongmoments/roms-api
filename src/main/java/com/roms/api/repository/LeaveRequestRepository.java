@@ -40,13 +40,13 @@ public interface LeaveRequestRepository extends JpaRepository<LeaveRequest,Strin
 
   //  Page<LeaveRequest> findAllByLeaveStatusAndEndDateTimeBetweenAndOrganisationOrderByApplyDateDesc( int leaveStatus, Instant fromDate,Instant toDate, Organisation organisation,PageRequest pageRequest);
 
-    Page<LeaveRequest> findAllByLeaveStatusAndStartDateTimeLessThanEqualAndEndDateTimeGreaterThanEqualAndOrganisationOrderByApplyDateDesc( int leaveStatus, Instant fromDate,Instant toDate, Organisation organisation,PageRequest pageRequest);
+    Page<LeaveRequest> findAllByLeaveStatusAndEndDateTimeBetweenAndOrganisationOrderByApplyDateDesc( int leaveStatus, Instant fromDate,Instant toDate, Organisation organisation,PageRequest pageRequest);
 
     Page<LeaveRequest> findAllByEmployeDepartmentsAndEndDateTimeBetweenAndOrganisationOrderByApplyDateDesc(Departments departments,Instant fromDate,Instant toDate,Organisation organisation, PageRequest pageRequest);
     Page<LeaveRequest> findAllByEmployeDepartmentsAndEndDateTimeBetweenAndOrganisationAndLeaveStatusOrderByApplyDateDesc(Departments departments,Instant fromDate,Instant toDate,Organisation organisation,int leaveStatus, PageRequest pageRequest);
 
     Page<LeaveRequest> findAllByEmployeEmployeTypeAndEndDateTimeBetweenAndOrganisationOrderByApplyDateDesc(EmployeType employeType,Instant fromDate,Instant toDate,Organisation organisation, PageRequest pageRequest);
-    Page<LeaveRequest> findAllByEmployeEmployeTypeAndEndDateTimeBetweenAndOrganisationAndLeaveStatusOrderByApplyDateDesc(EmployeType employeType,Instant fromDate,Instant toDate,Organisation organisation, int leaveStatus,PageRequest pageRequest);
+    Page<LeaveRequest> findAllByEmployeEmployeTypeAndEndDateTimeBetweenAndOrganisationAndLeaveStatus(EmployeType employeType,Instant fromDate,Instant toDate,Organisation organisation, int leaveStatus,PageRequest pageRequest);
 
     Page<LeaveRequest> findAllByEmployeEmployeTypeAndEmployeDepartmentsAndEndDateTimeBetweenAndOrganisationOrderByApplyDateDesc(EmployeType employeType,Departments departments,Instant fromDate,Instant toDate,Organisation organisation, PageRequest pageRequest);
 
