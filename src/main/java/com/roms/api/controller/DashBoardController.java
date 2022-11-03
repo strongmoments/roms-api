@@ -1,8 +1,11 @@
 package com.roms.api.controller;
 
+import com.roms.api.model.LeaveRequest;
 import com.roms.api.service.EmployeService;
+import com.roms.api.service.LeaveRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +28,8 @@ public class DashBoardController {
 
     @Autowired
     private EmployeService employeService;
+    @Autowired
+    private LeaveRequestService leaveRequestService;
     @GetMapping(value = "/load")
     public ResponseEntity<?> searchProjectSubTeam() throws ChangeSetPersister.NotFoundException {
         Map<String, Object> response = new HashMap<>();
@@ -51,6 +56,11 @@ public class DashBoardController {
         response.put("employeeDobAverage",counter.get()/countwithoutNull.get());
         response.put("starters",employeService.getNewEmployeeCountBetween(fromDate,toDate));
 
+        Instant today = Instant.now();
+
+        Page<LeaveRequest>  leaveData = leaveRequestService.findAllCurrentLeaveTransactionByLeaveStatus(0,100,today, today,2);
+        response.put("onLeaveToday",leaveData.getTotalElements());
+        response.put("onLeaveTodayEmployeeList",leaveData.getContent());
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
