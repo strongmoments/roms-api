@@ -41,6 +41,9 @@ public class ResourceDemandController {
     @Autowired
     private EmployeeSkilsPlantService employeeSkilsPlantService;
 
+    @Autowired
+    private LocationService locationService;
+
     @PostMapping()
     public ResponseEntity<?> saveJobResourceDemand(@RequestBody ResourceDemandInput request){
         Map<String,Object> response = new HashMap();
@@ -95,11 +98,19 @@ public class ResourceDemandController {
                 contractModel = clientContractService.save(contractModel);
                 employeeResourcedemand.setClientContract(contractModel);
 
+                Location locationModel = new Location();
+                locationModel.setDescription(request.getLocationName());
+                locationModel.setCode(request.getLocationName());
+                locationModel = locationService.save(locationModel);
+
+
+
                 String projectName = request.getClientProjectName();
                 ClientProject projectModel = new ClientProject();
                 projectModel.setContract(contractModel);
                 projectModel.setClient(clientmodel);
                 projectModel.setName(projectName);
+                projectModel.setLocation(locationModel);
 
                 projectModel = clientProjectService.save(projectModel);
                 employeeResourcedemand.setClientProject(projectModel);
@@ -111,8 +122,13 @@ public class ResourceDemandController {
                 clientProjectSubteam.setAwardType(request.getAwardType());
                 clientProjectSubteam.setRate(request.getRate());
                 clientProjectSubteam.setWageClassification(request.getWageClassification());
+                clientProjectSubteam.setLocation(locationModel);
+                clientProjectSubteam.setClientProject(projectModel);
+
                 clientProjectSubteam = clientProjectSubteamService.update(clientProjectSubteam);
                 employeeResourcedemand.setClientProjectSubteam(clientProjectSubteam);
+
+
             }
 
             Map<String, Object> skilsMap =  request.getSkils();

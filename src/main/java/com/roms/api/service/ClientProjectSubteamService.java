@@ -29,11 +29,19 @@ public class ClientProjectSubteamService {
         model.setLastUpdateDate(Instant.now());
         model.setUpdateBy(loggedIn.getUser());
         model.setCreateDate(Instant.now());
+        model.setOrganisation(loggedIn.getOrg());
         return clientProjectSubteamRepository.save(model);
     }
 
     public List<ClientProjectSubteam> findAll(){
       return  clientProjectSubteamRepository.findAllByOrganisation(loggedIn.getOrg());
+    }
+
+    public List<ClientProjectSubteam> searChBySubTeamName(String projectId, String searchText){
+        // searchText = "%"+searchText+"%";
+        ClientProject project = new ClientProject();
+        project.setId(projectId);
+        return  clientProjectSubteamRepository.findAllByTeamNameContainsIgnoreCaseAndOrganisationAndClientProject(searchText,loggedIn.getOrg(),project);
     }
 
     public List<ClientProjectSubteam> searChBySubTeamName(String searchText){
