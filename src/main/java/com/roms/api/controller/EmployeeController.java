@@ -8,6 +8,7 @@ import com.roms.api.kafka.KafkaProducer;
 import com.roms.api.model.*;
 import com.roms.api.requestInput.SearchInput;
 import com.roms.api.service.*;
+import com.roms.api.utils.LoggedInUserDetails;
 import org.codehaus.plexus.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,6 +85,9 @@ public class EmployeeController {
 
     @Autowired
     private  UserRolesMapService userRolesMapService;
+
+    @Autowired
+    private LoggedInUserDetails loggedIn;
 
 
 
@@ -268,5 +272,21 @@ public class EmployeeController {
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+
+    @RequestMapping(value = "/tnc", method = RequestMethod.POST, consumes = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<Map<String, Object>> uploadFile(@RequestBody Employe request) throws IOException {
+        Map<String, Object> response = new HashMap<>();
+        Optional<Employe> model = employeService.findById(loggedIn.getUser().getEmployeId().getId());
+        if (model.isPresent()) {
+            Employe employeeMOdel = model.get();
+            employeeMOdel.setTncFlag(request.isTncFlag());
+            employeeMOdel = employeService.update(employeeMOdel);
+            response.put("id", employeeMOdel.getId());
+            response.put("status", "success");
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+
     }
 }

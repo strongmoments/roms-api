@@ -53,13 +53,12 @@ public class LeaveRequestController {
     private LeaveAttachmentService leaveAttachmentService;
 
 
-
     @Autowired
     private MinioService minioService;
 
 
-    @RequestMapping(value = "/uploaddoc" , method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE  })
-    public ResponseEntity<Map<String,Object>> uploadFile(@RequestParam String leaveRequestId, @RequestParam(value="files") MultipartFile[] filse) throws IOException {
+    @RequestMapping(value = "/uploaddoc", method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<Map<String, Object>> uploadFile(@RequestParam String leaveRequestId, @RequestParam(value = "files") MultipartFile[] filse) throws IOException {
 
         Map<String, Object> response = new HashMap();
         ObjectMapper mapper = new ObjectMapper();
@@ -87,7 +86,7 @@ public class LeaveRequestController {
 
     @PostMapping(value = "/request", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<?> requestLeave(@RequestBody LeaveRequest leaveRequest) throws ParseException {
-        Map<String,Object> response = new HashMap<>();
+        Map<String, Object> response = new HashMap<>();
         try {
 
             SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault());
@@ -95,70 +94,70 @@ public class LeaveRequestController {
             leaveRequest.setStartDateTime(sdf.parse(leaveRequest.getStrStartDateTime()).toInstant());
             leaveRequest.setEndDateTime(sdf.parse(leaveRequest.getStrEndDateTime()).toInstant());
             LeaveRequest leaveRequests = leaveRequestService.applyLeave(leaveRequest);
-            if(leaveRequest != null && leaveRequest.getId() != null){
+            if (leaveRequest != null && leaveRequest.getId() != null) {
                 notificationService.sendNotification(leaveRequest.getId());
             }
-            response.put("leaveRequestId",leaveRequest.getId());
-        }catch (Exception e){
-            logger.error("Error while applying leave {} ",  e.getMessage());
+            response.put("leaveRequestId", leaveRequest.getId());
+        } catch (Exception e) {
+            logger.error("Error while applying leave {} ", e.getMessage());
             response.put("error", e.getMessage());
             response.put("status", "error");
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 
         }
-        response.put("status","success");
+        response.put("status", "success");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping(value = "/approve", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<?> approveLeave(@RequestBody LeaveRequest leaveRequest) {
-        Map<String,Object> response = new HashMap<>();
+        Map<String, Object> response = new HashMap<>();
         try {
             leaveRequest = leaveRequestService.approveLeave(leaveRequest);
-            if(leaveRequest != null && leaveRequest.getId() != null)
-            notificationService.sendApprovedOrRejectNotification(leaveRequest.getId(), "approved your", "approve");
-        }catch (Exception e){
-            logger.error("Error while approving leave {} ",  e.getMessage());
+            if (leaveRequest != null && leaveRequest.getId() != null)
+                notificationService.sendApprovedOrRejectNotification(leaveRequest.getId(), "approved your", "approve");
+        } catch (Exception e) {
+            logger.error("Error while approving leave {} ", e.getMessage());
             response.put("error", e.getMessage());
             response.put("status", "error");
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-       }
-        response.put("status","success");
+        }
+        response.put("status", "success");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping(value = "/reject", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<?> rejectLeave(@RequestBody LeaveRequest leaveRequest) {
-        Map<String,Object> response = new HashMap<>();
+        Map<String, Object> response = new HashMap<>();
         try {
-            leaveRequest =  leaveRequestService.rejectLeave(leaveRequest);
-            if(leaveRequest != null && leaveRequest.getId() != null)
-            notificationService.sendApprovedOrRejectNotification(leaveRequest.getId(), "rejected your", "reject");
-        }catch (Exception e){
-            logger.error("Error while rejecting leave {} ",  e.getMessage());
+            leaveRequest = leaveRequestService.rejectLeave(leaveRequest);
+            if (leaveRequest != null && leaveRequest.getId() != null)
+                notificationService.sendApprovedOrRejectNotification(leaveRequest.getId(), "rejected your", "reject");
+        } catch (Exception e) {
+            logger.error("Error while rejecting leave {} ", e.getMessage());
             response.put("error", e.getMessage());
             response.put("status", "error");
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        response.put("status","success");
+        response.put("status", "success");
         return new ResponseEntity<>(response, HttpStatus.OK);
 
     }
 
-   // 0-pendint, 1-approved, 2-rejected
+    // 0-pendint, 1-approved, 2-rejected
     @GetMapping(value = "/applied")
     public ResponseEntity<?> loadApliedLeaveByLeaveStatus(
-            @RequestParam(value ="leaveStatus", defaultValue = "0") int leaveStatus,
-            @RequestParam(value ="page", defaultValue = "0") int page,
-            @RequestParam(value ="size", defaultValue = "3") int size){
-         String employeeId = loggedIn.getUser().getEmployeId().getId();
+            @RequestParam(value = "leaveStatus", defaultValue = "0") int leaveStatus,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "3") int size) {
+        String employeeId = loggedIn.getUser().getEmployeId().getId();
 
         Map<String, Object> response = new HashMap<>();
         try {
             Page<LeaveRequest> requestedPage = null;
-            if(leaveStatus == 0){
+            if (leaveStatus == 0) {
                 requestedPage = leaveRequestService.findAllSentRequest(employeeId, page, size);
-            }else{
+            } else {
                 requestedPage = leaveRequestService.findAllSentRequestByLeaveStatus(employeeId, leaveStatus, page, size);
             }
             response.put("totalElement", requestedPage.getTotalElements());
@@ -166,10 +165,10 @@ public class LeaveRequestController {
             response.put("numberOfelement", requestedPage.getNumberOfElements());
             response.put("currentPageNmber", requestedPage.getNumber());
             response.put("data", requestedPage.getContent());
-        } catch (Exception e){
+        } catch (Exception e) {
             logger.error("An error occurred! {}", e.getMessage());
-            response.put("status","error");
-            response.put("error",e.getMessage());
+            response.put("status", "error");
+            response.put("error", e.getMessage());
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -177,18 +176,18 @@ public class LeaveRequestController {
 
     @GetMapping(value = "/appliedToMe")
     public ResponseEntity<?> loadApliedToMeLeaveByLeaveStatus(
-            @RequestParam(value ="leaveStatus", defaultValue = "0") int leaveStatus,
-            @RequestParam(value ="page", defaultValue = "0") int page,
-            @RequestParam(value ="size", defaultValue = "3") int size){
+            @RequestParam(value = "leaveStatus", defaultValue = "0") int leaveStatus,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "3") int size) {
 
         String employeeId = loggedIn.getUser().getEmployeId().getId();
 
         Map<String, Object> response = new HashMap<>();
         try {
             Page<LeaveRequest> requestedPage = null;
-            if(leaveStatus == 0){
+            if (leaveStatus == 0) {
                 requestedPage = leaveRequestService.findAllRecievedRequest(employeeId, page, size);
-            }else{
+            } else {
                 requestedPage = leaveRequestService.findAllRecievedRequestByLeaveStatus(employeeId, leaveStatus, page, size);
             }
             response.put("totalElement", requestedPage.getTotalElements());
@@ -196,10 +195,10 @@ public class LeaveRequestController {
             response.put("numberOfelement", requestedPage.getNumberOfElements());
             response.put("currentPageNmber", requestedPage.getNumber());
             response.put("data", requestedPage.getContent());
-        } catch (Exception e){
+        } catch (Exception e) {
             logger.error("An error occurred! {}", e.getMessage());
-            response.put("status","error");
-            response.put("error",e.getMessage());
+            response.put("status", "error");
+            response.put("error", e.getMessage());
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -207,8 +206,8 @@ public class LeaveRequestController {
 
     @GetMapping(value = "/appliedToMeHistory")
     public ResponseEntity<?> loadApliedToMeLeaveHistory(
-            @RequestParam(value ="page", defaultValue = "0") int page,
-            @RequestParam(value ="size", defaultValue = "3") int size){
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "3") int size) {
 
         String employeeId = loggedIn.getUser().getEmployeId().getId();
 
@@ -223,26 +222,25 @@ public class LeaveRequestController {
             response.put("numberOfelement", requestedPage.getNumberOfElements());
             response.put("currentPageNmber", requestedPage.getNumber());
             response.put("data", requestedPage.getContent());
-        } catch (Exception e){
+        } catch (Exception e) {
             logger.error("An error occurred! {}", e.getMessage());
-            response.put("status","error");
-            response.put("error",e.getMessage());
+            response.put("status", "error");
+            response.put("error", e.getMessage());
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 
-
     @GetMapping(value = "/types")
     public ResponseEntity<?> loadLeaveType() {
         Map<String, Object> response = new HashMap<>();
         try {
-            response.put("data",leaveTypeService.findAll());
-        } catch (Exception e){
+            response.put("data", leaveTypeService.findAll());
+        } catch (Exception e) {
             logger.error("An error occurred! {}", e.getMessage());
-            response.put("status","error");
-            response.put("error",e.getMessage());
+            response.put("status", "error");
+            response.put("error", e.getMessage());
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -253,10 +251,10 @@ public class LeaveRequestController {
         Map<String, Object> response = new HashMap<>();
         try {
             return new ResponseEntity<>(clientProjectSubteamMemberService.getLeaveApprover(), HttpStatus.OK);
-        } catch (Exception e){
+        } catch (Exception e) {
             logger.error("An error occurred! {}", e.getMessage());
-            response.put("status","error");
-            response.put("error",e.getMessage());
+            response.put("status", "error");
+            response.put("error", e.getMessage());
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -264,8 +262,8 @@ public class LeaveRequestController {
     @PostMapping(value = "/loadAll")
     public ResponseEntity<?> loadAll(
             @RequestBody LeaveRequestSearchInput leaveRequestSearchInput,
-            @RequestParam(value ="page", defaultValue = "0") int page,
-            @RequestParam(value ="size", defaultValue = "3") int size) throws ParseException {
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "3") int size) throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault());
         Instant fromDate = sdf.parse(leaveRequestSearchInput.getFromDate()).toInstant();
         Instant toDate = sdf.parse(leaveRequestSearchInput.getToDate()).toInstant();
@@ -274,23 +272,23 @@ public class LeaveRequestController {
         Map<String, Object> response = new HashMap<>();
         try {
             Page<LeaveRequest> requestedPage = null;
-            if(!(StringUtils.isEmpty(leaveRequestSearchInput.getDepartmentId()) )&& !(StringUtils.isEmpty(leaveRequestSearchInput.getEmployeeTypeId())) && leaveStatus >0){
-                requestedPage = leaveRequestService.findAllLeaveTransactionByEmployeeTypeAndDepartmentAndLeaveStatus(page, size,fromDate,toDate, leaveRequestSearchInput.getEmployeeTypeId(),leaveRequestSearchInput.getDepartmentId(), leaveStatus);
-            }else if(!(StringUtils.isEmpty(leaveRequestSearchInput.getDepartmentId()) ) && StringUtils.isEmpty(leaveRequestSearchInput.getEmployeeTypeId()) && leaveStatus >0){
-                requestedPage = leaveRequestService.findAllLeaveTransactionByDepartmentAndLeaveStatus(page, size,fromDate,toDate,leaveRequestSearchInput.getDepartmentId(),leaveStatus);
-            }else if(StringUtils.isEmpty(leaveRequestSearchInput.getDepartmentId())  && !(StringUtils.isEmpty(leaveRequestSearchInput.getEmployeeTypeId())) && leaveStatus>0 ){
-                requestedPage = leaveRequestService.findAllLeaveTransactionByEmployeeTypeAndLeaveStatus(page, size,fromDate,toDate,leaveRequestSearchInput.getEmployeeTypeId(),leaveStatus);
-            }else if(!(StringUtils.isEmpty(leaveRequestSearchInput.getDepartmentId()) )&& !(StringUtils.isEmpty(leaveRequestSearchInput.getEmployeeTypeId())) ){
-                requestedPage = leaveRequestService.findAllLeaveTransactionByEmployeeTypeAndDepartment(page, size,fromDate,toDate, leaveRequestSearchInput.getEmployeeTypeId(),leaveRequestSearchInput.getDepartmentId());
-            }else if(!(StringUtils.isEmpty(leaveRequestSearchInput.getDepartmentId()) ) && StringUtils.isEmpty(leaveRequestSearchInput.getEmployeeTypeId()) ){
-                requestedPage = leaveRequestService.findAllLeaveTransactionByDepartment(page, size,fromDate,toDate,leaveRequestSearchInput.getDepartmentId());
-            }else if(StringUtils.isEmpty(leaveRequestSearchInput.getDepartmentId())  && !(StringUtils.isEmpty(leaveRequestSearchInput.getEmployeeTypeId())) ){
-                requestedPage = leaveRequestService.findAllLeaveTransactionByEmployeeType(page, size,fromDate,toDate,leaveRequestSearchInput.getEmployeeTypeId());
-            }else {
-                if(leaveStatus>0){
-                    requestedPage = leaveRequestService.findAllLeaveTransactionByLeaveStatus( page, size,fromDate,toDate,leaveStatus);
-                }else{
-                    requestedPage = leaveRequestService.findAllLeaveTransaction(page, size, fromDate,toDate);
+            if (!(StringUtils.isEmpty(leaveRequestSearchInput.getDepartmentId())) && !(StringUtils.isEmpty(leaveRequestSearchInput.getEmployeeTypeId())) && leaveStatus > 0) {
+                requestedPage = leaveRequestService.findAllLeaveTransactionByEmployeeTypeAndDepartmentAndLeaveStatus(page, size, fromDate, toDate, leaveRequestSearchInput.getEmployeeTypeId(), leaveRequestSearchInput.getDepartmentId(), leaveStatus);
+            } else if (!(StringUtils.isEmpty(leaveRequestSearchInput.getDepartmentId())) && StringUtils.isEmpty(leaveRequestSearchInput.getEmployeeTypeId()) && leaveStatus > 0) {
+                requestedPage = leaveRequestService.findAllLeaveTransactionByDepartmentAndLeaveStatus(page, size, fromDate, toDate, leaveRequestSearchInput.getDepartmentId(), leaveStatus);
+            } else if (StringUtils.isEmpty(leaveRequestSearchInput.getDepartmentId()) && !(StringUtils.isEmpty(leaveRequestSearchInput.getEmployeeTypeId())) && leaveStatus > 0) {
+                requestedPage = leaveRequestService.findAllLeaveTransactionByEmployeeTypeAndLeaveStatus(page, size, fromDate, toDate, leaveRequestSearchInput.getEmployeeTypeId(), leaveStatus);
+            } else if (!(StringUtils.isEmpty(leaveRequestSearchInput.getDepartmentId())) && !(StringUtils.isEmpty(leaveRequestSearchInput.getEmployeeTypeId()))) {
+                requestedPage = leaveRequestService.findAllLeaveTransactionByEmployeeTypeAndDepartment(page, size, fromDate, toDate, leaveRequestSearchInput.getEmployeeTypeId(), leaveRequestSearchInput.getDepartmentId());
+            } else if (!(StringUtils.isEmpty(leaveRequestSearchInput.getDepartmentId())) && StringUtils.isEmpty(leaveRequestSearchInput.getEmployeeTypeId())) {
+                requestedPage = leaveRequestService.findAllLeaveTransactionByDepartment(page, size, fromDate, toDate, leaveRequestSearchInput.getDepartmentId());
+            } else if (StringUtils.isEmpty(leaveRequestSearchInput.getDepartmentId()) && !(StringUtils.isEmpty(leaveRequestSearchInput.getEmployeeTypeId()))) {
+                requestedPage = leaveRequestService.findAllLeaveTransactionByEmployeeType(page, size, fromDate, toDate, leaveRequestSearchInput.getEmployeeTypeId());
+            } else {
+                if (leaveStatus > 0) {
+                    requestedPage = leaveRequestService.findAllLeaveTransactionByLeaveStatus(page, size, fromDate, toDate, leaveStatus);
+                } else {
+                    requestedPage = leaveRequestService.findAllLeaveTransaction(page, size, fromDate, toDate);
                 }
 
             }
@@ -300,10 +298,10 @@ public class LeaveRequestController {
             response.put("numberOfelement", requestedPage.getNumberOfElements());
             response.put("currentPageNmber", requestedPage.getNumber());
             response.put("data", requestedPage.getContent());
-        } catch (Exception e){
+        } catch (Exception e) {
             logger.error("An error occurred! {}", e.getMessage());
-            response.put("status","error");
-            response.put("error",e.getMessage());
+            response.put("status", "error");
+            response.put("error", e.getMessage());
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -313,8 +311,8 @@ public class LeaveRequestController {
     @PostMapping(value = "/loadCurrent")
     public ResponseEntity<?> loadCurrentLeaves(
             @RequestBody LeaveRequestSearchInput leaveRequestSearchInput,
-            @RequestParam(value ="page", defaultValue = "0") int page,
-            @RequestParam(value ="size", defaultValue = "3") int size) throws ParseException {
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "3") int size) throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault());
         Instant fromDate = sdf.parse(leaveRequestSearchInput.getFromDate()).toInstant();
         Instant toDate = sdf.parse(leaveRequestSearchInput.getToDate()).toInstant();
@@ -323,23 +321,23 @@ public class LeaveRequestController {
         Map<String, Object> response = new HashMap<>();
         try {
             Page<LeaveRequest> requestedPage = null;
-            if(!(StringUtils.isEmpty(leaveRequestSearchInput.getDepartmentId()) )&& !(StringUtils.isEmpty(leaveRequestSearchInput.getEmployeeTypeId())) && leaveStatus >0){
-                requestedPage = leaveRequestService.findAllCurrentLeaveTransactionByEmployeeTypeAndDepartmentAndLeaveStatus(page, size,fromDate,toDate, leaveRequestSearchInput.getEmployeeTypeId(),leaveRequestSearchInput.getDepartmentId(), leaveStatus);
-            }else if(!(StringUtils.isEmpty(leaveRequestSearchInput.getDepartmentId()) ) && StringUtils.isEmpty(leaveRequestSearchInput.getEmployeeTypeId()) && leaveStatus >0){
-                requestedPage = leaveRequestService.findAllCurrentLeaveTransactionByDepartmentAndLeaveStatus(page, size,fromDate,toDate,leaveRequestSearchInput.getDepartmentId(),leaveStatus);
-            }else if(StringUtils.isEmpty(leaveRequestSearchInput.getDepartmentId())  && !(StringUtils.isEmpty(leaveRequestSearchInput.getEmployeeTypeId())) && leaveStatus>0 ){
-                requestedPage = leaveRequestService.findAllCurrentLeaveTransactionByEmployeeTypeAndLeaveStatus(page, size,fromDate,toDate,leaveRequestSearchInput.getEmployeeTypeId(),leaveStatus);
-            }else if(!(StringUtils.isEmpty(leaveRequestSearchInput.getDepartmentId()) )&& !(StringUtils.isEmpty(leaveRequestSearchInput.getEmployeeTypeId())) ){
-                requestedPage = leaveRequestService.findAllCurrentLeaveTransactionByEmployeeTypeAndDepartment(page, size,fromDate,toDate, leaveRequestSearchInput.getEmployeeTypeId(),leaveRequestSearchInput.getDepartmentId());
-            }else if(!(StringUtils.isEmpty(leaveRequestSearchInput.getDepartmentId()) ) && StringUtils.isEmpty(leaveRequestSearchInput.getEmployeeTypeId()) ){
-                requestedPage = leaveRequestService.findAllCurrentLeaveTransactionByDepartment(page, size,fromDate,toDate,leaveRequestSearchInput.getDepartmentId());
-            }else if(StringUtils.isEmpty(leaveRequestSearchInput.getDepartmentId())  && !(StringUtils.isEmpty(leaveRequestSearchInput.getEmployeeTypeId())) ){
-                requestedPage = leaveRequestService.findAllCurrentLeaveTransactionByEmployeeType(page, size,fromDate,toDate,leaveRequestSearchInput.getEmployeeTypeId());
-            }else {
-                if(leaveStatus>0){
-                    requestedPage = leaveRequestService.findAllCurrentLeaveTransactionByLeaveStatus( page, size,fromDate,toDate,leaveStatus);
-                }else{
-                    requestedPage = leaveRequestService.findAllCurrentLeaveTransaction(page, size, fromDate,toDate);
+            if (!(StringUtils.isEmpty(leaveRequestSearchInput.getDepartmentId())) && !(StringUtils.isEmpty(leaveRequestSearchInput.getEmployeeTypeId())) && leaveStatus > 0) {
+                requestedPage = leaveRequestService.findAllCurrentLeaveTransactionByEmployeeTypeAndDepartmentAndLeaveStatus(page, size, fromDate, toDate, leaveRequestSearchInput.getEmployeeTypeId(), leaveRequestSearchInput.getDepartmentId(), leaveStatus);
+            } else if (!(StringUtils.isEmpty(leaveRequestSearchInput.getDepartmentId())) && StringUtils.isEmpty(leaveRequestSearchInput.getEmployeeTypeId()) && leaveStatus > 0) {
+                requestedPage = leaveRequestService.findAllCurrentLeaveTransactionByDepartmentAndLeaveStatus(page, size, fromDate, toDate, leaveRequestSearchInput.getDepartmentId(), leaveStatus);
+            } else if (StringUtils.isEmpty(leaveRequestSearchInput.getDepartmentId()) && !(StringUtils.isEmpty(leaveRequestSearchInput.getEmployeeTypeId())) && leaveStatus > 0) {
+                requestedPage = leaveRequestService.findAllCurrentLeaveTransactionByEmployeeTypeAndLeaveStatus(page, size, fromDate, toDate, leaveRequestSearchInput.getEmployeeTypeId(), leaveStatus);
+            } else if (!(StringUtils.isEmpty(leaveRequestSearchInput.getDepartmentId())) && !(StringUtils.isEmpty(leaveRequestSearchInput.getEmployeeTypeId()))) {
+                requestedPage = leaveRequestService.findAllCurrentLeaveTransactionByEmployeeTypeAndDepartment(page, size, fromDate, toDate, leaveRequestSearchInput.getEmployeeTypeId(), leaveRequestSearchInput.getDepartmentId());
+            } else if (!(StringUtils.isEmpty(leaveRequestSearchInput.getDepartmentId())) && StringUtils.isEmpty(leaveRequestSearchInput.getEmployeeTypeId())) {
+                requestedPage = leaveRequestService.findAllCurrentLeaveTransactionByDepartment(page, size, fromDate, toDate, leaveRequestSearchInput.getDepartmentId());
+            } else if (StringUtils.isEmpty(leaveRequestSearchInput.getDepartmentId()) && !(StringUtils.isEmpty(leaveRequestSearchInput.getEmployeeTypeId()))) {
+                requestedPage = leaveRequestService.findAllCurrentLeaveTransactionByEmployeeType(page, size, fromDate, toDate, leaveRequestSearchInput.getEmployeeTypeId());
+            } else {
+                if (leaveStatus > 0) {
+                    requestedPage = leaveRequestService.findAllCurrentLeaveTransactionByLeaveStatus(page, size, fromDate, toDate, leaveStatus);
+                } else {
+                    requestedPage = leaveRequestService.findAllCurrentLeaveTransaction(page, size, fromDate, toDate);
                 }
 
             }
@@ -349,14 +347,27 @@ public class LeaveRequestController {
             response.put("numberOfelement", requestedPage.getNumberOfElements());
             response.put("currentPageNmber", requestedPage.getNumber());
             response.put("data", requestedPage.getContent());
-        } catch (Exception e){
+        } catch (Exception e) {
             logger.error("An error occurred! {}", e.getMessage());
-            response.put("status","error");
-            response.put("error",e.getMessage());
+            response.put("status", "error");
+            response.put("error", e.getMessage());
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/process", method = RequestMethod.POST, consumes = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<Map<String, Object>> uploadFile(@RequestBody LeaveRequest leaveRequest) throws IOException {
+        Map<String, Object> response = new HashMap<>();
+        Optional<LeaveRequest> model = leaveRequestService.findById(leaveRequest.getId());
+        if (model.isPresent()) {
+            LeaveRequest leaveModel = model.get();
+            leaveModel.setSalaryProcessStatus(leaveRequest.getSalaryProcessStatus());
+            leaveModel = leaveRequestService.update(leaveModel);
+            response.put("id", leaveModel.getId());
+            response.put("status", "success");
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
 
+    }
 }

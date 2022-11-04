@@ -34,6 +34,12 @@ public class LeaveRequestService {
         return leaveRequestRepository.findById(id);
     }
 
+    public LeaveRequest update(LeaveRequest request){
+        request.setLastUpdateDate(Instant.now());
+        request.setUpdateBy(loggedIn.getUser());
+        return leaveRequestRepository.save(request);
+    }
+
     public void LeaveRequestRepository(LeaveRequest model) {
         leaveRequestRepository.save(model);
     }

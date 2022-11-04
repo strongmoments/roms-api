@@ -10,14 +10,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -31,7 +31,7 @@ public class DashBoardController {
     @Autowired
     private LeaveRequestService leaveRequestService;
     @GetMapping(value = "/load")
-    public ResponseEntity<?> searchProjectSubTeam() throws ChangeSetPersister.NotFoundException {
+    public ResponseEntity<?> searchProjectSubTeam() throws ChangeSetPersister.NotFoundException, ParseException {
         Map<String, Object> response = new HashMap<>();
         Long totalEmployee = employeService.getTotalEmployeeCount();
         totalEmployee = totalEmployee-1; // to remove admin user
@@ -56,9 +56,12 @@ public class DashBoardController {
         response.put("employeeDobAverage",counter.get()/countwithoutNull.get());
         response.put("starters",employeService.getNewEmployeeCountBetween(fromDate,toDate));
 
-        Instant today = Instant.now();
+        Instant toDates = Instant.now();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+        String todayDate  = sdf.format(new Date());
+        Instant fromDates = sdf.parse(todayDate).toInstant();
 
-        Page<LeaveRequest>  leaveData = leaveRequestService.findAllCurrentLeaveTransactionByLeaveStatus(0,100,today, today,2);
+        Page<LeaveRequest>  leaveData = leaveRequestService.findAllCurrentLeaveTransactionByLeaveStatus(0,100,fromDates, toDates,2);
         response.put("onLeaveToday",leaveData.getTotalElements());
         response.put("onLeaveTodayEmployeeList",leaveData.getContent());
 

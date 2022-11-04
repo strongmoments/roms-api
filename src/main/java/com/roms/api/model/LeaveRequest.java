@@ -31,6 +31,9 @@ public class LeaveRequest extends CommonFields implements Serializable {
     @Column(name="leave_status")
     private int leaveStatus;
 
+    @Column(name="salary_process_status")
+    private int salaryProcessStatus;
+
     @Column(name="start_date_time",nullable=false)
     private Instant startDateTime;
 
@@ -192,5 +195,13 @@ public class LeaveRequest extends CommonFields implements Serializable {
 
     public void setAttachments(Set<LeaveAttachments> attachments) {
         this.attachments = attachments;
+    }
+
+    public int getSalaryProcessStatus() {
+        return salaryProcessStatus;
+    }
+
+    public void setSalaryProcessStatus(int salaryProcessStatus) {
+        this.salaryProcessStatus = salaryProcessStatus;
     }
 }
