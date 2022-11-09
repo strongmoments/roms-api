@@ -35,7 +35,7 @@ public class AssetsService {
     }
 
     public Page<Assets> findAll(int page, int size){
-        PageRequest pageble  = PageRequest.of(page, size, Sort.by("applyDate").descending());
+        PageRequest pageble  = PageRequest.of(page, size, Sort.by("createDate").descending());
         return assetsRepository.findAllByOrganisation(loggedIn.getOrg(),pageble);
     }
 
