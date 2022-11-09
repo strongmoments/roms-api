@@ -2,8 +2,10 @@ package com.roms.api.controller;
 
 import com.roms.api.model.Assets;
 import com.roms.api.model.Client;
+import com.roms.api.model.DigitalAssets;
 import com.roms.api.model.LeaveRequest;
 import com.roms.api.service.AssetsService;
+import org.codehaus.plexus.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -25,6 +27,17 @@ public class AssetController {
     public ResponseEntity<?> saveCirtificate(@RequestBody() Assets assets ){
         Map<String,Object> response = new HashMap();
         try {
+
+            if(StringUtils.isNotBlank(assets.getQrCodeId())){
+                DigitalAssets QR = new DigitalAssets();
+                QR.setId(assets.getQrCodeId());
+                assets.setQrCode(QR);
+            }
+            if(StringUtils.isNotBlank(assets.getAssetImageId())){
+                DigitalAssets assetImage = new DigitalAssets();
+                assetImage.setId(assets.getAssetImageId());
+                assets.setId(assets.getAssetImageId());
+            }
              assets =assetsService.save(assets);
             response.put("status","success");
             response.put("id",assets.getId());
