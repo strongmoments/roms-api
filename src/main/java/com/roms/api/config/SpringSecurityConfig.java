@@ -6,6 +6,7 @@ import com.roms.api.filter.JwtRequestFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
@@ -68,7 +69,9 @@ public class SpringSecurityConfig extends  WebSecurityConfigurerAdapter  {
         // We don't need CSRF for this example
         httpSecurity.cors().and().csrf().disable()
                 // dont authenticate this particular request
-                .authorizeRequests().antMatchers("/authenticate","/version","/addUserRequest").permitAll().
+                .authorizeRequests().antMatchers("/authenticate","/version","/addUserRequest").permitAll()
+                .antMatchers(HttpMethod.GET,"/v1/files").permitAll()
+        .
                 // all other requests need to be authenticated
                         anyRequest().authenticated().and().
                 // make sure we use stateless session; session won't be used to

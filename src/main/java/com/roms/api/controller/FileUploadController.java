@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.roms.api.dto.FileDto;
 import com.roms.api.model.DigitalAssets;
 import com.roms.api.service.MinioService;
+import com.roms.api.utils.JwtTokenUtil;
+import com.roms.api.utils.LoggedInUserDetails;
 import org.apache.commons.compress.utils.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -27,6 +29,11 @@ public class FileUploadController {
     @Autowired
     private  MinioService minioService;
 
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
+
+    @Autowired
+    private LoggedInUserDetails loggedIn;
 
     @RequestMapping(value = "/upload" , method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE  })
     public ResponseEntity<Map<String,Object>> uploadFile(@RequestParam(value="files") MultipartFile[] filse) throws IOException {
@@ -55,10 +62,14 @@ public class FileUploadController {
     public ResponseEntity<?> loadFile(
             @RequestParam(value ="fileName", defaultValue = "") String fileName,
             @RequestParam(value ="id", defaultValue = "") String bucketName,
-    @RequestParam(value ="type", defaultValue = "") String type) throws IOException {
+    @RequestParam(value ="type", defaultValue = "") String type,
+            @RequestParam(value ="key", defaultValue = "") String key) throws IOException {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType(type));
+       if(!jwtTokenUtil.validateToken(key,loggedIn.getUser().getUsername())){
+           return new ResponseEntity<>("not_found", HttpStatus.NOT_FOUND);
+       }
 
         headers.add("Content-Disposition", "inline; filename=" + fileName);
 
