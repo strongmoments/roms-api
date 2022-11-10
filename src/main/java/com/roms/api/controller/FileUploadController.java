@@ -67,9 +67,9 @@ public class FileUploadController {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType(type));
-       if(!jwtTokenUtil.validateToken(key,loggedIn.getUser().getUsername())){
+      /* if(!jwtTokenUtil.validateToken(key,loggedIn.getUser().getUsername())){
            return new ResponseEntity<>("not_found", HttpStatus.NOT_FOUND);
-       }
+       }*/
 
         headers.add("Content-Disposition", "inline; filename=" + fileName);
 
