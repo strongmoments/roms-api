@@ -36,7 +36,8 @@ public class AssetController {
             if(StringUtils.isNotBlank(assets.getAssetImageId())){
                 DigitalAssets assetImage = new DigitalAssets();
                 assetImage.setId(assets.getAssetImageId());
-                assets.setId(assets.getAssetImageId());
+               
+                assets.setAssetImage(assetImage);
             }
              assets =assetsService.save(assets);
             response.put("status","success");
