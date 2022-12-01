@@ -9,8 +9,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
@@ -47,12 +50,16 @@ public class ResourceDemandController {
     @PostMapping()
     public ResponseEntity<?> saveJobResourceDemand(@RequestBody ResourceDemandInput request){
         Map<String,Object> response = new HashMap();
+        
         try {
+        	 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+            // Instant perposedDate = sdf.parse(request.getPerposedDate).toInstant();
+        	
             EmployeeResourcedemand employeeResourcedemand = EmployeeResourcedemand.builder()
                    .hiringManager(new Employe(request.getHiringManagerId()))
                     .demandType(request.getDemandType())
                     .roleName(request.getProfileRole())
-                    //.perposedDate()
+                   // .perposedDate(perposedDate)
                     .description(request.getDescription())
                     .type(request.getType()) // internal or external
                     .minimumExperiecne(request.getMinimumExperiecne())
@@ -194,9 +201,30 @@ public class ResourceDemandController {
         return new ResponseEntity<>(response, HttpStatus.OK);
 
     }
+    
+    @GetMapping("/{demandId}")
+    public ResponseEntity<?> loadResourceDemandById(@PathVariable("demandId") String demandId){
+        Map<String,Object> response = new HashMap();
 
-    @GetMapping("/{employeeId}")
-    public ResponseEntity<?> loadAllResourceDemand(@PathVariable("employeeId") String employeeId){
+        try {
+            Optional<EmployeeResourcedemand> dataList = employeeResourcedemandService.findById(demandId);
+            if(!dataList.isEmpty()) {
+            	response.put("data",dataList.get());
+            }else {
+            	 return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+            }
+            
+        } catch (Exception e) {
+            response.put("error", e.getMessage());
+            response.put("status", "error");
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+
+    }
+
+    @GetMapping("/self/{employeeId}")
+    public ResponseEntity<?> loadAllResourceDemandByEmployee(@PathVariable("employeeId") String employeeId){
         Map<String,Object> response = new HashMap();
 
         try {

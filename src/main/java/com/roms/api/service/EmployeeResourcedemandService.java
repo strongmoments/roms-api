@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class EmployeeResourcedemandService  {
@@ -31,6 +32,11 @@ public class EmployeeResourcedemandService  {
     public List<EmployeeResourcedemand> findAll(){
         return employeeResourcedemandRepository.findAllByOrganisation(loggedIn.getOrg());
     }
+    
+    public Optional<EmployeeResourcedemand> findById(String id){
+        return employeeResourcedemandRepository.findById(id);
+    }
+    
     public List<EmployeeResourcedemand> findbyEmployeeId(String employeeId){
         return employeeResourcedemandRepository.findAllByOrganisationAndHiringManagerOrCreateByEmployeId(loggedIn.getOrg(), new Employe(employeeId),new Employe(employeeId));
     }

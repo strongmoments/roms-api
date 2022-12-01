@@ -1,11 +1,12 @@
 package com.roms.api.requestInput;
 
-import com.roms.api.config.ModelHashMapConverter;
-import com.roms.api.model.ClientProject;
-import com.roms.api.model.ClientProjectSubteam;
+
 import com.roms.api.model.Employe;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -19,6 +20,8 @@ import java.util.Map;
 
 @Data
 @Builder
+@Getter
+@Setter
 public class ResourceDemandInput {
 
     private String hiringManagerId;

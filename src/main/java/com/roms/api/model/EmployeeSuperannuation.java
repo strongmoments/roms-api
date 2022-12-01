@@ -1,7 +1,6 @@
 package com.roms.api.model;
 
-import com.roms.api.requestInput.CurrentFundInput;
-import com.roms.api.requestInput.SelfFundInput;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
