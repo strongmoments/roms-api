@@ -651,6 +651,25 @@ public class UserController {
 
     }
 
+    @DeleteMapping(value = "/{emailId}")
+    public ResponseEntity<?> delete( @PathVariable("emailId") String emailId) {
+        Map<String, Object> response = new HashMap<>();
+        ArrayList obj = new ArrayList();
+        try {
+            EmployeePayLoad paylod =  EmployeePayLoad.builder().
+                    email(emailId).build();
+
+            response.put("data",userService.deleteTemporary(paylod));
+        } catch (Exception e){
+            logger.error("An error occurred! {}", e.getMessage());
+            response.put("status","error");
+            response.put("error",e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+
     @GetMapping(value = "/loadPendingUsers")
     public ResponseEntity<?> loadLeaveType() {
         Map<String, Object> response = new HashMap<>();

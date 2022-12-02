@@ -144,6 +144,23 @@ public class UserService  {
         return response;
     }
 
+    public String deleteTemporary(EmployeePayLoad employeePayLoad) {
+        RestTemplate restTemplate = new RestTemplate();
+        String URL  = "http://localhost:8081/deleteUser";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+
+        // employeePayLoad.setId(loggedIn.getUser().getEmployeId().getId());
+        employeePayLoad.setRegistrationDate(String.valueOf(Instant.now().toEpochMilli()));
+        employeePayLoad.setStatus(2);
+        employeePayLoad.setOrgId(loggedIn.getOrg().getId());
+        HttpEntity<EmployeePayLoad> entity = new HttpEntity<EmployeePayLoad>(employeePayLoad,headers);
+        String response = restTemplate.exchange(
+                URL, HttpMethod.POST, entity, String.class).getBody();
+        return response;
+    }
+
 
     public Users save(Users usersModel) {
          if(doesUserExist(usersModel.getUserId())){
