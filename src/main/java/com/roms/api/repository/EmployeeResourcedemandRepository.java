@@ -11,6 +11,6 @@ import java.util.List;
 @Repository
 public interface EmployeeResourcedemandRepository extends JpaRepository<EmployeeResourcedemand,String> {
 
-    public List<EmployeeResourcedemand>  findAllByOrganisation(Organisation org);
+    public List<EmployeeResourcedemand>  findAllByOrganisationOrderByCreateDateDesc(Organisation org);
     public List<EmployeeResourcedemand>  findAllByOrganisationAndHiringManagerOrCreateByEmployeId(Organisation org, Employe managerId,Employe createdBy);
 }

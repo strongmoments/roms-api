@@ -30,7 +30,7 @@ public class EmployeeResourcedemandService  {
     }
 
     public List<EmployeeResourcedemand> findAll(){
-        return employeeResourcedemandRepository.findAllByOrganisation(loggedIn.getOrg());
+        return employeeResourcedemandRepository.findAllByOrganisationOrderByCreateDateDesc(loggedIn.getOrg());
     }
     
     public Optional<EmployeeResourcedemand> findById(String id){

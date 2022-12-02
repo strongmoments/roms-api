@@ -53,13 +53,13 @@ public class ResourceDemandController {
         
         try {
         	 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-            // Instant perposedDate = sdf.parse(request.getPerposedDate).toInstant();
+            Instant perposedDate = sdf.parse(request.getPerposedDate()).toInstant();
         	
             EmployeeResourcedemand employeeResourcedemand = EmployeeResourcedemand.builder()
                    .hiringManager(new Employe(request.getHiringManagerId()))
                     .demandType(request.getDemandType())
                     .roleName(request.getProfileRole())
-                   // .perposedDate(perposedDate)
+                    .perposedDate(perposedDate)
                     .description(request.getDescription())
                     .type(request.getType()) // internal or external
                     .minimumExperiecne(request.getMinimumExperiecne())
@@ -223,7 +223,7 @@ public class ResourceDemandController {
 
     }
 
-    @GetMapping("/self/{employeeId}")
+    @GetMapping("/mydemand/{employeeId}")
     public ResponseEntity<?> loadAllResourceDemandByEmployee(@PathVariable("employeeId") String employeeId){
         Map<String,Object> response = new HashMap();
 

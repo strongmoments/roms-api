@@ -75,6 +75,11 @@ public class FileUploadController {
 
         ResponseEntity<byte[]> returnValue = new ResponseEntity<>(IOUtils.toByteArray(minioService.getObject(fileName,bucketName)), headers, HttpStatus.OK);
 
+        /*return ResponseEntity.ok()
+                .headers(headers)
+                .contentLength(file.length())
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(resource);*/
         return returnValue;
 
     }
