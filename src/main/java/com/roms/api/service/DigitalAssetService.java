@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.List;
 
 @Service
 public class DigitalAssetService {
@@ -24,6 +25,15 @@ public class DigitalAssetService {
         digitalAssets.setCreateDate(Instant.now());
         return digitalAssetRepository.save(digitalAssets);
 
+    }
+
+    public DigitalAssets update(DigitalAssets digitalAssets){
+        digitalAssets.setLastUpdateDate(Instant.now());
+         return digitalAssetRepository.save(digitalAssets);
+    }
+
+    public List<DigitalAssets> findAll(){
+       return  digitalAssetRepository.findAllByOrganisation(loggedIn.getOrg());
     }
 
 }

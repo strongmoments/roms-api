@@ -3,9 +3,11 @@ package com.roms.api.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.roms.api.dto.FileDto;
 import com.roms.api.model.DigitalAssets;
+import com.roms.api.service.DigitalAssetService;
 import com.roms.api.service.MinioService;
 import com.roms.api.utils.JwtTokenUtil;
 import com.roms.api.utils.LoggedInUserDetails;
+import io.minio.errors.*;
 import org.apache.commons.compress.utils.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -16,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +38,9 @@ public class FileUploadController {
 
     @Autowired
     private LoggedInUserDetails loggedIn;
+
+    @Autowired
+    private DigitalAssetService digitalAssetService;
 
     @RequestMapping(value = "/upload" , method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE  })
     public ResponseEntity<Map<String,Object>> uploadFile(@RequestParam(value="files") MultipartFile[] filse) throws IOException {
@@ -81,6 +88,50 @@ public class FileUploadController {
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .body(resource);*/
         return returnValue;
+
+    }
+
+
+
+    @GetMapping(value = "/migrate")
+    public ResponseEntity<?> migrate()  {
+        List<Map<String, Object>  > dataList = new ArrayList<>();
+
+        List<DigitalAssets>   allFileList = digitalAssetService.findAll();
+        allFileList.forEach(obj->{
+            try {
+                String newUrl =  minioService.getPreSignedUrl(obj.getFileName(),obj.getBucketName(),obj.getFileType());
+                String oldurl= obj.getUrl();
+                Map<String, Object> response = new HashMap();
+                response.put("old",oldurl);
+                response.put("id",obj.getId());
+                response.put("new ",newUrl);
+
+                dataList.add(response);
+                obj.setUrl(newUrl);
+                digitalAssetService.update(obj);
+            } catch (ServerException e) {
+                throw new RuntimeException(e);
+            } catch (InsufficientDataException e) {
+                throw new RuntimeException(e);
+            } catch (ErrorResponseException e) {
+                throw new RuntimeException(e);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            } catch (NoSuchAlgorithmException e) {
+                throw new RuntimeException(e);
+            } catch (InvalidKeyException e) {
+                throw new RuntimeException(e);
+            } catch (InvalidResponseException e) {
+                throw new RuntimeException(e);
+            } catch (XmlParserException e) {
+                throw new RuntimeException(e);
+            } catch (InternalException e) {
+                throw new RuntimeException(e);
+            }
+
+        });
+        return new ResponseEntity<>(dataList, HttpStatus.OK);
 
     }
 
