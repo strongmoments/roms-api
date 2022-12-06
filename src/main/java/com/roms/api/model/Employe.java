@@ -78,6 +78,9 @@ public class Employe extends CommonFields implements Serializable {
     @Column(name="onboarding_flag")
     public int onboardingFlag;
 
+    @Column(name="payment_frequency")
+    public char paymentFrequency;
+
     @OneToOne()
     @JoinColumn(name = "employee_typeIdx",referencedColumnName = "id")
     @Fetch(FetchMode.SELECT)
@@ -294,6 +297,14 @@ public class Employe extends CommonFields implements Serializable {
 
     public void setTncFlag(boolean tncFlag) {
         this.tncFlag = tncFlag;
+    }
+
+    public char getPaymentFrequency() {
+        return paymentFrequency;
+    }
+
+    public void setPaymentFrequency(char paymentFrequency) {
+        this.paymentFrequency = paymentFrequency;
     }
 }
 

@@ -157,7 +157,7 @@ public class UserController {
 
     @PostMapping(value = "/add", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<?> addLayeredBrand(@RequestBody AddUserInput request) {
-        logger.info(("Process add new brand"));
+        logger.info(("adding user to redis  "));
         Map<String, Object> response = new HashMap<>();
         try {
 
@@ -183,6 +183,7 @@ public class UserController {
             employeModel.setPhone(request.getPhone());
             employeModel.setEmail(request.getEmail().trim());
             employeModel.setJobTitle("");
+            employeModel.setPaymentFrequency( request.getPaymentFrequency() == 0 ? 'w' : request.getPaymentFrequency());
             employeModel.setOnboardingFlag(1);
            // employeModel.setBirthdate(dob.toInstant());
             employeModel.setGender("");
@@ -204,8 +205,6 @@ public class UserController {
                 roles.setId(request.getRoleId());
                 userModels.setRole(roles);
             }
-
-
 
             if( StringUtils.isBlank(request.getDepartmentId())){
                 departments.setCode(request.getDepartmentName());
