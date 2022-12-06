@@ -1,6 +1,6 @@
 package com.roms.api.model;
 
-import com.roms.api.config.ModelHashMapConverter;
+import com.roms.api.utils.CustomGenerator;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import com.vladmihalcea.hibernate.type.json.JsonStringType;
 import lombok.AllArgsConstructor;
@@ -14,7 +14,6 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.List;
 import java.util.Map;
 
 @Data
@@ -28,6 +27,10 @@ import java.util.Map;
 })
 @Table(name ="employee_resource_demand")
 public class EmployeeResourcedemand extends CommonFields implements Serializable {
+
+    @GeneratorType(type= CustomGenerator.class,when= GenerationTime.INSERT)
+    @Column(name="demand_id", nullable=false, length=255, unique = true, updatable = false)
+    private String demandId;
 
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "hiring_manager_idx",referencedColumnName = "id")

@@ -144,7 +144,7 @@ public class ResourceDemandController {
             employeeResourcedemandService.save(employeeResourcedemand);
             response.put("status","success");
             response.put("id",employeeResourcedemand.getId());
-            response.put("demandId",employeeResourcedemand.getId());
+            response.put("demandId",employeeResourcedemand.getDemandId());
 
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
