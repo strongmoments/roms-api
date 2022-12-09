@@ -1,6 +1,7 @@
 package com.roms.api.controller;
 
 import com.roms.api.model.*;
+import com.roms.api.requestInput.RecommendInput;
 import com.roms.api.requestInput.ResourceDemandInput;
 import com.roms.api.service.*;
 import org.codehaus.plexus.util.StringUtils;
@@ -43,6 +44,9 @@ public class ResourceDemandController {
     private EmployeeSkilsLicenceService employeeSkilsLicenceService;
     @Autowired
     private EmployeeSkilsPlantService employeeSkilsPlantService;
+
+    @Autowired
+    private EmploymentRecommendService employmentRecommendService;
 
     @Autowired
     private LocationService locationService;
@@ -152,6 +156,46 @@ public class ResourceDemandController {
             response.put("status", "error");
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @PostMapping("/recommend")
+    public ResponseEntity<?> recomendEmployee(@RequestBody RecommendInput request){
+        Map<String, Object> response = new HashMap();
+        try {
+
+            EmploymentRecommendation model = new EmploymentRecommendation();
+            Optional<EmployeeResourcedemand> resourcedemand = employeeResourcedemandService.findById(request.getResourceDemandId());
+            if (resourcedemand.isPresent()) {
+                EmployeeResourcedemand resourcedemand1 = resourcedemand.get();
+                model.setDemandIdx(resourcedemand1);
+                ClientProjectSubteam fromTeam = new ClientProjectSubteam();
+                fromTeam.setId(request.getSubTeamId());
+                model.setToSubteamIdx(resourcedemand1.getClientProjectSubteam());
+                model.setFromSubteamIdx(fromTeam);
+                Employe employe = new Employe();
+                employe.setId(request.getEmployeeId());
+                model.setEmployeeIdx(employe);
+                model.setAcceptedBy(resourcedemand1.getHiringManager());
+
+                model.setStatus(1);
+            }
+            employmentRecommendService.save(model);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }catch (Exception e){
+            response.put("error", e.getMessage());
+            response.put("status", "error");
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+
+    @GetMapping("/recommend")
+    public ResponseEntity<?> getRecomendEmployee(){
+        Map<String,Object> response = new HashMap();
+        EmploymentRecommendation model = new EmploymentRecommendation();
+        List<EmploymentRecommendation> recommendList = employmentRecommendService.findAll();
+        response.put("data",recommendList);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     public void saveOrUpdateSkills(Map<String, Object> skilsMap){
