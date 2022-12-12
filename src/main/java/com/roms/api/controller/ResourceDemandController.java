@@ -215,7 +215,7 @@ public class ResourceDemandController {
                 }
 
             }
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            return new ResponseEntity<>("success", HttpStatus.OK);
         }catch (Exception e){
             response.put("error", e.getMessage());
             response.put("status", "error");
