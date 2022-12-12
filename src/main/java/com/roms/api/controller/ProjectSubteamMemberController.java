@@ -46,6 +46,6 @@ public class ProjectSubteamMemberController {
         }
         response.put("gangDetails",requestedPage.get());
 
-        return new ResponseEntity<>(requestedPage.get(), HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
