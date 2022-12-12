@@ -12,11 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @CrossOrigin
@@ -50,6 +46,9 @@ public class ResourceDemandController {
 
     @Autowired
     private LocationService locationService;
+
+    @Autowired
+    private EmployeeManagerService employeeManagerService;
 
     @PostMapping()
     public ResponseEntity<?> saveJobResourceDemand(@RequestBody ResourceDemandInput request){
@@ -227,18 +226,43 @@ public class ResourceDemandController {
     @GetMapping("/recommend")
     public ResponseEntity<?> getRecomendEmployee(){
         Map<String,Object> response = new HashMap();
+        List<Map<String,Object>> dataList = new ArrayList<>();
         EmploymentRecommendation model = new EmploymentRecommendation();
         List<EmploymentRecommendation> recommendList = employmentRecommendService.findAll();
-        response.put("data",recommendList);
+        recommendList.forEach(obj->{
+            Map<String,Object> response1 = new HashMap();
+            response1.put("recommendDetails",obj);
+            Optional<EmployeeManagers> managers = employeeManagerService.getManager(obj.getEmployeeIdx().getId());
+            if(managers.isEmpty()){
+                response1.put("manager",null);
+            }else {
+                response1.put("manager",managers.get().getManagers());
+            }
+            dataList.add(response1);
+        });
+
+        response.put("data",dataList);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/approved/report")
     public ResponseEntity<?> loadAllApprovedReport(){
         Map<String,Object> response = new HashMap();
+        List<Map<String,Object>> dataList = new ArrayList<>();
         EmploymentRecommendation model = new EmploymentRecommendation();
         List<EmploymentRecommendation> recommendList = employmentRecommendService.findAllApprovedReport();
-        response.put("data",recommendList);
+        recommendList.forEach(obj->{
+            Map<String,Object> response1 = new HashMap();
+            response1.put("recommendDetails",obj);
+            Optional<EmployeeManagers> managers = employeeManagerService.getManager(obj.getEmployeeIdx().getId());
+            if(managers.isEmpty()){
+                response1.put("manager",null);
+            }else {
+                response1.put("manager",managers.get().getManagers());
+            }
+            dataList.add(response1);
+        });
+        response.put("data",dataList);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
