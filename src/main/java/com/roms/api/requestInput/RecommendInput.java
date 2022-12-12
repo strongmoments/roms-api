@@ -10,7 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class RecommendInput {
-
+    String id;
     String employeeId;
     String demandId;
     String resourceDemandId;

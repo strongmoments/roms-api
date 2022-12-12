@@ -1,5 +1,6 @@
 package com.roms.api.service;
 
+import com.roms.api.model.EmployeeResourcedemand;
 import com.roms.api.model.EmploymentRecommendation;
 import com.roms.api.repository.EmploymentRecommendRepository;
 import com.roms.api.utils.LoggedInUserDetails;
@@ -27,8 +28,24 @@ public class EmploymentRecommendService {
         return employmentRecommendRepository.save(model);
     }
 
+    public EmploymentRecommendation update(EmploymentRecommendation model){
+        model.setLastUpdateDate(Instant.now());
+        model.setUpdateBy(loggedIn.getUser());
+        return employmentRecommendRepository.save(model);
+    }
+
     public List<EmploymentRecommendation> findAll(){
         return employmentRecommendRepository.findAll();
 
+    }
+
+    public List<EmploymentRecommendation> findByResourceDemandId(String resourceDemandId){
+        EmployeeResourcedemand rd = new EmployeeResourcedemand();
+        rd.setId(resourceDemandId);
+        return employmentRecommendRepository.findAllByDemandIdxAndOrganisation(rd,loggedIn.getOrg());
+    }
+
+    public List<EmploymentRecommendation> findAllApprovedReport(){
+        return employmentRecommendRepository.findAllByStatusAndOrganisation(2,loggedIn.getOrg());
     }
 }

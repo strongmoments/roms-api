@@ -179,7 +179,7 @@ public class ResourceDemandController {
                 model.setEmployeeIdx(employe);
                 model.setAcceptedBy(resourcedemand1.getHiringManager());
 
-                model.setStatus(1);
+                model.setStatus(1); // pending
             }
             employmentRecommendService.save(model);
             return new ResponseEntity<>(response, HttpStatus.OK);
@@ -191,11 +191,53 @@ public class ResourceDemandController {
 
     }
 
+    @PostMapping("/employee/approve")
+    public ResponseEntity<?> approveEmployee(@RequestBody RecommendInput request){
+        Map<String, Object> response = new HashMap();
+        try {
+
+            EmploymentRecommendation model = new EmploymentRecommendation();
+            Optional<EmployeeResourcedemand> resourcedemand = employeeResourcedemandService.findById(request.getResourceDemandId());
+            if (resourcedemand.isPresent()) {
+                EmployeeResourcedemand resourceDemand1 = resourcedemand.get();
+                if(request.getResourceDemandId().equalsIgnoreCase(resourceDemand1.getHiringManager().getId())){
+                    List<EmploymentRecommendation>   allRecomandation =  employmentRecommendService.findByResourceDemandId(resourceDemand1.getId());
+                    allRecomandation.forEach(obj->{
+                        if(request.getId().equalsIgnoreCase(obj.getId())){
+                            obj.setStatus(2); // approved
+                        }else{
+                            obj.setStatus(3); // rejected
+                        }
+                        employmentRecommendService.update(obj);
+                    });
+
+                }else{
+                    return new ResponseEntity<>("not_authorised", HttpStatus.BAD_REQUEST);
+                }
+
+            }
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }catch (Exception e){
+            response.put("error", e.getMessage());
+            response.put("status", "error");
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
     @GetMapping("/recommend")
     public ResponseEntity<?> getRecomendEmployee(){
         Map<String,Object> response = new HashMap();
         EmploymentRecommendation model = new EmploymentRecommendation();
         List<EmploymentRecommendation> recommendList = employmentRecommendService.findAll();
+        response.put("data",recommendList);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/approved/report")
+    public ResponseEntity<?> loadAllApprovedReport(){
+        Map<String,Object> response = new HashMap();
+        EmploymentRecommendation model = new EmploymentRecommendation();
+        List<EmploymentRecommendation> recommendList = employmentRecommendService.findAllApprovedReport();
         response.put("data",recommendList);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
