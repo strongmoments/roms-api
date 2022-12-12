@@ -168,10 +168,12 @@ public class ResourceDemandController {
             if (resourcedemand.isPresent()) {
                 EmployeeResourcedemand resourcedemand1 = resourcedemand.get();
                 model.setDemandIdx(resourcedemand1);
-                ClientProjectSubteam fromTeam = new ClientProjectSubteam();
-                fromTeam.setId(request.getSubTeamId());
+                if(StringUtils.isNotBlank(request.getSubTeamId())){
+                    ClientProjectSubteam fromTeam = new ClientProjectSubteam();
+                    fromTeam.setId(request.getSubTeamId());
+                    model.setFromSubteamIdx(fromTeam);
+                }
                 model.setToSubteamIdx(resourcedemand1.getClientProjectSubteam());
-                model.setFromSubteamIdx(fromTeam);
                 Employe employe = new Employe();
                 employe.setId(request.getEmployeeId());
                 model.setEmployeeIdx(employe);
