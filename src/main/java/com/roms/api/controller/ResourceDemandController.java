@@ -208,38 +208,6 @@ public class ResourceDemandController {
             if (resourcedemand.isPresent()) {
                 EmployeeResourcedemand resourceDemand1 = resourcedemand.get();
                 if(loggedIn.getUser().getEmployeId().getId().equalsIgnoreCase(resourceDemand1.getHiringManager().getId())){
-                    Optional<EmploymentRecommendation> recommendation =  employmentRecommendService.findById(request.getId());
-                    if(recommendation.isPresent()){
-                        EmploymentRecommendation employmentRecommendation =  recommendation.get();
-                        employmentRecommendation.setStatus(3);
-                        employmentRecommendService.update(employmentRecommendation);
-                    }
-                }else{
-                    return new ResponseEntity<>("not_authorised", HttpStatus.BAD_REQUEST);
-                }
-                resourceDemand1.setStatus(1);
-                employeeResourcedemandService.update(resourceDemand1);
-
-            }
-            return new ResponseEntity<>("success", HttpStatus.OK);
-        }catch (Exception e){
-            response.put("error", e.getMessage());
-            response.put("status", "error");
-            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
-    }
-
-    @PostMapping("/employee/reject")
-    public ResponseEntity<?> reject(@RequestBody RecommendInput request){
-        Map<String, Object> response = new HashMap();
-        try {
-
-            EmploymentRecommendation model = new EmploymentRecommendation();
-            Optional<EmployeeResourcedemand> resourcedemand = employeeResourcedemandService.findById(request.getResourceDemandId());
-            if (resourcedemand.isPresent()) {
-                EmployeeResourcedemand resourceDemand1 = resourcedemand.get();
-                if(loggedIn.getUser().getEmployeId().getId().equalsIgnoreCase(resourceDemand1.getHiringManager().getId())){
                     List<EmploymentRecommendation>   allRecomandation =  employmentRecommendService.findByResourceDemandId(resourceDemand1.getId());
                     allRecomandation.forEach(obj->{
                         if(request.getId().equalsIgnoreCase(obj.getId())){
@@ -253,6 +221,38 @@ public class ResourceDemandController {
                 }else{
                     return new ResponseEntity<>("not_authorised", HttpStatus.BAD_REQUEST);
                 }
+
+            }
+            return new ResponseEntity<>("success", HttpStatus.OK);
+        }catch (Exception e){
+            response.put("error", e.getMessage());
+            response.put("status", "error");
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+
+    @PostMapping("/employee/reject")
+    public ResponseEntity<?> reject(@RequestBody RecommendInput request){
+                Map<String, Object> response = new HashMap();
+        try {
+
+            EmploymentRecommendation model = new EmploymentRecommendation();
+            Optional<EmployeeResourcedemand> resourcedemand = employeeResourcedemandService.findById(request.getResourceDemandId());
+            if (resourcedemand.isPresent()) {
+                EmployeeResourcedemand resourceDemand1 = resourcedemand.get();
+                if(loggedIn.getUser().getEmployeId().getId().equalsIgnoreCase(resourceDemand1.getHiringManager().getId())){
+                    Optional<EmploymentRecommendation> recommendation =  employmentRecommendService.findById(request.getId());
+                    if(recommendation.isPresent()){
+                        EmploymentRecommendation employmentRecommendation =  recommendation.get();
+                        employmentRecommendation.setStatus(3);
+                        employmentRecommendService.update(employmentRecommendation);
+                    }
+                }else{
+                    return new ResponseEntity<>("not_authorised", HttpStatus.BAD_REQUEST);
+                }
+                resourceDemand1.setStatus(1);
+                employeeResourcedemandService.update(resourceDemand1);
 
             }
             return new ResponseEntity<>("success", HttpStatus.OK);
