@@ -51,6 +51,9 @@ public class EmployeeResourcedemand extends CommonFields implements Serializable
     @Column(name="type")
     private int type; // external or internal
 
+    @Column(name="status")
+    private Integer status;
+
 
 
     @Column(name="minimum_experience")

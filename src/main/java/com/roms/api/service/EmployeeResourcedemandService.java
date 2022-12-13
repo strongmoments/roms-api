@@ -29,6 +29,12 @@ public class EmployeeResourcedemandService  {
         return employeeResourcedemandRepository.save(employeeResourcedemand);
     }
 
+    public EmployeeResourcedemand update(EmployeeResourcedemand employeeResourcedemand){
+        employeeResourcedemand.setUpdateBy(loggedIn.getUser());
+        employeeResourcedemand.setLastUpdateDate(Instant.now());
+        return employeeResourcedemandRepository.save(employeeResourcedemand);
+    }
+
     public List<EmployeeResourcedemand> findAll(){
         return employeeResourcedemandRepository.findAllByOrganisationOrderByCreateDateDesc(loggedIn.getOrg());
     }
@@ -36,6 +42,8 @@ public class EmployeeResourcedemandService  {
     public Optional<EmployeeResourcedemand> findById(String id){
         return employeeResourcedemandRepository.findById(id);
     }
+
+
     
     public List<EmployeeResourcedemand> findbyEmployeeId(String employeeId){
         return employeeResourcedemandRepository.findAllByOrganisationAndHiringManagerOrCreateByEmployeId(loggedIn.getOrg(), new Employe(employeeId),new Employe(employeeId));

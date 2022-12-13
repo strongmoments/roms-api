@@ -4,6 +4,7 @@ import com.roms.api.model.*;
 import com.roms.api.requestInput.RecommendInput;
 import com.roms.api.requestInput.ResourceDemandInput;
 import com.roms.api.service.*;
+import com.roms.api.utils.LoggedInUserDetails;
 import org.codehaus.plexus.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -50,6 +51,9 @@ public class ResourceDemandController {
     @Autowired
     private EmployeeManagerService employeeManagerService;
 
+    @Autowired
+    private LoggedInUserDetails loggedIn;
+
     @PostMapping()
     public ResponseEntity<?> saveJobResourceDemand(@RequestBody ResourceDemandInput request){
         Map<String,Object> response = new HashMap();
@@ -63,6 +67,7 @@ public class ResourceDemandController {
                     .demandType(request.getDemandType())
                     .roleName(request.getProfileRole())
                     .perposedDate(perposedDate)
+                    .status(0)
                     .description(request.getDescription())
                     .type(request.getType()) // internal or external
                     .minimumExperiecne(request.getMinimumExperiecne())
@@ -162,6 +167,9 @@ public class ResourceDemandController {
         Map<String, Object> response = new HashMap();
         try {
 
+            if(employmentRecommendService.alreadyRequested(request.getResourceDemandId(),request.getEmployeeId())){
+                return new ResponseEntity<>("already_requested", HttpStatus.BAD_REQUEST);
+            }
             EmploymentRecommendation model = new EmploymentRecommendation();
             Optional<EmployeeResourcedemand> resourcedemand = employeeResourcedemandService.findById(request.getResourceDemandId());
             if (resourcedemand.isPresent()) {
@@ -199,7 +207,39 @@ public class ResourceDemandController {
             Optional<EmployeeResourcedemand> resourcedemand = employeeResourcedemandService.findById(request.getResourceDemandId());
             if (resourcedemand.isPresent()) {
                 EmployeeResourcedemand resourceDemand1 = resourcedemand.get();
-                if(request.getResourceDemandId().equalsIgnoreCase(resourceDemand1.getHiringManager().getId())){
+                if(loggedIn.getUser().getEmployeId().getId().equalsIgnoreCase(resourceDemand1.getHiringManager().getId())){
+                    Optional<EmploymentRecommendation> recommendation =  employmentRecommendService.findById(request.getId());
+                    if(recommendation.isPresent()){
+                        EmploymentRecommendation employmentRecommendation =  recommendation.get();
+                        employmentRecommendation.setStatus(3);
+                        employmentRecommendService.update(employmentRecommendation);
+                    }
+                }else{
+                    return new ResponseEntity<>("not_authorised", HttpStatus.BAD_REQUEST);
+                }
+                resourceDemand1.setStatus(1);
+                employeeResourcedemandService.update(resourceDemand1);
+
+            }
+            return new ResponseEntity<>("success", HttpStatus.OK);
+        }catch (Exception e){
+            response.put("error", e.getMessage());
+            response.put("status", "error");
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+
+    @PostMapping("/employee/reject")
+    public ResponseEntity<?> reject(@RequestBody RecommendInput request){
+        Map<String, Object> response = new HashMap();
+        try {
+
+            EmploymentRecommendation model = new EmploymentRecommendation();
+            Optional<EmployeeResourcedemand> resourcedemand = employeeResourcedemandService.findById(request.getResourceDemandId());
+            if (resourcedemand.isPresent()) {
+                EmployeeResourcedemand resourceDemand1 = resourcedemand.get();
+                if(loggedIn.getUser().getEmployeId().getId().equalsIgnoreCase(resourceDemand1.getHiringManager().getId())){
                     List<EmploymentRecommendation>   allRecomandation =  employmentRecommendService.findByResourceDemandId(resourceDemand1.getId());
                     allRecomandation.forEach(obj->{
                         if(request.getId().equalsIgnoreCase(obj.getId())){
@@ -229,6 +269,28 @@ public class ResourceDemandController {
         List<Map<String,Object>> dataList = new ArrayList<>();
         EmploymentRecommendation model = new EmploymentRecommendation();
         List<EmploymentRecommendation> recommendList = employmentRecommendService.findAll();
+        recommendList.forEach(obj->{
+            Map<String,Object> response1 = new HashMap();
+            response1.put("recommendDetails",obj);
+            Optional<EmployeeManagers> managers = employeeManagerService.getManager(obj.getEmployeeIdx().getId());
+            if(managers.isEmpty()){
+                response1.put("manager",null);
+            }else {
+                response1.put("manager",managers.get().getManagers());
+            }
+            dataList.add(response1);
+        });
+
+        response.put("data",dataList);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/recommend/{resouceDemandId}")
+    public ResponseEntity<?> getRecomendEmployee(@PathVariable("resouceDemandId") String demandId){
+        Map<String,Object> response = new HashMap();
+        List<Map<String,Object>> dataList = new ArrayList<>();
+        EmploymentRecommendation model = new EmploymentRecommendation();
+        List<EmploymentRecommendation> recommendList = employmentRecommendService.findByResourceDemandId(demandId);
         recommendList.forEach(obj->{
             Map<String,Object> response1 = new HashMap();
             response1.put("recommendDetails",obj);

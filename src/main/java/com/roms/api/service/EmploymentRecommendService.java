@@ -1,5 +1,6 @@
 package com.roms.api.service;
 
+import com.roms.api.model.Employe;
 import com.roms.api.model.EmployeeResourcedemand;
 import com.roms.api.model.EmploymentRecommendation;
 import com.roms.api.repository.EmploymentRecommendRepository;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class EmploymentRecommendService {
@@ -45,7 +47,28 @@ public class EmploymentRecommendService {
         return employmentRecommendRepository.findAllByDemandIdxAndOrganisation(rd,loggedIn.getOrg());
     }
 
+    public List<EmploymentRecommendation> findByResourceDemandIdAndEmployeeId(String resourceDemandId,String employeeId){
+        EmployeeResourcedemand rd = new EmployeeResourcedemand();
+        rd.setId(resourceDemandId);
+        Employe employee = new Employe();
+        employee.setId(employeeId);
+        return employmentRecommendRepository.findAllByStatusAndDemandIdxAndAndEmployeeIdx(1,rd,employee);
+    }
+
+    public boolean alreadyRequested(String resourceDemandId,String employeeId){
+        List<EmploymentRecommendation>  allrecommend = findByResourceDemandIdAndEmployeeId( resourceDemandId, employeeId);
+        if(!allrecommend.isEmpty()){
+            return  true;
+        }else {
+            return false;
+        }
+    }
+
     public List<EmploymentRecommendation> findAllApprovedReport(){
         return employmentRecommendRepository.findAllByStatusAndOrganisation(2,loggedIn.getOrg());
+    }
+
+    public Optional<EmploymentRecommendation> findById(String id){
+        return employmentRecommendRepository.findById(id);
     }
 }

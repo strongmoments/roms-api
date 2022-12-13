@@ -1,5 +1,6 @@
 package com.roms.api.repository;
 
+import com.roms.api.model.Employe;
 import com.roms.api.model.EmployeeResourcedemand;
 import com.roms.api.model.EmploymentRecommendation;
 import com.roms.api.model.Organisation;
@@ -14,5 +15,9 @@ public interface EmploymentRecommendRepository extends JpaRepository<EmploymentR
   public List<EmploymentRecommendation> findAllByDemandIdxAndOrganisation(EmployeeResourcedemand rdemand, Organisation organisation);
 
   public List<EmploymentRecommendation> findAllByStatusAndOrganisation(Integer status,Organisation organisation);
+
+  public List<EmploymentRecommendation> findAllByStatusAndDemandIdxAndAndEmployeeIdx(Integer status, EmployeeResourcedemand demand, Employe employe);
+
+
 
 }
