@@ -222,6 +222,8 @@ public class ResourceDemandController {
                     return new ResponseEntity<>("not_authorised", HttpStatus.BAD_REQUEST);
                 }
 
+                resourceDemand1.setStatus(1);
+                employeeResourcedemandService.update(resourceDemand1);
             }
             return new ResponseEntity<>("success", HttpStatus.OK);
         }catch (Exception e){
@@ -251,9 +253,6 @@ public class ResourceDemandController {
                 }else{
                     return new ResponseEntity<>("not_authorised", HttpStatus.BAD_REQUEST);
                 }
-                resourceDemand1.setStatus(1);
-                employeeResourcedemandService.update(resourceDemand1);
-
             }
             return new ResponseEntity<>("success", HttpStatus.OK);
         }catch (Exception e){
