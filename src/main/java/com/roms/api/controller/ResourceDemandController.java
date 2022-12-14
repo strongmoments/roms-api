@@ -162,6 +162,22 @@ public class ResourceDemandController {
         }
     }
 
+    @GetMapping()
+    public ResponseEntity<?> loadAllResourceDemand(){
+        Map<String,Object> response = new HashMap();
+
+        try {
+            List<EmployeeResourcedemand> dataList = employeeResourcedemandService.findAllPendingDemand();
+            response.put("data",dataList);
+        } catch (Exception e) {
+            response.put("error", e.getMessage());
+            response.put("status", "error");
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+
+    }
+
     @PostMapping("/recommend")
     public ResponseEntity<?> recomendEmployee(@RequestBody RecommendInput request){
         Map<String, Object> response = new HashMap();
@@ -359,22 +375,6 @@ public class ResourceDemandController {
 
     }
 
-    @GetMapping()
-    public ResponseEntity<?> loadAllResourceDemand(){
-        Map<String,Object> response = new HashMap();
-
-        try {
-            List<EmployeeResourcedemand> dataList = employeeResourcedemandService.findAll();
-            response.put("data",dataList);
-        } catch (Exception e) {
-            response.put("error", e.getMessage());
-            response.put("status", "error");
-            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return new ResponseEntity<>(response, HttpStatus.OK);
-
-    }
-    
     @GetMapping("/{demandId}")
     public ResponseEntity<?> loadResourceDemandById(@PathVariable("demandId") String demandId){
         Map<String,Object> response = new HashMap();

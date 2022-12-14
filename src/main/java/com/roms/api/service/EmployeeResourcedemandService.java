@@ -38,6 +38,9 @@ public class EmployeeResourcedemandService  {
     public List<EmployeeResourcedemand> findAll(){
         return employeeResourcedemandRepository.findAllByOrganisationOrderByCreateDateDesc(loggedIn.getOrg());
     }
+    public List<EmployeeResourcedemand> findAllPendingDemand(){
+        return employeeResourcedemandRepository.findAllByOrganisationAndAndStatusOrderByCreateDateDesc(loggedIn.getOrg(),0);
+    }
     
     public Optional<EmployeeResourcedemand> findById(String id){
         return employeeResourcedemandRepository.findById(id);
