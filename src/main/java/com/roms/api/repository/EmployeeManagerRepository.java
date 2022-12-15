@@ -18,5 +18,9 @@ public interface EmployeeManagerRepository extends JpaRepository<EmployeeManager
 
     Optional<EmployeeManagers> findByEmployeAndAndOrganisation(Employe employe, Organisation org);
 
+    List<EmployeeManagers>  findAllByManagersAndEmployeManagerFlag(Employe employe, boolean managerflag);
+
     List<EmployeeManagers> findAllByManagersFirstNameContainingIgnoreCaseOrManagersLastNameContainingIgnoreCaseAndOrganisation(String searchText, String searchText2,  Organisation org);
+
+    List<EmployeeManagers> findAllByManagersInAndEmployeFirstNameContainingIgnoreCaseAndOrganisation(List<Employe> manager, String searchText,   Organisation org);
 }

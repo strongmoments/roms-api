@@ -274,6 +274,35 @@ public class EmployeeController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @GetMapping(value = "/load/own")
+    public ResponseEntity<?> loadOwnEmployee(
+            @RequestParam(value ="page", defaultValue = "0") int page,
+            @RequestParam(value ="size", defaultValue = "3") int size,
+            @RequestParam(value ="empName", defaultValue = "") String empName){
+
+        List<Employe> managerList = new ArrayList<Employe>();
+        managerList.add(loggedIn.getUser().getEmployeId());
+        employeeManagerService.setSearchRecordToZero();
+        Map<String, Object> response = new HashMap<>();
+        try {
+            List<Employe> requestedPage = new ArrayList<Employe>();
+
+                requestedPage = employeeManagerService.findAllEmployeeUnderManager(managerList,empName);
+
+          /*  response.put("totalElement", requestedPage.getTotalElements());
+            response.put("totalPage", requestedPage.getTotalPages());
+            response.put("numberOfelement", requestedPage.getNumberOfElements());
+            response.put("currentPageNmber", requestedPage.getNumber());*/
+            response.put("data", requestedPage);
+        } catch (Exception e){
+            logger.error("An error occurred! {}", e.getMessage());
+            response.put("status","error");
+            response.put("error",e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
 
     @RequestMapping(value = "/tnc", method = RequestMethod.POST, consumes = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Map<String, Object>> uploadFile(@RequestBody Employe request) throws IOException {
