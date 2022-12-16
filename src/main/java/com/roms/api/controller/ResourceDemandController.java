@@ -283,7 +283,7 @@ public class ResourceDemandController {
         Map<String,Object> response = new HashMap();
         List<Map<String,Object>> dataList = new ArrayList<>();
         EmploymentRecommendation model = new EmploymentRecommendation();
-        List<EmploymentRecommendation> recommendList = employmentRecommendService.findAll();
+        List<EmploymentRecommendation> recommendList = employmentRecommendService.findAllByPendingDemands();
         recommendList.forEach(obj->{
             Map<String,Object> response1 = new HashMap();
             response1.put("recommendDetails",obj);

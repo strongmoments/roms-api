@@ -41,6 +41,11 @@ public class EmploymentRecommendService {
 
     }
 
+    public List<EmploymentRecommendation> findAllByPendingDemands(){
+        return employmentRecommendRepository.findAllByDemandIdxStatusAndOrganisation(0,loggedIn.getOrg());
+
+    }
+
     public List<EmploymentRecommendation> findByResourceDemandId(String resourceDemandId){
         EmployeeResourcedemand rd = new EmployeeResourcedemand();
         rd.setId(resourceDemandId);
