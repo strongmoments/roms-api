@@ -11,10 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @CrossOrigin
@@ -37,15 +34,17 @@ public class ProjectSubteamMemberController {
     public ResponseEntity<?> employeeGangDetails(@PathVariable("employeeId") String employeeId) throws ChangeSetPersister.NotFoundException {
         Optional<ClientProjectSubteam> requestedPage =  clientProjectSubteamMemberService.findClientProjectSubTeamByEmployeeId(employeeId);
         Map<String, Object> response = new HashMap();
-        /*if(requestedPage.isEmpty()){
-            return new ResponseEntity<>("not_found ", HttpStatus.NOT_FOUND);
-        }*/
+        if(requestedPage.isEmpty()){
+            response.put("gangDetails", null);
+        }else{
+            response.put("gangDetails",requestedPage.get());
+        }
         Optional<EmployeeManagers>  managerModel =  employeeManagerService.getManager(employeeId);
         if(managerModel.isPresent()){
             response.put("manager",managerModel.get().getManagers());
+        }else{
+            response.put("manager", null);
         }
-        response.put("gangDetails",requestedPage.get());
-
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
