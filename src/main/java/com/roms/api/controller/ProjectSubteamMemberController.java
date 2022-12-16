@@ -37,9 +37,9 @@ public class ProjectSubteamMemberController {
     public ResponseEntity<?> employeeGangDetails(@PathVariable("employeeId") String employeeId) throws ChangeSetPersister.NotFoundException {
         Optional<ClientProjectSubteam> requestedPage =  clientProjectSubteamMemberService.findClientProjectSubTeamByEmployeeId(employeeId);
         Map<String, Object> response = new HashMap();
-        if(requestedPage.isEmpty()){
+        /*if(requestedPage.isEmpty()){
             return new ResponseEntity<>("not_found ", HttpStatus.NOT_FOUND);
-        }
+        }*/
         Optional<EmployeeManagers>  managerModel =  employeeManagerService.getManager(employeeId);
         if(managerModel.isPresent()){
             response.put("manager",managerModel.get().getManagers());
