@@ -86,6 +86,4 @@ public class EmployeeResourcedemand extends CommonFields implements Serializable
     private String commitement;
 
 
-
-
 }

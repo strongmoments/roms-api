@@ -53,6 +53,10 @@ public class EmploymentRecommendation extends CommonFields implements Serializab
     @Column(name="jobFlag")
     private Integer jobFlag;
 
+    @Column(name="external_system_entry_flag")
+    private boolean externalSystemEntry ;
+
+
     @OneToOne()
     @JoinColumn(name = "initiatedby",referencedColumnName = "id")
     @Fetch(FetchMode.SELECT)
@@ -157,5 +161,13 @@ public class EmploymentRecommendation extends CommonFields implements Serializab
 
     public void setDemandIdx(EmployeeResourcedemand demandIdx) {
         this.demandIdx = demandIdx;
+    }
+
+    public boolean isExternalSystemEntry() {
+        return externalSystemEntry;
+    }
+
+    public void setExternalSystemEntry(boolean externalSystemEntry) {
+        this.externalSystemEntry = externalSystemEntry;
     }
 }

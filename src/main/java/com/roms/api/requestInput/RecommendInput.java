@@ -15,4 +15,5 @@ public class RecommendInput {
     String demandId;
     String resourceDemandId;
     String subTeamId;
+    boolean externalSystemEntry;
 }

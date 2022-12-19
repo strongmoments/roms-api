@@ -8,9 +8,11 @@ import com.roms.api.utils.LoggedInUserDetails;
 import org.codehaus.plexus.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.*;
@@ -186,10 +188,17 @@ public class ResourceDemandController {
             if(employmentRecommendService.alreadyRequested(request.getResourceDemandId(),request.getEmployeeId())){
                 return new ResponseEntity<>("already_requested", HttpStatus.BAD_REQUEST);
             }
+
             EmploymentRecommendation model = new EmploymentRecommendation();
             Optional<EmployeeResourcedemand> resourcedemand = employeeResourcedemandService.findById(request.getResourceDemandId());
+
+
             if (resourcedemand.isPresent()) {
                 EmployeeResourcedemand resourcedemand1 = resourcedemand.get();
+
+                if(resourcedemand1.getStatus() == 1){
+                    return new ResponseEntity<>("demand_is_closed", HttpStatus.BAD_REQUEST);
+                }
                 model.setDemandIdx(resourcedemand1);
                 if(StringUtils.isNotBlank(request.getSubTeamId())){
                     ClientProjectSubteam fromTeam = new ClientProjectSubteam();
@@ -407,6 +416,21 @@ public class ResourceDemandController {
             response.put("error", e.getMessage());
             response.put("status", "error");
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+
+    }
+
+    @RequestMapping(value = "/process", method = RequestMethod.POST, consumes = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<Map<String, Object>> uploadFile(@RequestBody RecommendInput request) throws IOException {
+        Map<String, Object> response = new HashMap<>();
+        Optional<EmploymentRecommendation> model = employmentRecommendService.findById(request.getId());
+        if (model.isPresent()) {
+            EmploymentRecommendation recommendationMOdel = model.get();
+            recommendationMOdel.setExternalSystemEntry(request.isExternalSystemEntry());
+            recommendationMOdel = employmentRecommendService.update(recommendationMOdel);
+            response.put("id", recommendationMOdel.getId());
+            response.put("status", "success");
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
 
