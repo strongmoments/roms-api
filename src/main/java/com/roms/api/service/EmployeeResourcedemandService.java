@@ -39,7 +39,7 @@ public class EmployeeResourcedemandService  {
         return employeeResourcedemandRepository.findAllByOrganisationOrderByCreateDateDesc(loggedIn.getOrg());
     }
     public List<EmployeeResourcedemand> findAllPendingDemand(){
-        return employeeResourcedemandRepository.findAllByOrganisationAndAndStatusOrderByCreateDateDesc(loggedIn.getOrg(),0);
+        return employeeResourcedemandRepository.findAllByOrganisationAndStatusOrderByCreateDateDesc(loggedIn.getOrg(),0);
     }
     
     public Optional<EmployeeResourcedemand> findById(String id){
@@ -49,7 +49,7 @@ public class EmployeeResourcedemandService  {
 
     
     public List<EmployeeResourcedemand> findbyEmployeeId(String employeeId){
-        return employeeResourcedemandRepository.findAllByOrganisationAndHiringManagerOrCreateByEmployeId(loggedIn.getOrg(), new Employe(employeeId),new Employe(employeeId));
+        return employeeResourcedemandRepository.findAllByOrganisationAndHiringManagerOrCreateByEmployeIdAndStatusOrderByCreateDateDesc(loggedIn.getOrg(), new Employe(employeeId),new Employe(employeeId),0);
     }
 
 

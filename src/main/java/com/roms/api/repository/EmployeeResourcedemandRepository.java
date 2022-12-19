@@ -13,6 +13,6 @@ public interface EmployeeResourcedemandRepository extends JpaRepository<Employee
 
     public List<EmployeeResourcedemand>  findAllByOrganisationOrderByCreateDateDesc(Organisation org);
 
-    public List<EmployeeResourcedemand>  findAllByOrganisationAndAndStatusOrderByCreateDateDesc(Organisation org,Integer status);
-    public List<EmployeeResourcedemand>  findAllByOrganisationAndHiringManagerOrCreateByEmployeId(Organisation org, Employe managerId,Employe createdBy);
+    public List<EmployeeResourcedemand>  findAllByOrganisationAndStatusOrderByCreateDateDesc(Organisation org,Integer status);
+    public List<EmployeeResourcedemand>  findAllByOrganisationAndHiringManagerOrCreateByEmployeIdAndStatusOrderByCreateDateDesc(Organisation org, Employe managerId,Employe createdBy,Integer status);
 }

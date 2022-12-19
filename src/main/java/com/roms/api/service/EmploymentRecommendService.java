@@ -42,14 +42,14 @@ public class EmploymentRecommendService {
     }
 
     public List<EmploymentRecommendation> findAllByPendingDemands(){
-        return employmentRecommendRepository.findAllByDemandIdxStatusAndOrganisation(0,loggedIn.getOrg());
+        return employmentRecommendRepository.findAllByDemandIdxStatusAndOrganisationOrderByCreateDateDesc(0,loggedIn.getOrg());
 
     }
 
     public List<EmploymentRecommendation> findByResourceDemandId(String resourceDemandId){
         EmployeeResourcedemand rd = new EmployeeResourcedemand();
         rd.setId(resourceDemandId);
-        return employmentRecommendRepository.findAllByDemandIdxAndOrganisation(rd,loggedIn.getOrg());
+        return employmentRecommendRepository.findAllByDemandIdxAndOrganisationOrderByCreateDateDesc(rd,loggedIn.getOrg());
     }
 
     public List<EmploymentRecommendation> findByResourceDemandIdAndEmployeeId(String resourceDemandId,String employeeId){
@@ -70,7 +70,7 @@ public class EmploymentRecommendService {
     }
 
     public List<EmploymentRecommendation> findAllApprovedReport(){
-        return employmentRecommendRepository.findAllByStatusAndOrganisation(2,loggedIn.getOrg());
+        return employmentRecommendRepository.findAllByStatusAndOrganisationOrderByCreateByDesc(2,loggedIn.getOrg());
     }
 
     public Optional<EmploymentRecommendation> findById(String id){

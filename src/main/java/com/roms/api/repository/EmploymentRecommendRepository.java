@@ -12,11 +12,11 @@ import java.util.List;
 @Repository
 public interface EmploymentRecommendRepository extends JpaRepository<EmploymentRecommendation, String> {
 
-  public List<EmploymentRecommendation> findAllByDemandIdxAndOrganisation(EmployeeResourcedemand rdemand, Organisation organisation);
+  public List<EmploymentRecommendation> findAllByDemandIdxAndOrganisationOrderByCreateDateDesc(EmployeeResourcedemand rdemand, Organisation organisation);
 
-  public List<EmploymentRecommendation> findAllByDemandIdxStatusAndOrganisation(Integer demandStatus, Organisation organisation);
+  public List<EmploymentRecommendation> findAllByDemandIdxStatusAndOrganisationOrderByCreateDateDesc(Integer demandStatus, Organisation organisation);
 
-  public List<EmploymentRecommendation> findAllByStatusAndOrganisation(Integer status,Organisation organisation);
+  public List<EmploymentRecommendation> findAllByStatusAndOrganisationOrderByCreateByDesc(Integer status,Organisation organisation);
 
   public List<EmploymentRecommendation> findAllByStatusAndDemandIdxAndAndEmployeeIdx(Integer status, EmployeeResourcedemand demand, Employe employe);
 
