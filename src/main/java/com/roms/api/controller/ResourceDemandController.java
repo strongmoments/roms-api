@@ -66,7 +66,7 @@ public class ResourceDemandController {
         	
             EmployeeResourcedemand employeeResourcedemand = EmployeeResourcedemand.builder()
                    .hiringManager(new Employe(request.getHiringManagerId()))
-                    .demandType(request.getDemandType())
+                    .demandType(request.getDemandType())  // 1 for internal
                     .roleName(request.getProfileRole())
                     .perposedDate(perposedDate)
                     .status(0)
@@ -169,7 +169,7 @@ public class ResourceDemandController {
         Map<String,Object> response = new HashMap();
 
         try {
-            List<EmployeeResourcedemand> dataList = employeeResourcedemandService.findAllPendingDemand();
+            List<EmployeeResourcedemand> dataList = employeeResourcedemandService.findAllInternalPendingDemand();
             response.put("data",dataList);
         } catch (Exception e) {
             response.put("error", e.getMessage());
@@ -410,7 +410,7 @@ public class ResourceDemandController {
         Map<String,Object> response = new HashMap();
 
         try {
-            List<EmployeeResourcedemand> dataList = employeeResourcedemandService.findbyEmployeeId(employeeId);
+            List<EmployeeResourcedemand> dataList = employeeResourcedemandService.findPendingInternalDemandByEmployeeId(employeeId);
             response.put("data",dataList);
         } catch (Exception e) {
             response.put("error", e.getMessage());

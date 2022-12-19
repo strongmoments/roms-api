@@ -41,6 +41,10 @@ public class EmployeeResourcedemandService  {
     public List<EmployeeResourcedemand> findAllPendingDemand(){
         return employeeResourcedemandRepository.findAllByOrganisationAndStatusOrderByCreateDateDesc(loggedIn.getOrg(),0);
     }
+
+    public List<EmployeeResourcedemand> findAllInternalPendingDemand(){
+        return employeeResourcedemandRepository.findAllByOrganisationAndStatusAndDemandTypeOrderByCreateDateDesc(loggedIn.getOrg(),0,1);
+    }
     
     public Optional<EmployeeResourcedemand> findById(String id){
         return employeeResourcedemandRepository.findById(id);
@@ -50,6 +54,11 @@ public class EmployeeResourcedemandService  {
     
     public List<EmployeeResourcedemand> findbyEmployeeId(String employeeId){
         return employeeResourcedemandRepository.findAllByOrganisationAndHiringManagerOrCreateByEmployeIdAndStatusOrderByCreateDateDesc(loggedIn.getOrg(), new Employe(employeeId),new Employe(employeeId),0);
+    }
+
+    public List<EmployeeResourcedemand> findPendingInternalDemandByEmployeeId(String employeeId){
+        // demand type  1 if for internal
+        return employeeResourcedemandRepository.findAllByDemandTypeAndOrganisationAndHiringManagerOrCreateByEmployeIdAndStatusOrderByCreateDateDesc(1,loggedIn.getOrg(), new Employe(employeeId),new Employe(employeeId),0);
     }
 
 
