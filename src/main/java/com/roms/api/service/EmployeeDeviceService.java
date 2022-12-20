@@ -39,6 +39,12 @@ public class EmployeeDeviceService {
         org.setId(orgId);
         return employeeDeviceRepository.findAllByEmployeAndOrganisation(employee, org);
     }
+    public List<EmployeeDevices> findAllByEmployee(String employeeId){
+        Employe employee =  new Employe();
+        employee.setId(employeeId);
+        return employeeDeviceRepository.findAllByEmploye(employee);
+    }
+
 
     public List<String> findAllResisterdDeviceOfEmployee(String employeeId,String orgId){
         Organisation org =new Organisation();

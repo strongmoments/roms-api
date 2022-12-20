@@ -26,5 +26,7 @@ public interface EmployeRepository extends JpaRepository<Employe,String> {
 
     List<Employe> findAllByManagerFlagAndOrganisation(boolean managerFlag, Organisation organisation);
 
+    List<Employe> findAllByManagerFlag(boolean managerFlag);
+
     List<Employe> findAllByManagerFlagAndOrganisationAndLastNameContainsIgnoreCase(boolean managerflag,Organisation organisation,String searchText);
 }

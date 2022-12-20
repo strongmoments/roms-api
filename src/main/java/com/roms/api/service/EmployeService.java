@@ -82,6 +82,11 @@ public class EmployeService {
 
     }
 
+    public List<Employe> findAllManagerss(){
+        return employeesRepository.findAllByManagerFlag(true);
+
+    }
+
     public Employe update(OnboardingPersonalDetailInput request){
        Employe employeModel = loggedIn.getUser().getEmployeId();
         employeModel.setFirstName(request.getFirstName());

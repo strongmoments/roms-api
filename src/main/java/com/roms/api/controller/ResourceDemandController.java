@@ -164,12 +164,13 @@ public class ResourceDemandController {
             saveOrUpdateSkills(skilsMap);
             employeeResourcedemand.setSkilsMap(request.getSkils());
             employeeResourcedemand=   employeeResourcedemandService.save(employeeResourcedemand);
+            EmployeeResourcedemand createdRecord =  employeeResourcedemandService.findById(employeeResourcedemand.getId()).get();
             response.put("status","success");
             response.put("id",employeeResourcedemand.getId());
             response.put("demandId",employeeResourcedemand.getDemandId());
 
             try{
-                notificationService.sendNotification(employeeResourcedemand,request.getPerposedDate());
+                notificationService.sendNotification(createdRecord,request.getPerposedDate());
                 response.put("notification","send");
             }catch (Exception e){
                 response.put("notification",e.getMessage());

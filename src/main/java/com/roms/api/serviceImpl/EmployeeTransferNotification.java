@@ -38,7 +38,7 @@ public class EmployeeTransferNotification extends NotificationService {
     RestTemplate restTemplate = new RestTemplate();
     HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-    List<Employe> employess = employeService.findAllManagers();
+    List<Employe> employess = employeService.findAllManagerss();
 
         if(!employess.isEmpty())
 
@@ -48,7 +48,7 @@ public class EmployeeTransferNotification extends NotificationService {
 
         for (Employe employes : employess) {
             List<String> allDevices = new ArrayList<>();
-            List<EmployeeDevices> notificatinDevices = employeeDeviceService.findAllByEmployee(employes.getId(), loggedIn.getOrg().getId());
+            List<EmployeeDevices> notificatinDevices = employeeDeviceService.findAllByEmployee(employes.getId());
             if (!notificatinDevices.isEmpty()) {
                 notificatinDevices.forEach(obj -> {
                     allDevices.add(obj.getNotificationDeviceToken());
