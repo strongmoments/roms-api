@@ -163,7 +163,7 @@ public class ResourceDemandController {
             Map<String, Object> skilsMap =  request.getSkils();
             saveOrUpdateSkills(skilsMap);
             employeeResourcedemand.setSkilsMap(request.getSkils());
-            employeeResourcedemandService.save(employeeResourcedemand);
+            employeeResourcedemand=   employeeResourcedemandService.save(employeeResourcedemand);
             response.put("status","success");
             response.put("id",employeeResourcedemand.getId());
             response.put("demandId",employeeResourcedemand.getDemandId());
