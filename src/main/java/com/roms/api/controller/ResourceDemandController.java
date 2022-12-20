@@ -32,6 +32,8 @@ public class ResourceDemandController {
     private EmployeeResourcedemandService employeeResourcedemandService;
 
     @Autowired
+    private EmployeService employeService;
+    @Autowired
     private ClientProjectSubteamService clientProjectSubteamService;
 
     @Autowired
@@ -75,9 +77,16 @@ public class ResourceDemandController {
         try {
         	 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
             Instant perposedDate = sdf.parse(request.getPerposedDate()).toInstant();
-        	
+            Optional<Employe> hiringmanger =   employeService.findById(request.getHiringManagerId());
+            if(hiringmanger.isEmpty()){
+                response.put("error", "invalid_hiring_manger");
+                response.put("status", "error");
+                return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+
+            }
+
             EmployeeResourcedemand employeeResourcedemand = EmployeeResourcedemand.builder()
-                   .hiringManager(new Employe(request.getHiringManagerId()))
+                   .hiringManager(hiringmanger.get())
                     .demandType(request.getDemandType())  // 1 for internal
                     .roleName(request.getProfileRole())
                     .perposedDate(perposedDate)
@@ -164,13 +173,11 @@ public class ResourceDemandController {
             saveOrUpdateSkills(skilsMap);
             employeeResourcedemand.setSkilsMap(request.getSkils());
             employeeResourcedemand=   employeeResourcedemandService.save(employeeResourcedemand);
-            EmployeeResourcedemand createdRecord =  employeeResourcedemandService.findById(employeeResourcedemand.getId()).get();
             response.put("status","success");
             response.put("id",employeeResourcedemand.getId());
             response.put("demandId",employeeResourcedemand.getDemandId());
-
             try{
-                notificationService.sendNotification(createdRecord,request.getPerposedDate());
+                notificationService.sendNotification(employeeResourcedemand,request.getPerposedDate());
                 response.put("notification","send");
             }catch (Exception e){
                 response.put("notification",e.getMessage());
@@ -207,7 +214,10 @@ public class ResourceDemandController {
         try {
 
             if(employmentRecommendService.alreadyRequested(request.getResourceDemandId(),request.getEmployeeId())){
-                return new ResponseEntity<>("already_requested", HttpStatus.BAD_REQUEST);
+                response.put("error", "already_requested");
+                response.put("status", "error");
+                return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+
             }
 
             EmploymentRecommendation model = new EmploymentRecommendation();
@@ -218,7 +228,9 @@ public class ResourceDemandController {
                 EmployeeResourcedemand resourcedemand1 = resourcedemand.get();
 
                 if(resourcedemand1.getStatus() == 1){
-                    return new ResponseEntity<>("demand_is_closed", HttpStatus.BAD_REQUEST);
+                    response.put("error", "demand_is_closed");
+                    response.put("status", "error");
+                    return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
                 }
                 model.setDemandIdx(resourcedemand1);
                 if(StringUtils.isNotBlank(request.getSubTeamId())){
@@ -227,15 +239,28 @@ public class ResourceDemandController {
                     model.setFromSubteamIdx(fromTeam);
                 }
                 model.setToSubteamIdx(resourcedemand1.getClientProjectSubteam());
-                Employe employe = new Employe();
-                employe.setId(request.getEmployeeId());
-                model.setEmployeeIdx(employe);
+
+                Optional<Employe> employes  = employeService.findById(request.getEmployeeId());
+                if(employes.isEmpty()){
+                    response.put("error", "employee_id_not_found");
+                    response.put("status", "error");
+                    return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+                }
+
+                model.setEmployeeIdx(employes.get());
                 model.setAcceptedBy(resourcedemand1.getHiringManager());
                 model.setJobFlag(0);
                 model.setStatus(1); // pending
                 model.setInitiatedBy(loggedIn.getUser().getEmployeId());
             }
-            employmentRecommendService.save(model);
+            model = employmentRecommendService.save(model);
+            response.put("status", "success");
+            try{
+                notificationService.sendRecomendNotification(model);
+                response.put("notification", "send");
+            }catch (Exception e){
+                response.put("notification", e.getMessage());
+            }
             return new ResponseEntity<>(response, HttpStatus.OK);
         }catch (Exception e){
             response.put("error", e.getMessage());
@@ -264,6 +289,13 @@ public class ResourceDemandController {
                                 clientProjectSubteamMemberService.transferToGang(obj.getId());
                                 // send notfication
                             }
+                            try {
+                                notificationService.sendRecomendationApproveOrRejectNotification(obj,"approve");
+                                response.put("notification", "send");
+                            }catch (Exception e){
+                                response.put("notification", e.getMessage());
+                            }
+
                         }else{
                             obj.setStatus(1); // pending
                             obj.setJobFlag(1);
@@ -305,6 +337,13 @@ public class ResourceDemandController {
                         employmentRecommendation.setStatus(3);
                         employmentRecommendation.setAcceptedBy(loggedIn.getUser().getEmployeId());
                         employmentRecommendService.update(employmentRecommendation);
+
+                        try {
+                            notificationService.sendRecomendationApproveOrRejectNotification(employmentRecommendation,"reject");
+                            response.put("notification", "send");
+                        }catch (Exception e){
+                            response.put("notification", e.getMessage());
+                        }
                     }
                 }else{
                     return new ResponseEntity<>("not_authorised", HttpStatus.BAD_REQUEST);

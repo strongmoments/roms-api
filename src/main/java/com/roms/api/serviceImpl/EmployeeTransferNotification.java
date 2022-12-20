@@ -59,7 +59,7 @@ public class EmployeeTransferNotification extends NotificationService {
 
             requestPayload.setFrom("");
             requestPayload.setType("job_demand");
-            requestPayload.setMessage(demandPayload.getDescription()+" demand posted by"+demandPayload.getHiringManager().getFirstName()+" "+demandPayload.getHiringManager().getLastName()+" with Proposed Start Date -"+startDate);
+            requestPayload.setMessage(demandPayload.getDescription()+" demand posted by "+demandPayload.getHiringManager().getFirstName()+" "+demandPayload.getHiringManager().getLastName()+" with Proposed Start Date -"+startDate+".");
             requestPayload.setUsername(employes.getId());
             Map<String, Object> obj = new HashMap<>();
             Set<EmployeeProfileImage>  image = demandPayload.getHiringManager().getProfileImage();
@@ -69,7 +69,6 @@ public class EmployeeTransferNotification extends NotificationService {
                     profileImageUrl = data.getDigitalAssets().getUrl();
                 }
             }
-
             obj.put("profileImage", profileImageUrl);
             String time = String.valueOf(Instant.now().toEpochMilli());
             obj.put("time", time);
@@ -77,14 +76,104 @@ public class EmployeeTransferNotification extends NotificationService {
             obj.put("eventId", demandPayload.getDemandId());
             obj.put("data", object);
             requestPayload.setBody(obj);
-
             HttpEntity<PushNotificationPayload> entity = new HttpEntity<PushNotificationPayload>(requestPayload, headers);
-
             restTemplate.exchange(
                     "http://localhost:8081/sendNotification", HttpMethod.POST, entity, String.class).getBody();
             Thread.sleep(500);
         }
     }
 }
+    @Override
+    public void sendRecomendNotification(EmploymentRecommendation recomendNotifcation)throws InterruptedException {
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+
+        ObjectMapper jsonParser = new ObjectMapper();
+        Map<String, Object> object = new HashMap<>();
+        List<String> allDevices = new ArrayList<>();
+        List<EmployeeDevices> employeeDevices = employeeDeviceService.findAllByEmployee(recomendNotifcation.getDemandIdx().getHiringManager().getId());
+        if (!employeeDevices.isEmpty()) {
+            employeeDevices.forEach(obj -> {
+                allDevices.add(obj.getNotificationDeviceToken());
+            });
+
+            PushNotificationPayload requestPayload = new PushNotificationPayload();
+
+            requestPayload.setFrom("");
+            requestPayload.setType("employee_recommend");
+            requestPayload.setMessage(recomendNotifcation.getEmployeeIdx().getFirstName() + " " + recomendNotifcation.getEmployeeIdx().getLastName() + " is recommended by " + recomendNotifcation.getInitiatedBy().getFirstName() + " " + recomendNotifcation.getInitiatedBy().getLastName() + " for " + recomendNotifcation.getDemandIdx().getDescription() + " demand.");
+            requestPayload.setUsername(recomendNotifcation.getDemandIdx().getHiringManager().getId());
+            Map<String, Object> obj = new HashMap<>();
+            Set<EmployeeProfileImage> image = recomendNotifcation.getInitiatedBy().getProfileImage();
+            String profileImageUrl = "";
+            if (image != null) {
+                for (EmployeeProfileImage data : image) {
+                    profileImageUrl = data.getDigitalAssets().getUrl();
+                }
+            }
+            obj.put("profileImage", profileImageUrl);
+            String time = String.valueOf(Instant.now().toEpochMilli());
+            obj.put("time", time);
+            obj.put("devices", allDevices);
+            obj.put("eventId", recomendNotifcation.getId());
+            obj.put("data", object);
+            requestPayload.setBody(obj);
+            HttpEntity<PushNotificationPayload> entity = new HttpEntity<PushNotificationPayload>(requestPayload, headers);
+            restTemplate.exchange(
+                    "http://localhost:8081/sendNotification", HttpMethod.POST, entity, String.class).getBody();
+            Thread.sleep(500);
+        }
+    }
+
+    @Override
+    public void sendRecomendationApproveOrRejectNotification(EmploymentRecommendation recomendNotifcation,String status)throws InterruptedException {
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+
+        ObjectMapper jsonParser = new ObjectMapper();
+        Map<String, Object> object = new HashMap<>();
+        List<String> allDevices = new ArrayList<>();
+        List<EmployeeDevices> employeeDevices = employeeDeviceService.findAllByEmployee(recomendNotifcation.getInitiatedBy().getId());
+        if (!employeeDevices.isEmpty()) {
+            employeeDevices.forEach(obj -> {
+                allDevices.add(obj.getNotificationDeviceToken());
+            });
+
+            PushNotificationPayload requestPayload = new PushNotificationPayload();
+
+            requestPayload.setFrom("");
+            requestPayload.setType("employee_recommend");
+            if(status.equalsIgnoreCase("approve")){
+                requestPayload.setMessage(recomendNotifcation.getEmployeeIdx().getFirstName() + " " + recomendNotifcation.getEmployeeIdx().getLastName() + " is accepted by " + recomendNotifcation.getDemandIdx().getHiringManager().getFirstName() + " " + recomendNotifcation.getDemandIdx().getHiringManager().getLastName() + " for " + recomendNotifcation.getDemandIdx().getDescription() + " demand.");
+            }
+            if(status.equalsIgnoreCase("reject")){
+                requestPayload.setMessage(recomendNotifcation.getEmployeeIdx().getFirstName() + " " + recomendNotifcation.getEmployeeIdx().getLastName() + " is rejected by " + recomendNotifcation.getDemandIdx().getHiringManager().getFirstName() + " " + recomendNotifcation.getDemandIdx().getHiringManager().getLastName() + " for " + recomendNotifcation.getDemandIdx().getDescription() + " demand.");
+            }
+            requestPayload.setUsername(recomendNotifcation.getInitiatedBy().getId());
+            Map<String, Object> obj = new HashMap<>();
+            Set<EmployeeProfileImage> image = recomendNotifcation.getDemandIdx().getHiringManager().getProfileImage();
+            String profileImageUrl = "";
+            if (image != null) {
+                for (EmployeeProfileImage data : image) {
+                    profileImageUrl = data.getDigitalAssets().getUrl();
+                }
+            }
+            obj.put("profileImage", profileImageUrl);
+            String time = String.valueOf(Instant.now().toEpochMilli());
+            obj.put("time", time);
+            obj.put("devices", allDevices);
+            obj.put("eventId", recomendNotifcation.getId());
+            obj.put("data", object);
+            requestPayload.setBody(obj);
+            HttpEntity<PushNotificationPayload> entity = new HttpEntity<PushNotificationPayload>(requestPayload, headers);
+            restTemplate.exchange(
+                    "http://localhost:8081/sendNotification", HttpMethod.POST, entity, String.class).getBody();
+            Thread.sleep(500);
+        }
+    }
+
+
 
 }

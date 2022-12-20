@@ -32,6 +32,11 @@ public abstract class NotificationService {
 
     public  String sendsms(String toNumber ,String message)  {return "";}
 
+    public void sendRecomendNotification(EmploymentRecommendation recomendNotifcation)throws InterruptedException {}
+
+    public void sendRecomendationApproveOrRejectNotification(EmploymentRecommendation recomendNotifcation,String status)throws InterruptedException {}
+
+
 
 
 
