@@ -58,7 +58,7 @@ public class EmployeeResourcedemandService  {
 
     public List<EmployeeResourcedemand> findPendingInternalDemandByEmployeeId(String employeeId){
         // demand type  1 if for internal
-        return employeeResourcedemandRepository.findAllByDemandTypeAndOrganisationAndHiringManagerOrCreateByEmployeIdAndStatusOrderByCreateDateDesc(1,loggedIn.getOrg(), new Employe(employeeId),new Employe(employeeId),0);
+        return employeeResourcedemandRepository.findAllByDemandTypeAndOrganisationAndHiringManagerOrCreateByEmployeIdAndStatusOrderByCreateDateDesc(0,loggedIn.getOrg(), new Employe(employeeId),new Employe(employeeId),0);
     }
 
 
