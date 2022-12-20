@@ -76,4 +76,8 @@ public class EmploymentRecommendService {
     public Optional<EmploymentRecommendation> findById(String id){
         return employmentRecommendRepository.findById(id);
     }
+
+    public List<EmploymentRecommendation> findAllPendingJobs(){
+       return employmentRecommendRepository.findAllByJobFlagAndOrganisation(0,loggedIn.getOrg());
+    }
 }

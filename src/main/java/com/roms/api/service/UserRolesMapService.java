@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
 public class UserRolesMapService {
@@ -44,5 +45,16 @@ public class UserRolesMapService {
         }else {
             return null;
         }
+    }
+
+    public boolean isSuperWiser(String employeeId,String orgId){
+        AtomicBoolean isSuperWiser = new AtomicBoolean(false);
+        List<Employe>  employeList = findAllEmployeeByRoleName("ROLE_SUPERVISOR",  orgId);
+        employeList.forEach(obj->{
+            if(obj.getId().equalsIgnoreCase(employeeId)){
+                isSuperWiser.set(true);
+            }
+        });
+        return isSuperWiser.get();
     }
 }

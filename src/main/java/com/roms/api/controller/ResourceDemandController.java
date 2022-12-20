@@ -7,14 +7,17 @@ import com.roms.api.service.*;
 import com.roms.api.utils.LoggedInUserDetails;
 import org.codehaus.plexus.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.ZoneOffset;
 import java.util.*;
 
 @RestController
@@ -22,6 +25,9 @@ import java.util.*;
 @RequestMapping(value = "/v1/jobs/resource/demand")
 public class ResourceDemandController {
 
+    @Autowired
+    @Qualifier("employeeTransfernotification")
+    private NotificationService notificationService;
     @Autowired
     private EmployeeResourcedemandService employeeResourcedemandService;
 
@@ -55,6 +61,12 @@ public class ResourceDemandController {
 
     @Autowired
     private LoggedInUserDetails loggedIn;
+
+    @Autowired
+    private ClientProjectSubteamMemberService clientProjectSubteamMemberService;
+
+    @Autowired
+    private UserRolesMapService userRolesMapService;
 
     @PostMapping()
     public ResponseEntity<?> saveJobResourceDemand(@RequestBody ResourceDemandInput request){
@@ -156,6 +168,14 @@ public class ResourceDemandController {
             response.put("id",employeeResourcedemand.getId());
             response.put("demandId",employeeResourcedemand.getDemandId());
 
+            try{
+                notificationService.sendNotification(employeeResourcedemand,request.getPerposedDate());
+                response.put("notification","send");
+            }catch (Exception e){
+                response.put("notification",e.getMessage());
+            }
+
+
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             response.put("error", e.getMessage());
@@ -210,8 +230,9 @@ public class ResourceDemandController {
                 employe.setId(request.getEmployeeId());
                 model.setEmployeeIdx(employe);
                 model.setAcceptedBy(resourcedemand1.getHiringManager());
-
+                model.setJobFlag(0);
                 model.setStatus(1); // pending
+                model.setInitiatedBy(loggedIn.getUser().getEmployeId());
             }
             employmentRecommendService.save(model);
             return new ResponseEntity<>(response, HttpStatus.OK);
@@ -227,19 +248,26 @@ public class ResourceDemandController {
     public ResponseEntity<?> approveEmployee(@RequestBody RecommendInput request){
         Map<String, Object> response = new HashMap();
         try {
-
             EmploymentRecommendation model = new EmploymentRecommendation();
             Optional<EmployeeResourcedemand> resourcedemand = employeeResourcedemandService.findById(request.getResourceDemandId());
+            boolean transferNow = false;
             if (resourcedemand.isPresent()) {
                 EmployeeResourcedemand resourceDemand1 = resourcedemand.get();
-                if(loggedIn.getUser().getEmployeId().getId().equalsIgnoreCase(resourceDemand1.getHiringManager().getId())){
+                if(loggedIn.getUser().getEmployeId().getId().equalsIgnoreCase(resourceDemand1.getHiringManager().getId()) || userRolesMapService.isSuperWiser(loggedIn.getUser().getEmployeId().getId(),loggedIn.getOrg().getId()) ){
                     List<EmploymentRecommendation>   allRecomandation =  employmentRecommendService.findByResourceDemandId(resourceDemand1.getId());
                     allRecomandation.forEach(obj->{
                         if(request.getId().equalsIgnoreCase(obj.getId())){
                             obj.setStatus(2); // approved
+
+                            if(Instant.now().isAfter(resourceDemand1.getPerposedDate()) || Instant.now().atOffset(ZoneOffset.UTC).toLocalDate().equals(resourceDemand1.getPerposedDate().atOffset(ZoneOffset.UTC).toLocalDate())){
+                                clientProjectSubteamMemberService.transferToGang(obj.getId());
+                                // send notfication
+                            }
                         }else{
-                            obj.setStatus(3); // rejected
+                            obj.setStatus(1); // pending
+                            obj.setJobFlag(1);
                         }
+                        obj.setAcceptedBy(loggedIn.getUser().getEmployeId());
                         employmentRecommendService.update(obj);
                     });
 
@@ -272,7 +300,9 @@ public class ResourceDemandController {
                     Optional<EmploymentRecommendation> recommendation =  employmentRecommendService.findById(request.getId());
                     if(recommendation.isPresent()){
                         EmploymentRecommendation employmentRecommendation =  recommendation.get();
+                        employmentRecommendation.setJobFlag(1);
                         employmentRecommendation.setStatus(3);
+                        employmentRecommendation.setAcceptedBy(loggedIn.getUser().getEmployeId());
                         employmentRecommendService.update(employmentRecommendation);
                     }
                 }else{
@@ -332,10 +362,18 @@ public class ResourceDemandController {
     }
 
     @GetMapping("/approved/report")
-    public ResponseEntity<?> loadAllApprovedReport(){
+    public ResponseEntity<?> loadAllApprovedReport(@RequestParam(value ="page", defaultValue = "0") int page,
+                                                   @RequestParam(value ="size", defaultValue = "3") int size,
+                                                   @RequestParam(value ="fromDate", defaultValue = "") String fromDate,
+                                                   @RequestParam(value ="toDate", defaultValue = "3") String toDate,
+                                                   @RequestParam(value ="searchText", defaultValue = "") String searchTexts) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+
         Map<String,Object> response = new HashMap();
         List<Map<String,Object>> dataList = new ArrayList<>();
         EmploymentRecommendation model = new EmploymentRecommendation();
+      //  Instant fDate = sdf.parse(fromDate).toInstant();
+       // Instant tDate = sdf.parse(toDate).toInstant();
         List<EmploymentRecommendation> recommendList = employmentRecommendService.findAllApprovedReport();
         recommendList.forEach(obj->{
             Map<String,Object> response1 = new HashMap();

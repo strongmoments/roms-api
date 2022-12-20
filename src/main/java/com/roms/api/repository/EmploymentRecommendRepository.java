@@ -20,6 +20,8 @@ public interface EmploymentRecommendRepository extends JpaRepository<EmploymentR
 
   public List<EmploymentRecommendation> findAllByStatusAndDemandIdxAndAndEmployeeIdx(Integer status, EmployeeResourcedemand demand, Employe employe);
 
+  public List<EmploymentRecommendation> findAllByJobFlagAndOrganisation(Integer jobStatus,Organisation org);
+
 
 
 }

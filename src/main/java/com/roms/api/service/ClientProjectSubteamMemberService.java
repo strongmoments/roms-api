@@ -21,11 +21,19 @@ public class ClientProjectSubteamMemberService {
    @Autowired
    private EmployeeManagerService employeeManagerService;
 
+   @Autowired
+   private EmploymentRecommendService employmentRecommendService;
+
 
     public void save(ClientProjectSubteamMember model){
         model.setOrganisation(loggedIn.getOrg());
         model.setCreateDate(Instant.now());
         model.setCreateBy(loggedIn.getUser());
+        clientProjectSubteamMemberRepository.save(model);
+    }
+    public void update(ClientProjectSubteamMember model){
+        model.setLastUpdateDate(Instant.now());
+        model.setUpdateBy(loggedIn.getUser());
         clientProjectSubteamMemberRepository.save(model);
     }
 
@@ -66,5 +74,32 @@ public class ClientProjectSubteamMemberService {
 
     public List<ClientProjectSubteamMember> findAllEmployeeByFirstNameOrNumber(String searchText){
             return clientProjectSubteamMemberRepository.findAllByEmployeeEmployeeNoContainsIgnoreCaseAndManagerFlagOrEmployeeFirstNameContainsIgnoreCaseAndManagerFlagAndOrganisation(searchText,false,searchText,false, loggedIn.getOrg());
+    }
+
+    public void transferToGang(String employeeRecommendationId){
+        Optional<EmploymentRecommendation>  employmentRecommendation =   employmentRecommendService.findById(employeeRecommendationId);
+        if(employmentRecommendation.isPresent()){
+            EmploymentRecommendation employmentRecommendation1 =   employmentRecommendation.get();
+            Employe employe = employmentRecommendation1.getEmployeeIdx();
+            ClientProjectSubteam clientProjectSubteam = employmentRecommendation1.getToSubteamIdx();
+            List<ClientProjectSubteamMember> clientProjectSubteamMember = clientProjectSubteamMemberRepository.findByEmployeeAndOrganisation(employe, loggedIn.getOrg());
+            if(!clientProjectSubteamMember.isEmpty()){
+                clientProjectSubteamMember.forEach(obj->{
+                    obj.setClientProjectSubteam(clientProjectSubteam);
+                    update(obj);
+                });
+            }else{
+                ClientProjectSubteamMember model = new ClientProjectSubteamMember();
+                model.setEmployee(employe);
+                model.setClientProjectSubteam(clientProjectSubteam);
+                model.setStartDate(employmentRecommendation1.getDemandIdx().getPerposedDate());
+                model.setManagerFlag(false);
+                save(model);
+            }
+            employmentRecommendation1.setJobFlag(1);
+            employmentRecommendService.update(employmentRecommendation1);
+
+        }
+
     }
 }
