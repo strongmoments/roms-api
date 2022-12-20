@@ -1,8 +1,11 @@
 package com.roms.api.utils;
 
+import com.roms.api.controller.LeaveRequestController;
 import com.roms.api.model.EmploymentRecommendation;
 import com.roms.api.service.ClientProjectSubteamMemberService;
 import com.roms.api.service.EmploymentRecommendService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Component;
@@ -19,6 +22,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 @EnableScheduling
 public class TransferScheduler {
 
+    public static final Logger logger = LoggerFactory.getLogger(TransferScheduler.class);
     @Autowired
     private ClientProjectSubteamMemberService clientProjectSubteamMemberService;
 
@@ -27,6 +31,7 @@ public class TransferScheduler {
 
     @Scheduled(cron = "0 0/03 1 * * *") // every day at 1:03 am
     public void cronJobSch() {
+        logger.info("employe transfer job started");
         List<EmploymentRecommendation> allRecommendation = employmentRecommendService.findAllPendingJobs();
         if(!allRecommendation.isEmpty()){
             allRecommendation.forEach(obj->{
@@ -36,5 +41,6 @@ public class TransferScheduler {
                 }
             });
         }
+        logger.info("employe transfer job done");
     }
 }

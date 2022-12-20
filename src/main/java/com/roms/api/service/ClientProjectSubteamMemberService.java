@@ -31,9 +31,21 @@ public class ClientProjectSubteamMemberService {
         model.setCreateBy(loggedIn.getUser());
         clientProjectSubteamMemberRepository.save(model);
     }
+
+    public void save2(ClientProjectSubteamMember model){
+        Organisation org = new Organisation("ab905406-79a3-4e54-8244-d79fc0e60937");
+        model.setOrganisation(org);
+        model.setCreateDate(Instant.now());
+         clientProjectSubteamMemberRepository.save(model);
+    }
     public void update(ClientProjectSubteamMember model){
         model.setLastUpdateDate(Instant.now());
         model.setUpdateBy(loggedIn.getUser());
+        clientProjectSubteamMemberRepository.save(model);
+    }
+
+    public void update2(ClientProjectSubteamMember model){
+        model.setLastUpdateDate(Instant.now());
         clientProjectSubteamMemberRepository.save(model);
     }
 
@@ -82,11 +94,11 @@ public class ClientProjectSubteamMemberService {
             EmploymentRecommendation employmentRecommendation1 =   employmentRecommendation.get();
             Employe employe = employmentRecommendation1.getEmployeeIdx();
             ClientProjectSubteam clientProjectSubteam = employmentRecommendation1.getToSubteamIdx();
-            List<ClientProjectSubteamMember> clientProjectSubteamMember = clientProjectSubteamMemberRepository.findByEmployeeAndOrganisation(employe, loggedIn.getOrg());
+            List<ClientProjectSubteamMember> clientProjectSubteamMember = clientProjectSubteamMemberRepository.findByEmployee(employe);
             if(!clientProjectSubteamMember.isEmpty()){
                 clientProjectSubteamMember.forEach(obj->{
                     obj.setClientProjectSubteam(clientProjectSubteam);
-                    update(obj);
+                    update2(obj);
                 });
             }else{
                 ClientProjectSubteamMember model = new ClientProjectSubteamMember();
@@ -94,12 +106,14 @@ public class ClientProjectSubteamMemberService {
                 model.setClientProjectSubteam(clientProjectSubteam);
                 model.setStartDate(employmentRecommendation1.getDemandIdx().getPerposedDate());
                 model.setManagerFlag(false);
-                save(model);
+                save2(model);
             }
             employmentRecommendation1.setJobFlag(1);
-            employmentRecommendService.update(employmentRecommendation1);
+            employmentRecommendService.update2(employmentRecommendation1);
 
         }
 
     }
+
+
 }

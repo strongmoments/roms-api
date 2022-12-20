@@ -35,6 +35,10 @@ public class EmploymentRecommendService {
         model.setUpdateBy(loggedIn.getUser());
         return employmentRecommendRepository.save(model);
     }
+    public EmploymentRecommendation update2(EmploymentRecommendation model){
+        model.setLastUpdateDate(Instant.now());
+        return employmentRecommendRepository.save(model);
+    }
 
     public List<EmploymentRecommendation> findAll(){
         return employmentRecommendRepository.findAll();
