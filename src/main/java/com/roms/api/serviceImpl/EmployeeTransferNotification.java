@@ -59,7 +59,7 @@ public class EmployeeTransferNotification extends NotificationService {
 
             requestPayload.setFrom("");
             requestPayload.setType("job_demand");
-            requestPayload.setMessage(demandPayload.getDescription()+" demand posted by "+demandPayload.getHiringManager().getFirstName()+" "+demandPayload.getHiringManager().getLastName()+" with Proposed Start Date -"+startDate+".");
+            requestPayload.setMessage(demandPayload.getRoleName()+" demand posted by "+demandPayload.getHiringManager().getFirstName()+" "+demandPayload.getHiringManager().getLastName()+" with Proposed Start Date -"+startDate+".");
             requestPayload.setUsername(employes.getId());
             Map<String, Object> obj = new HashMap<>();
             Set<EmployeeProfileImage>  image = demandPayload.getHiringManager().getProfileImage();
@@ -102,7 +102,7 @@ public class EmployeeTransferNotification extends NotificationService {
 
             requestPayload.setFrom("");
             requestPayload.setType("employee_recommend");
-            requestPayload.setMessage(recomendNotifcation.getEmployeeIdx().getFirstName() + " " + recomendNotifcation.getEmployeeIdx().getLastName() + " is recommended by " + recomendNotifcation.getInitiatedBy().getFirstName() + " " + recomendNotifcation.getInitiatedBy().getLastName() + " for " + recomendNotifcation.getDemandIdx().getDescription() + " demand.");
+            requestPayload.setMessage(recomendNotifcation.getEmployeeIdx().getFirstName() + " " + recomendNotifcation.getEmployeeIdx().getLastName() + " is recommended by " + recomendNotifcation.getInitiatedBy().getFirstName() + " " + recomendNotifcation.getInitiatedBy().getLastName() + " for " + recomendNotifcation.getDemandIdx().getRoleName() + " demand.");
             requestPayload.setUsername(recomendNotifcation.getDemandIdx().getHiringManager().getId());
             Map<String, Object> obj = new HashMap<>();
             Set<EmployeeProfileImage> image = recomendNotifcation.getInitiatedBy().getProfileImage();
@@ -146,10 +146,10 @@ public class EmployeeTransferNotification extends NotificationService {
             requestPayload.setFrom("");
             requestPayload.setType("employee_recommend");
             if(status.equalsIgnoreCase("approve")){
-                requestPayload.setMessage(recomendNotifcation.getEmployeeIdx().getFirstName() + " " + recomendNotifcation.getEmployeeIdx().getLastName() + " is accepted by " + recomendNotifcation.getDemandIdx().getHiringManager().getFirstName() + " " + recomendNotifcation.getDemandIdx().getHiringManager().getLastName() + " for " + recomendNotifcation.getDemandIdx().getDescription() + " demand.");
+                requestPayload.setMessage(recomendNotifcation.getEmployeeIdx().getFirstName() + " " + recomendNotifcation.getEmployeeIdx().getLastName() + " is accepted by " + recomendNotifcation.getDemandIdx().getHiringManager().getFirstName() + " " + recomendNotifcation.getDemandIdx().getHiringManager().getLastName() + " for " + recomendNotifcation.getDemandIdx().getRoleName() + " demand.");
             }
             if(status.equalsIgnoreCase("reject")){
-                requestPayload.setMessage(recomendNotifcation.getEmployeeIdx().getFirstName() + " " + recomendNotifcation.getEmployeeIdx().getLastName() + " is rejected by " + recomendNotifcation.getDemandIdx().getHiringManager().getFirstName() + " " + recomendNotifcation.getDemandIdx().getHiringManager().getLastName() + " for " + recomendNotifcation.getDemandIdx().getDescription() + " demand.");
+                requestPayload.setMessage(recomendNotifcation.getEmployeeIdx().getFirstName() + " " + recomendNotifcation.getEmployeeIdx().getLastName() + " is rejected by " + recomendNotifcation.getDemandIdx().getHiringManager().getFirstName() + " " + recomendNotifcation.getDemandIdx().getHiringManager().getLastName() + " for " + recomendNotifcation.getDemandIdx().getRoleName() + " demand.");
             }
             requestPayload.setUsername(recomendNotifcation.getInitiatedBy().getId());
             Map<String, Object> obj = new HashMap<>();
