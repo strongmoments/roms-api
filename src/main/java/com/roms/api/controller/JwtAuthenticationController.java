@@ -153,7 +153,7 @@ public class JwtAuthenticationController {
         StringBuilder sb = new StringBuilder();
         String version =  model.getArtifactId();
         if(version != null){
-            version =    version.replace("roms-api","");
+            version =    version.replace("roms-employee","");
         }
        sb.append(version);
         sb.append(model.getVersion());
