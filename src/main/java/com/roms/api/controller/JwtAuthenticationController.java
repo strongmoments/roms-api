@@ -148,7 +148,7 @@ public class JwtAuthenticationController {
     public String getAppVersion() throws IOException, XmlPullParserException {
 
         MavenXpp3Reader reader = new MavenXpp3Reader();
-        InputStream input = JwtAuthenticationController.class.getResourceAsStream("/META-INF/maven/com.roms/roms-api/pom.xml");
+        InputStream input = JwtAuthenticationController.class.getResourceAsStream("/META-INF/maven/com.roms/roms-employee/pom.xml");
         Model model = reader.read(input);
         StringBuilder sb = new StringBuilder();
         String version =  model.getArtifactId();
