@@ -17,8 +17,8 @@
             </PatternLayout>
         </File>
         <RollingFile name="RollingFileAppender"
-                     fileName="roms-api.log"
-                     filePattern="roms-api-%d{dd-MM-yyyy}-%i.log.gz">
+                     fileName="roms-employee.log"
+                     filePattern="roms-employee-%d{dd-MM-yyyy}-%i.log.gz">
             <PatternLayout>
                 <Pattern>${LOG_PATTERN}</Pattern>
             </PatternLayout>
