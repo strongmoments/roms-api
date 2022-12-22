@@ -176,10 +176,22 @@ public class EmployeService {
         return employeesRepository.findAllByOrganisation(new Organisation(loggedInUserDetails.get("orgId").toString()),pageble);
     }
 
+    public Page<Employe> findAllByPaymentFrequency(int page, int size,  List<Character> payFrequency){
+        PageRequest pageble  = PageRequest.of(page, size, Sort.by("lastName").ascending());
+        Map<String,Object> loggedInUserDetails =(Map<String,Object>) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        return employeesRepository.findAllByPaymentFrequencyInAndOrganisation(payFrequency,new Organisation(loggedInUserDetails.get("orgId").toString()),pageble);
+    }
+
     public Page<Employe> findAllFilterByName(int page, int size, String searchText){
         PageRequest pageble  = PageRequest.of(page, size, Sort.by("lastName").ascending());
         Map<String,Object> loggedInUserDetails =(Map<String,Object>) SecurityContextHolder.getContext().getAuthentication().getDetails();
         return employeesRepository.findAllByOrganisationAndFirstNameContainsIgnoreCaseOrLastNameContainsIgnoreCase(new Organisation(loggedInUserDetails.get("orgId").toString()),searchText,searchText, pageble);
+    }
+
+    public Page<Employe> findAllFilterByNameAndPaymentFrequency(int page, int size, String searchText,   List<Character> payFrequency){
+        PageRequest pageble  = PageRequest.of(page, size, Sort.by("lastName").ascending());
+        Map<String,Object> loggedInUserDetails =(Map<String,Object>) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        return employeesRepository.findAllByPaymentFrequencyInAndOrganisationAndFirstNameContainsIgnoreCaseOrLastNameContainsIgnoreCase(payFrequency,new Organisation(loggedInUserDetails.get("orgId").toString()),searchText,searchText, pageble);
     }
 
 

@@ -98,10 +98,43 @@ public class ResourceDemandController {
                     .build();
 
             if(StringUtils.isNotBlank(request.getClientId())){
-                employeeResourcedemand.setClient(new Client(request.getClientId()));
+                 Client clientmodel = new Client(request.getClientId());
+                employeeResourcedemand.setClient(clientmodel);
+                ClientContract contractModel = new ClientContract();
+                if(StringUtils.isNotBlank(request.getContractId())){
+                    contractModel = new ClientContract(request.getContractId());
+                    employeeResourcedemand.setClientContract(contractModel);
+                }else{
+                    String contractName = request.getContractName();
+                     contractModel = ClientContract.builder()
+                            .name(contractName)
+                            .client(clientmodel)
+                            .build();
+                    contractModel = clientContractService.save(contractModel);
+                    employeeResourcedemand.setClientContract(contractModel);
+                }
+
+                Location locationModel = new Location();
+                if(StringUtils.isNotBlank(request.getLocationId())){
+                    locationModel.setId(request.getLocationId());
+                }else{
+                    locationModel.setDescription(request.getLocationName());
+                    locationModel.setCode(request.getLocationName());
+                    locationModel = locationService.save(locationModel);
+                }
+
 
                 if(StringUtils.isNotBlank(request.getClientProjectNameId())){
                     employeeResourcedemand.setClientProject( new ClientProject(request.getClientProjectNameId()));
+                }else{
+                    String projectName = request.getClientProjectName();
+                    ClientProject projectModel = new ClientProject();
+                    projectModel.setContract(contractModel);
+                    projectModel.setClient(clientmodel);
+                    projectModel.setName(projectName);
+                    projectModel.setLocation(locationModel);
+                    projectModel = clientProjectService.save(projectModel);
+                    employeeResourcedemand.setClientProject(projectModel);
                 }
 
                 if(StringUtils.isNotBlank(request.getClientProjectSubteamId())){
@@ -115,11 +148,17 @@ public class ResourceDemandController {
                         clientProjectSubteam = clientProjectSubteamService.update(clientProjectSubteam);
                         employeeResourcedemand.setClientProjectSubteam(clientProjectSubteam);
                     }
+                }else{
+                    ClientProjectSubteam clientProjectSubteam = new ClientProjectSubteam();
+                    clientProjectSubteam.setWageRole(request.getWageRole());
+                    clientProjectSubteam.setAwardType(request.getAwardType());
+                    clientProjectSubteam.setRate(request.getRate());
+                    clientProjectSubteam.setWageClassification(request.getWageClassification());
+                    clientProjectSubteam = clientProjectSubteamService.save(clientProjectSubteam);
+                    employeeResourcedemand.setClientProjectSubteam(clientProjectSubteam);
                 }
 
-                if(StringUtils.isNotBlank(request.getContractId())){
-                    employeeResourcedemand.setClientContract(new ClientContract(request.getContractId()));
-                }
+
             }else{
                 String clientName = request.getClientName();
                 Client clientmodel = Client.builder()

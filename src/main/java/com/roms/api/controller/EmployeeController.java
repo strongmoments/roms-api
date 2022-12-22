@@ -248,16 +248,24 @@ public class EmployeeController {
     public ResponseEntity<?> loadAllEmployee(
             @RequestParam(value ="page", defaultValue = "0") int page,
             @RequestParam(value ="size", defaultValue = "3") int size,
-            @RequestParam(value ="empName", defaultValue = "") String empName){
+            @RequestParam(value ="empName", defaultValue = "") String empName,
+            @RequestParam(value ="payfrequency", defaultValue = "") String paymentFrequency){
 
         logger.info(("Process add new brand"));
         Map<String, Object> response = new HashMap<>();
+        char[] payfrequency = paymentFrequency.toCharArray();
+        List<Character> paymentFreq = new ArrayList<Character>();
+        for(char data: payfrequency){
+            paymentFreq.add(data);
+        }
+
         try {
            Page<Employe> requestedPage = null;
            if(StringUtils.isBlank(empName)){
-               requestedPage = employeService.findAll(page,size);
+               requestedPage = employeService.findAllByPaymentFrequency(page,size,paymentFreq);
            }else{
-               requestedPage = employeService.findAllFilterByName(page,size,empName);
+
+               requestedPage = employeService.findAllFilterByNameAndPaymentFrequency(page,size,empName,paymentFreq);
            }
 
             response.put("totalElement", requestedPage.getTotalElements());
