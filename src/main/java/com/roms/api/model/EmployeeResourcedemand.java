@@ -57,7 +57,6 @@ public class EmployeeResourcedemand extends CommonFields implements Serializable
     @Column(name="job_status")
     private Integer jobStatus;
 
-
     @Column(name="minimum_experience")
     private String minimumExperiecne;
 
