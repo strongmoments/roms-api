@@ -87,8 +87,8 @@ minio:
   access:
     name: minioadmin
     secret: minioadmin
-  #url: http://13.211.215.135:9000
-  env: prod
-  url: http://media.rtl.com.au:9000
+  url: http://13.211.215.135:9000
+  env: dev
+  #url: http://media.rtl.com.au:9000
 
 
