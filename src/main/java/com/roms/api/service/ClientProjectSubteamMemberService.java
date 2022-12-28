@@ -63,6 +63,16 @@ public class ClientProjectSubteamMemberService {
 
     }
 
+    public Optional<ClientProjectSubteam> findEmployeeGangByEmployeId(String employeeId){
+        List<ClientProjectSubteamMember> clientProjectSubteamMember = clientProjectSubteamMemberRepository.findByEmployeeAndOrganisation(new Employe(employeeId), loggedIn.getOrg());
+        if(!clientProjectSubteamMember.isEmpty()){
+            return Optional.ofNullable(clientProjectSubteamMember.get(0).getClientProjectSubteam());
+        }else{
+            return Optional.ofNullable(null);
+        }
+
+    }
+
     public Optional<Employe> findClientProjectSubTeamManager(String subTeamId){
        Optional<ClientProjectSubteamMember>  subteamMember = clientProjectSubteamMemberRepository.findByClientProjectSubteamAndManagerFlagAndOrganisation(new ClientProjectSubteam(subTeamId),true,loggedIn.getOrg());
        if(!subteamMember.isEmpty()){

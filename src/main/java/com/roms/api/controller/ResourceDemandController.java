@@ -151,6 +151,8 @@ public class ResourceDemandController {
                 }else{
                     ClientProjectSubteam clientProjectSubteam = new ClientProjectSubteam();
                     clientProjectSubteam.setWageRole(request.getWageRole());
+                    clientProjectSubteam.setTeamName(request.getClientProjectSubteamName());
+                    clientProjectSubteam.setCode(request.getClientProjectSubteamName());
                     clientProjectSubteam.setAwardType(request.getAwardType());
                     clientProjectSubteam.setRate(request.getRate());
                     clientProjectSubteam.setWageClassification(request.getWageClassification());
