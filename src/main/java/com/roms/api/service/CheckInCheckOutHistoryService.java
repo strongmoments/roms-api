@@ -27,6 +27,9 @@ public class CheckInCheckOutHistoryService {
     public void saveAll(List<CheckInCheckOutHistory> models){
         checkInCheckOutHistoryRepository.saveAll(models);
     }
+    public CheckInCheckOutHistory save(CheckInCheckOutHistory models){
+        return checkInCheckOutHistoryRepository.save(models);
+    }
 
     public Page<CheckInCheckOutHistory> findAllAttendanceByEmployeeId(String employeeId, int page, int size){
         PageRequest pageble  = PageRequest.of(page, size, Sort.by("checkout").descending());

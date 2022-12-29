@@ -43,6 +43,7 @@ public class EmployeeAttendanceController {
     @PostMapping("")
     public ResponseEntity<?> syncWithMobile(@RequestBody()CheckInCheckOutInput request){
         Map<String,Object> response = new HashMap();
+        List<Map<String,Object>> responseList  = new ArrayList<>();
         try {
             SimpleDateFormat dateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
             if(!request.getCheckInCheckout().isEmpty()) {
@@ -108,11 +109,18 @@ public class EmployeeAttendanceController {
                         obj.setCreateBy(loggedIn.getUser());
                         obj.setCreateDate(Instant.now());
                         obj.setTotalHour(totalHour);
+                        String syncId = obj.getSyncId();
+                       obj =checkInCheckOutHistoryService.save(obj);
+                    Map<String,Object> response1 = new HashMap<>();
+                    response1.put("syncId",syncId);
+                    response1.put("id",obj.getId());
+                    responseList.add(response1);
 
-                        checkInHistory.add(obj);
+                        //checkInHistory.add(obj);
+
 
                 });
-                checkInCheckOutHistoryService.saveAll(checkInHistory);
+
 
                /* if(employeeAttendance.getCheckIn() == null){
                     employeeAttendance.setCheckIn(checkInHistory.get(0).getCheckin());
@@ -130,6 +138,7 @@ public class EmployeeAttendanceController {
                 employeeAttendance = employeeAttendanceService.update(employeeAttendance);
 */
                 response.put("status", "success");
+                response.put("data",responseList);
 
             }
 
