@@ -100,6 +100,9 @@ public class EmployeeAttendanceController {
                         } catch (ParseException e) {
                             throw new RuntimeException(e);
                         }
+                        if(StringUtils.isBlank(obj.getId())){
+                            obj.setId(null);
+                        }
                        // calculatedtotalHour.set(calculatedtotalHour.get() + ChronoUnit.HOURS.between(obj.getCheckin(), obj.getCheckout()));
                     Long totalHour =0L;
                        if(obj.getCheckin() != null &&  obj.getCheckout() != null){
