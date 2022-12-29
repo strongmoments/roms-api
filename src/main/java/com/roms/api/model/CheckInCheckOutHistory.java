@@ -64,6 +64,9 @@ public class CheckInCheckOutHistory extends CommonFields{
     @Column(name="checkin_address")
     private String checkInAddress;
 
+    @Transient
+    private String syncId;
+
 
 
 }
