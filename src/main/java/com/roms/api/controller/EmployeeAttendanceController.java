@@ -100,7 +100,7 @@ public class EmployeeAttendanceController {
                         } catch (ParseException e) {
                             throw new RuntimeException(e);
                         }
-                        if(StringUtils.isNotBlank(obj.getId())){
+                        if(StringUtils.isBlank(obj.getId())){
                             obj.setId(null);
                         }
                        // calculatedtotalHour.set(calculatedtotalHour.get() + ChronoUnit.HOURS.between(obj.getCheckin(), obj.getCheckout()));
