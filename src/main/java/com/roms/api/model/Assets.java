@@ -28,8 +28,10 @@ public class Assets  extends CommonFields implements Serializable {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "asset_class")
-    private String assetClass;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "asset_class_idx",referencedColumnName = "id")
+    private AssetClass assetClass ;
 
     @Column(name = "make")
     private String make;
@@ -47,8 +49,14 @@ public class Assets  extends CommonFields implements Serializable {
     private String ownership;
 
 
-    @Column(name = "asset_type")
-    private int assetType;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "asset_type_idx",referencedColumnName = "id")
+    private AssetType assetType ;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "asset_category_idx",referencedColumnName = "id")
+    private AssetCategory assetCategory ;
+
 
     @Column(name = "status")
     private int status;
@@ -68,9 +76,6 @@ public class Assets  extends CommonFields implements Serializable {
     @Column(name = "retirement_date")
     private Instant retirementDate;
 
-    @Column(name = "category")
-    private int category;
-
     @Transient
     private String assetImageId;
 
@@ -86,5 +91,9 @@ public class Assets  extends CommonFields implements Serializable {
     @JoinColumn(name = "qr_code_idx",referencedColumnName = "id")
     @Fetch(FetchMode.SELECT)
     private DigitalAssets QrCode;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "location_idx",referencedColumnName = "id")
+    private Location location ;
 
 }

@@ -12,7 +12,10 @@ import java.io.Serializable;
 public class Location extends CommonFields implements Serializable {
     @Serial
     private static final long serialVersionUID = -4590696208175081666L;
+    @Column(name="code")
     private String code;
+
+    @Column(name="description")
     private String description;
     @Column(name="address")
     private String address;
