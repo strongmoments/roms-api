@@ -1,10 +1,7 @@
 package com.roms.api.controller;
 
-import com.roms.api.model.Assets;
-import com.roms.api.model.Client;
-import com.roms.api.model.DigitalAssets;
-import com.roms.api.model.LeaveRequest;
-import com.roms.api.service.AssetsService;
+import com.roms.api.model.*;
+import com.roms.api.service.*;
 import org.codehaus.plexus.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -14,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin
@@ -22,6 +20,19 @@ public class AssetController {
 
     @Autowired
     private AssetsService assetsService;
+
+    @Autowired
+    private AssetCategoryService assetCategoryService;
+
+    @Autowired
+    private AssetTypeService assetTypeService;
+
+    @Autowired
+    private AssetClassService assetClassService;
+
+    @Autowired
+    private LocationService locationService;
+
 
     @PostMapping()
     public ResponseEntity<?> saveCirtificate(@RequestBody() Assets assets ){
@@ -39,6 +50,27 @@ public class AssetController {
                
                 assets.setAssetImage(assetImage);
             }
+            if(StringUtils.isBlank(assets.getAssetCategory().getId())){
+                AssetCategory assetCategory=  assetCategoryService.save(assets.getAssetCategory());
+                assets.setAssetCategory(assetCategory);
+            }
+
+            if(StringUtils.isBlank(assets.getAssetType().getId())){
+                AssetType assetType=  assetTypeService.save(assets.getAssetType());
+                assets.setAssetType(assetType);
+            }
+
+            if(StringUtils.isBlank(assets.getAssetClass().getId())){
+                AssetClass assetClass =  assetClassService.save(assets.getAssetClass());
+                assets.setAssetClass(assetClass);
+            }
+
+            if(StringUtils.isBlank(assets.getLocation().getId())){
+                Location location =  locationService.save(assets.getLocation());
+                assets.setLocation(location);
+            }
+
+
              assets =assetsService.save(assets);
             response.put("status","success");
             response.put("id",assets.getId());
@@ -69,6 +101,29 @@ public class AssetController {
             response.put("data", requestedPage.getContent());
         } catch (Exception e) {
          //   logger.error("An error occurred! {}", e.getMessage());
+            response.put("status", "error");
+            response.put("error", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/{assetId}")
+    public ResponseEntity<?> loadApliedLeaveByLeaveStatus(
+            @RequestParam(value = "assetId", defaultValue = "") String assetId) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+
+            Optional<Assets> requestedPage =  assetsService.findById(assetId);
+           if(requestedPage.isPresent()){
+               response.put("data", requestedPage.get());
+           }else{
+               response.put("error", "asset_not_found");
+               return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+           }
+
+        } catch (Exception e) {
+            //   logger.error("An error occurred! {}", e.getMessage());
             response.put("status", "error");
             response.put("error", e.getMessage());
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
