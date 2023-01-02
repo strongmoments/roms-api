@@ -96,4 +96,10 @@ public class Assets  extends CommonFields implements Serializable {
     @JoinColumn(name = "location_idx",referencedColumnName = "id")
     private Location location ;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "inpection_list_idx",referencedColumnName = "id")
+    private InspectionLists inspectionLists ;
+
+
+
 }

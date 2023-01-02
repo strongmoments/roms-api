@@ -14,4 +14,5 @@ public interface AssetsRepository extends JpaRepository<Assets, String> {
 
     Page<Assets> findAllByOrganisation(Organisation organisation, PageRequest pageRequest);
 
+    List<Assets> findAllByOrganisationOrderByCreateDateDesc(Organisation organisation);
 }

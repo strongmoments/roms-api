@@ -39,4 +39,8 @@ public class AssetsService {
         return assetsRepository.findAllByOrganisation(loggedIn.getOrg(),pageble);
     }
 
+    public List<Assets> findAll(){
+        return assetsRepository.findAllByOrganisationOrderByCreateDateDesc(loggedIn.getOrg());
+    }
+
 }
