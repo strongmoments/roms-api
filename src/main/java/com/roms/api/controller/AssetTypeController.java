@@ -1,5 +1,7 @@
 package com.roms.api.controller;
 
+import com.roms.api.model.AssetClass;
+import com.roms.api.model.AssetType;
 import com.roms.api.model.Assets;
 import com.roms.api.service.AssetTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,24 @@ public class AssetTypeController {
 
     @Autowired
     private AssetTypeService assetTypeService;
+
+
+    @PostMapping()
+    public ResponseEntity<?> saveItemCategory(@RequestBody() AssetType request){
+        Map<String,Object> response = new HashMap();
+        try {
+            request.setCode(request.getCode().toLowerCase());
+            AssetType model = assetTypeService.save(request);
+            response.put("status","success");
+            response.put("id",model.getId());
+
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            response.put("error", e.getMessage());
+            response.put("status", "error");
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
     @GetMapping(value = "")
     public ResponseEntity<?> loadApliedLeaveByLeaveStatus() {

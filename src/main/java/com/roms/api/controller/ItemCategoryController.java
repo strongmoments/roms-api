@@ -1,32 +1,33 @@
 package com.roms.api.controller;
 
-import com.roms.api.model.AssetClass;
+import com.roms.api.model.EmployeeSkilsCirtificate;
 import com.roms.api.model.ItemCategory;
-import com.roms.api.service.AssetClassService;
-import com.roms.api.service.AssetTypeService;
+import com.roms.api.service.ItemCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
 
 @RestController
 @CrossOrigin
-@RequestMapping(value = "/v1/assetsclass")
-public class AssetClassController {
+@RequestMapping(value = "/v1/inspection/item/category")
+public class ItemCategoryController {
 
     @Autowired
-    private AssetClassService assetClassService;
-
+    private ItemCategoryService itemCategoryService;
 
     @PostMapping()
-    public ResponseEntity<?> saveItemCategory(@RequestBody() AssetClass request){
+    public ResponseEntity<?> saveItemCategory(@RequestBody()ItemCategory request){
         Map<String,Object> response = new HashMap();
         try {
             request.setCode(request.getCode().toLowerCase());
-            AssetClass model = assetClassService.save(request);
+            ItemCategory model = itemCategoryService.save(request);
             response.put("status","success");
             response.put("id",model.getId());
 
@@ -39,16 +40,10 @@ public class AssetClassController {
     }
 
     @GetMapping(value = "")
-    public ResponseEntity<?> loadAllAssetsClass() {
-        Map<String, Object> response = new HashMap<>();
-        try {
-            response.put("data",assetClassService.findAll());
-        } catch (Exception e) {
-            //   logger.error("An error occurred! {}", e.getMessage());
-            response.put("status", "error");
-            response.put("error", e.getMessage());
-            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<?> loadItemCategory() throws ChangeSetPersister.NotFoundException {
+        Map<String,Object> response = new HashMap();
+        List<ItemCategory> requestedPage =  itemCategoryService.findAll();
+        response.put("data",requestedPage);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

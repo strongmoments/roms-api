@@ -53,24 +53,42 @@ public class AssetController {
             if(StringUtils.isBlank(assets.getAssetCategory().getId())){
                 AssetCategory assetCategory=  assetCategoryService.save(assets.getAssetCategory());
                 assets.setAssetCategory(assetCategory);
+            }else{
+                AssetCategory assetCategory = new AssetCategory();
+                assetCategory.setId(assets.getAssetCategory().getId());
+                assets.setAssetCategory(assetCategory);
             }
 
             if(StringUtils.isBlank(assets.getAssetType().getId())){
                 AssetType assetType=  assetTypeService.save(assets.getAssetType());
                 assets.setAssetType(assetType);
+            }else{
+                AssetType assetType = new AssetType();
+                assetType.setId(assets.getAssetType().getId());
+                assets.setAssetType(assetType);
+
             }
 
             if(StringUtils.isBlank(assets.getAssetClass().getId())){
                 AssetClass assetClass =  assetClassService.save(assets.getAssetClass());
+                assets.setAssetClass(assetClass);
+            }else{
+                AssetClass assetClass  = new AssetClass();
+                assetClass.setId(assets.getAssetClass().getId());
                 assets.setAssetClass(assetClass);
             }
 
             if(StringUtils.isBlank(assets.getLocation().getId())){
                 Location location =  locationService.save(assets.getLocation());
                 assets.setLocation(location);
+            }else{
+                Location location = new Location();
+                location.setId(assets.getLocation().getId());
+                assets.setLocation(location);
             }
 
-
+            assets.setMake(assets.getMake().toUpperCase());
+            assets.setModel(assets.getModel().toUpperCase());
              assets =assetsService.save(assets);
             response.put("status","success");
             response.put("id",assets.getId());
