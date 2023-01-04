@@ -1,5 +1,6 @@
 package com.roms.api.controller;
 
+import com.roms.api.enums.SearchOperation;
 import com.roms.api.model.*;
 import com.roms.api.service.*;
 import org.codehaus.plexus.util.StringUtils;
@@ -104,14 +105,30 @@ public class AssetController {
     @GetMapping(value = "")
     public ResponseEntity<?> loadApliedLeaveByLeaveStatus(
             @RequestParam(value = "class", defaultValue = "") String className,
-            @RequestParam(value = "type", defaultValue = "0") int type,
+            @RequestParam(value = "type", defaultValue = "") String  type,
             @RequestParam(value = "status", defaultValue = "0") int status,
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "3") int size) {
         Map<String, Object> response = new HashMap<>();
         try {
+            GenericSpesification genericSpesification = new GenericSpesification<Assets>();
+            if(StringUtils.isNotBlank(className)){
+                AssetClass assetClass =  new AssetClass();
+                assetClass.setId(className);
+                genericSpesification.add(new SearchCriteria("assetClass",assetClass, SearchOperation.EQUAL));
+
+            }
+            if(StringUtils.isNotBlank(type)){
+                AssetType assetType = new AssetType();
+                assetType.setId(type);
+                genericSpesification.add(new SearchCriteria("assetType",assetType, SearchOperation.EQUAL));
+            }
+            if(status != 0){
+                genericSpesification.add(new SearchCriteria("status",status, SearchOperation.EQUAL));
+            }
+
             Page<Assets> requestedPage = null;
-                requestedPage = assetsService.findAll(page,size);
+                requestedPage = assetsService.findAll(page,size,genericSpesification);
             response.put("totalElement", requestedPage.getTotalElements());
             response.put("totalPage", requestedPage.getTotalPages());
             response.put("numberOfelement", requestedPage.getNumberOfElements());

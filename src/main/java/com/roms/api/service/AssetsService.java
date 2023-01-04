@@ -34,9 +34,10 @@ public class AssetsService {
         return assetsRepository.findById(assetId);
     }
 
-    public Page<Assets> findAll(int page, int size){
+    public Page<Assets> findAll(int page, int size, GenericSpesification spesification){
         PageRequest pageble  = PageRequest.of(page, size, Sort.by("createDate").descending());
-        return assetsRepository.findAllByOrganisation(loggedIn.getOrg(),pageble);
+
+        return assetsRepository.findAll(spesification,pageble);
     }
 
     public List<Assets> findAll(){
