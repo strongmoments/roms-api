@@ -46,7 +46,7 @@ public class PrestartController {
             Instant date = sdf.parse(request.getDate()).toInstant();
             Instant startTime = sdf.parse(request.getStartTime()).toInstant();
             Instant endTime = sdf.parse(request.getEndTime()).toInstant();
-
+            prestart.setHasDefect(false);
             prestart.setStartTime(startTime);
             prestart.setDate(date);
             prestart.setEndTime(endTime);
