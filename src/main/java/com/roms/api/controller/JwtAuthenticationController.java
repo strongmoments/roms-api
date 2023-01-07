@@ -36,6 +36,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
@@ -117,8 +118,19 @@ public class JwtAuthenticationController {
     public ResponseEntity<?> requestUser(@RequestBody EmployeePayLoad employe) throws Exception {
 
         Map<String,Object> response = new HashMap<>();
+        if(userService.doesUserExist(employe.getEmail(),employe.getOrgId())){
+            response.put("status","error");
+            response.put("error","already_exist");
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
         String resonse  = userService.saveTemporary(employe);
-        response.put("status",resonse);
+        if(!"success".equalsIgnoreCase(resonse)){
+            response.put("status","error");
+            response.put("error",resonse);
+        }else{
+            response.put("status",resonse);
+        }
+
         return ResponseEntity.ok(response);
     }
 
@@ -135,13 +147,16 @@ public class JwtAuthenticationController {
     @RequestMapping(value = "/version", method = RequestMethod.GET)
     public String getAppVersion() throws IOException, XmlPullParserException {
 
-      //  MavenXpp3Reader reader = new MavenXpp3Reader();
-       // Model model = reader.read(new FileReader("pom.xml"));
+        MavenXpp3Reader reader = new MavenXpp3Reader();
+        InputStream input = JwtAuthenticationController.class.getResourceAsStream("/META-INF/maven/com.roms/roms-employee/pom.xml");
+        Model model = reader.read(input);
         StringBuilder sb = new StringBuilder();
-        sb.append(releaseVersion);
-       /* sb.append(model.getArtifactId());
-        sb.append("\n");
-        sb.append(model.getVersion());*/
+        String version =  model.getArtifactId();
+        if(version != null){
+            version =    version.replace("roms-employee","");
+        }
+       sb.append(version);
+        sb.append(model.getVersion());
 
         return sb.toString();
 

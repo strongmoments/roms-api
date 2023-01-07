@@ -21,11 +21,31 @@ public class ClientProjectSubteamMemberService {
    @Autowired
    private EmployeeManagerService employeeManagerService;
 
+   @Autowired
+   private EmploymentRecommendService employmentRecommendService;
+
 
     public void save(ClientProjectSubteamMember model){
         model.setOrganisation(loggedIn.getOrg());
         model.setCreateDate(Instant.now());
         model.setCreateBy(loggedIn.getUser());
+        clientProjectSubteamMemberRepository.save(model);
+    }
+
+    public void save2(ClientProjectSubteamMember model){
+        Organisation org = new Organisation("ab905406-79a3-4e54-8244-d79fc0e60937");
+        model.setOrganisation(org);
+        model.setCreateDate(Instant.now());
+         clientProjectSubteamMemberRepository.save(model);
+    }
+    public void update(ClientProjectSubteamMember model){
+        model.setLastUpdateDate(Instant.now());
+        model.setUpdateBy(loggedIn.getUser());
+        clientProjectSubteamMemberRepository.save(model);
+    }
+
+    public void update2(ClientProjectSubteamMember model){
+        model.setLastUpdateDate(Instant.now());
         clientProjectSubteamMemberRepository.save(model);
     }
 
@@ -35,6 +55,16 @@ public class ClientProjectSubteamMemberService {
 
     public Optional<ClientProjectSubteam> findClientProjectSubTeamByEmployeeId(String employeeId){
         List<ClientProjectSubteamMember> clientProjectSubteamMember = clientProjectSubteamMemberRepository.findByEmployeeAndOrganisationAndManagerFlag(new Employe(employeeId), loggedIn.getOrg(),false);
+        if(!clientProjectSubteamMember.isEmpty()){
+            return Optional.ofNullable(clientProjectSubteamMember.get(0).getClientProjectSubteam());
+        }else{
+            return Optional.ofNullable(null);
+        }
+
+    }
+
+    public Optional<ClientProjectSubteam> findEmployeeGangByEmployeId(String employeeId){
+        List<ClientProjectSubteamMember> clientProjectSubteamMember = clientProjectSubteamMemberRepository.findByEmployeeAndOrganisation(new Employe(employeeId), loggedIn.getOrg());
         if(!clientProjectSubteamMember.isEmpty()){
             return Optional.ofNullable(clientProjectSubteamMember.get(0).getClientProjectSubteam());
         }else{
@@ -67,4 +97,33 @@ public class ClientProjectSubteamMemberService {
     public List<ClientProjectSubteamMember> findAllEmployeeByFirstNameOrNumber(String searchText){
             return clientProjectSubteamMemberRepository.findAllByEmployeeEmployeeNoContainsIgnoreCaseAndManagerFlagOrEmployeeFirstNameContainsIgnoreCaseAndManagerFlagAndOrganisation(searchText,false,searchText,false, loggedIn.getOrg());
     }
+
+    public void transferToGang(String employeeRecommendationId){
+        Optional<EmploymentRecommendation>  employmentRecommendation =   employmentRecommendService.findById(employeeRecommendationId);
+        if(employmentRecommendation.isPresent()){
+            EmploymentRecommendation employmentRecommendation1 =   employmentRecommendation.get();
+            Employe employe = employmentRecommendation1.getEmployeeIdx();
+            ClientProjectSubteam clientProjectSubteam = employmentRecommendation1.getToSubteamIdx();
+            List<ClientProjectSubteamMember> clientProjectSubteamMember = clientProjectSubteamMemberRepository.findByEmployee(employe);
+            if(!clientProjectSubteamMember.isEmpty()){
+                clientProjectSubteamMember.forEach(obj->{
+                    obj.setClientProjectSubteam(clientProjectSubteam);
+                    update2(obj);
+                });
+            }else{
+                ClientProjectSubteamMember model = new ClientProjectSubteamMember();
+                model.setEmployee(employe);
+                model.setClientProjectSubteam(clientProjectSubteam);
+                model.setStartDate(employmentRecommendation1.getDemandIdx().getPerposedDate());
+                model.setManagerFlag(false);
+                save2(model);
+            }
+            employmentRecommendation1.setJobFlag(1);
+            employmentRecommendService.update2(employmentRecommendation1);
+
+        }
+
+    }
+
+
 }

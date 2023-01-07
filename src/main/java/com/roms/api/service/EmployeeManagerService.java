@@ -2,12 +2,15 @@ package com.roms.api.service;
 
 import com.roms.api.model.Employe;
 import com.roms.api.model.EmployeeManagers;
+import com.roms.api.model.EmployeeSkilsCirtificate;
 import com.roms.api.repository.EmployeeManagerRepository;
 import com.roms.api.utils.LoggedInUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -51,6 +54,31 @@ public class EmployeeManagerService {
             employeeManagerRepository.save(employeeManagers);
         }
 
+    }
+
+    public List<EmployeeManagers> searchByEmployeeName(String searchText){
+
+        return  employeeManagerRepository.findAllByManagersFirstNameContainingIgnoreCaseOrManagersLastNameContainingIgnoreCaseAndOrganisation(searchText,searchText, loggedIn.getOrg());
+    }
+   public List<Employe> employeeSearchedRecord = new ArrayList<Employe>();
+    public void setSearchRecordToZero(){
+        employeeSearchedRecord = new ArrayList<>();
+    }
+    public List<Employe> findAllEmployeeUnderManager(List<Employe> managerList,String searchText){
+        List<EmployeeManagers>  dataList =  employeeManagerRepository.findAllByManagersInAndEmployeFirstNameContainingIgnoreCaseAndOrganisation(managerList, searchText, loggedIn.getOrg());
+        if(dataList.isEmpty()){
+            return employeeSearchedRecord;
+        }else {
+            List<Employe> employeeManagerList = new ArrayList<Employe>();
+            dataList.forEach(obj->{
+                if(obj.getEmploye().isManagerFlag()) {
+                    employeeManagerList.add(obj.getEmploye());
+                }
+                employeeSearchedRecord.add(obj.getEmploye());
+
+            });
+         return  findAllEmployeeUnderManager(employeeManagerList,searchText);
+        }
     }
 
 }

@@ -1,0 +1,94 @@
+
+
+app:
+  kafka:
+    producer:
+      topic: YellowTripOutbound
+      client-id-config: my-app-readYellowTrip
+      data-file-location: data
+      data-file-name: yellow_tripdata_2021-01.csv
+spring:
+  jackson:
+    serialization:
+      fail-on-self-references : false
+      FAIL_ON_EMPTY_BEANS: false
+  main:
+    allow-circular-references: true
+  kafka:
+    bootstrap-servers: 206.189.130.216:9092
+    properties:
+      producer:
+        retries: 0
+        acks: all
+  servlet:
+    multipart:
+      max-file-size: 15MB
+      max-request-size: 15MB
+
+  jpa:
+    generate-ddl: true
+
+    show-sql: false
+    properties:
+      hibernate:
+        ddl-auto: create
+        enable_lazy_load_no_trans: true
+        jdbc:
+          lob:
+            non_contextual_creation: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        show-sql: false
+  datasource:
+    url: jdbc:postgresql://localhost:5432/roms
+    username: teamsm
+    password: smproduct
+
+jwt:
+  secret: javainuse
+  get:
+    token:
+      uri: /authenticate
+
+# for slide url
+slide:
+  url: https://drive.google.com/open?id=1i2qruJERgojKNFRmMnIyVI-VdpFxwPbk
+
+
+username: InventoriesApp
+userpass: Password
+
+# admin
+useradmin: admin
+adminpass: admin
+
+# slide
+userslide: slide
+slidepass: slide
+
+server:
+  port: 8080
+  name: http://test.rtl.com.au
+
+release:
+  version: release-0.0.3
+
+common:
+  password: roms@123
+
+ROLE_ADMIN: '{"dashboard":["mytask","mystaff","inspection"],"mytask":[],"mystaff":[],"timeoff":["applyleave", "history"],"operations":["assets","inspection"],"reports":[]}'
+ROLE_EMPLOYEE: '{"dashboard":["mytask","mystaff","inspection"],"mytask":[],"mystaff":[],"timeoff":["applyleave", "history"],"operations":["assets","inspection"]}'
+ROLE_SUPERVISOR: '{"dashboard":["mytask","mystaff","inspection"],"mytask":[],"mystaff":[],"timeoff":["applyleave", "history"],"operations":["assets","inspection"],"reports":["leave_export","resign_export","add_user"]}'
+
+minio:
+  bucket:
+    name: test
+  default:
+    folder: /
+  access:
+    name: minioadmin
+    secret: minioadmin
+  url: http://13.211.215.135:9000
+  env: prod
+  #url: http://media.rtl.com.au:9000
+
+

@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.List;
 
 @Service
 public class LocationService {
@@ -22,6 +23,10 @@ public class LocationService {
         location.setCreateBy(loggedIn.getUser());
         location.setCreateDate(Instant.now());
         return locationRepository.save(location);
+    }
+
+    public List<Location> findAll(){
+        return locationRepository.findAllByOrganisation(loggedIn.getOrg());
     }
 
 }

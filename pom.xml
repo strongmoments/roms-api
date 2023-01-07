@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.roms</groupId>
-	<artifactId>roms-api</artifactId>
-	<version>0.0.3</version>
-	<name>roms</name>
+	<artifactId>roms-employee</artifactId>
+	<version>0.0.5</version>
+	<name>roms-employee</name>
 	<description>RTL Operation Management System</description>
 	<properties>
 		<java.version>17</java.version>
@@ -108,6 +108,13 @@
 			<groupId>org.apache.maven</groupId>
 			<artifactId>maven-model</artifactId>
 			<version>3.0.2</version>
+		</dependency>
+
+		<!-- to upload file so minio -->
+		<dependency>
+			<groupId>io.minio</groupId>
+			<artifactId>minio</artifactId>
+			<version>8.4.4</version>
 		</dependency>
 
 		<dependency>

@@ -50,10 +50,19 @@ public class UserService  {
         return usersRepository.findById(loggedIn.getUser().getId());
     }
 
+    public Optional<Users> findByUsername(String username) {
+
+        return usersRepository.findByUserIdEqualsIgnoreCaseAndOrganisation(username,loggedIn.getOrg());
+    }
+
+    public Optional<Users> findByEmployeeId(String id) {
+
+        return usersRepository.findByEmployeIdAndOrganisation(new Employe(id),loggedIn.getOrg());
+    }
 
      public Optional<Users> findByUsername(String username,String orgId) {
 
-        return usersRepository.findByUserIdAndOrganisation(username,getOrganisation(orgId));
+        return usersRepository.findByUserIdEqualsIgnoreCaseAndOrganisation(username,getOrganisation(orgId));
     }
 
     public List<String> findAllUserIdByOrganisation(String orgId){
@@ -62,7 +71,7 @@ public class UserService  {
 
     public void uploadProfilePic(Employe employe, MultipartFile file) throws IOException {
 
-        employe.setProfileImage(file.getBytes());
+       // employe.setProfileImage(file.getBytes());
         employeService.save(employe);
     }
     public Users updateLastLogin(Users usersModel) {
@@ -99,7 +108,7 @@ public class UserService  {
         return dataList;
     }
 
-    public String saveTemporary(EmployeePayLoad employeePayLoad) {
+    public String saveTemporary(EmployeePayLoad employeePayLoad) throws InterruptedException {
             RestTemplate restTemplate = new RestTemplate();
             String URL  = "http://localhost:8081/addUser";
 
@@ -114,17 +123,38 @@ public class UserService  {
                     URL, HttpMethod.POST, entity, String.class).getBody();
             if("success".equalsIgnoreCase(response)){
                 notificationService.sendNotification(employeePayLoad);
+
             }
             return response;
     }
-    public String updateTemporary(String emailId) {
+    public String updateTemporary(EmployeePayLoad employeePayLoad) {
         RestTemplate restTemplate = new RestTemplate();
         String URL  = "http://localhost:8081/updateUser";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-        EmployeePayLoad employeePayLoad = EmployeePayLoad.builder().email(emailId).orgId(loggedIn.getOrg().getId()).build();
+
+       // employeePayLoad.setId(loggedIn.getUser().getEmployeId().getId());
+        employeePayLoad.setRegistrationDate(String.valueOf(Instant.now().toEpochMilli()));
         employeePayLoad.setStatus(2);
+        employeePayLoad.setOrgId(loggedIn.getOrg().getId());
+        HttpEntity<EmployeePayLoad> entity = new HttpEntity<EmployeePayLoad>(employeePayLoad,headers);
+        String response = restTemplate.exchange(
+                URL, HttpMethod.POST, entity, String.class).getBody();
+        return response;
+    }
+
+    public String deleteTemporary(EmployeePayLoad employeePayLoad) {
+        RestTemplate restTemplate = new RestTemplate();
+        String URL  = "http://localhost:8081/deleteUser";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+
+        // employeePayLoad.setId(loggedIn.getUser().getEmployeId().getId());
+        employeePayLoad.setRegistrationDate(String.valueOf(Instant.now().toEpochMilli()));
+        employeePayLoad.setStatus(2);
+        employeePayLoad.setOrgId(loggedIn.getOrg().getId());
         HttpEntity<EmployeePayLoad> entity = new HttpEntity<EmployeePayLoad>(employeePayLoad,headers);
         String response = restTemplate.exchange(
                 URL, HttpMethod.POST, entity, String.class).getBody();
@@ -189,12 +219,21 @@ public class UserService  {
     public boolean doesUserExist(String userId){
         Map<String,String> loggedInDetails  = (Map<String,String>)SecurityContextHolder.getContext().getAuthentication().getDetails();
 
-        if(usersRepository.findByUserIdAndOrganisation(userId, getOrganisation(loggedInDetails.get("orgId"))).isEmpty()){
+        if(usersRepository.findByUserIdEqualsIgnoreCaseAndOrganisation(userId, getOrganisation(loggedInDetails.get("orgId"))).isEmpty()){
            return false;
         }else{
             return  true;
         }
     }
+
+    public boolean doesUserExist(String userId,String orgId){
+        if(usersRepository.findByUserIdEqualsIgnoreCaseAndOrganisation(userId, getOrganisation(orgId)).isEmpty()){
+            return false;
+        }else{
+            return  true;
+        }
+    }
+
 
 
     private  Organisation getOrganisation(String orgId){

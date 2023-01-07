@@ -4,8 +4,10 @@ package com.roms.api.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.roms.api.config.CustomPasswordEncoder;
 import com.roms.api.constant.Constant;
+import com.roms.api.dto.FileDto;
 import com.roms.api.model.*;
 import com.roms.api.requestInput.AddUserInput;
+import com.roms.api.requestInput.EmployeePayLoad;
 import com.roms.api.service.*;
 import com.roms.api.utils.LoggedInUserDetails;
 
@@ -18,6 +20,7 @@ import org.codehaus.plexus.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -87,6 +90,12 @@ public class UserController {
     private EmployeeManagerTypeService employeeManagerTypeService;
 
     @Autowired
+    @Qualifier("addusernotification")
+    private NotificationService notificationService;
+
+    @Autowired
+    private MinioService minioService;
+    @Autowired
     private RoleService roleService;
 
     Map<String,LocationType> locationTypeMap;
@@ -148,7 +157,7 @@ public class UserController {
 
     @PostMapping(value = "/add", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public ResponseEntity<?> addLayeredBrand(@RequestBody AddUserInput request) {
-        logger.info(("Process add new brand"));
+        logger.info(("adding user to redis  "));
         Map<String, Object> response = new HashMap<>();
         try {
 
@@ -166,17 +175,20 @@ public class UserController {
             Employe employeModel = new Employe();
 
             employeModel.setManagerFlag(request.isManager());
-            employeModel.setFirstName(request.getFirstName());
-            employeModel.setEmployeeNo(request.getEmployeeNo());
-            employeModel.setLastName(request.getLastName());
+            employeModel.setFirstName(request.getFirstName().trim());
+            employeModel.setTncFlag(false);
+            employeModel.setEmployeeNo(request.getEmployeeNo().trim());
+            employeModel.setLastName(request.getLastName().trim());
             employeModel.setMiddleName("");
             employeModel.setPhone(request.getPhone());
-            employeModel.setEmail(request.getEmail());
+            employeModel.setEmail(request.getEmail().trim());
             employeModel.setJobTitle("");
+            employeModel.setPaymentFrequency( request.getPaymentFrequency() == 0 ? 'w' : request.getPaymentFrequency());
+            employeModel.setOnboardingFlag(1);
            // employeModel.setBirthdate(dob.toInstant());
             employeModel.setGender("");
 
-            employeModel.setIndigenousFlag(false);
+            employeModel.setIndigenousFlag(0);
 
 
             userModels.setEmployeId(employeModel);
@@ -193,8 +205,6 @@ public class UserController {
                 roles.setId(request.getRoleId());
                 userModels.setRole(roles);
             }
-
-
 
             if( StringUtils.isBlank(request.getDepartmentId())){
                 departments.setCode(request.getDepartmentName());
@@ -222,11 +232,12 @@ public class UserController {
             Instant dob = sdf.parse("11-11-1960").toInstant();
             userModel.getEmployeId().setBirthdate(dob);*/
             Random random = new Random();
-            String password  = request.getFirstName()+"@"+random.nextInt(100,1000);
+          //  String password  = request.getFirstName().trim()+"_"+random.nextInt(100,1000);
+            String password  = request.getFirstName().trim()+random.nextInt(10000,100000);
 
             userModels.setApppassword(customPasswordEncoder.encode(password));
             userModels.setDisableFlag(false);
-            userModels.setUserId(request.getEmail());
+            userModels.setUserId(request.getEmail().trim());
             userModels =  userService.save(userModels);
 
             String mangerType = "Line Managre";
@@ -265,7 +276,20 @@ public class UserController {
             //response.put("department",userModels.getEmployeId().getDepartments().getDescription());
 
             try{
-                String redisStatus = userService.updateTemporary(request.getEmail());
+                EmployeePayLoad employeePayLoad = EmployeePayLoad.builder().employeeNo(request.getEmployeeNo())
+                        .firstName(request.getFirstName())
+                        .lastName(request.getLastName())
+                        .phone(request.getPhone())
+                        .email(request.getEmail())
+                        .id(userModels.getEmployeId().getId())
+                        .build();
+                String redisStatus = userService.updateTemporary(employeePayLoad);
+                if(request.isNotifyBySms()){
+                   String smsesponse = notificationService.sendsms(request.getPhone(),getSmsContent(request.getFirstName(),request.getEmail(),password));
+                    response.put("sms",smsesponse);
+                }else{
+                    response.put("sms","not_send");
+                }
                 response.put("rdis_status",redisStatus);
             }catch (Exception e){
                 response.put("rdis_status",e.getMessage());
@@ -281,13 +305,19 @@ public class UserController {
     }
 
     @RequestMapping(value = "/uploadPic" , method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE  })
-    public ResponseEntity<Map<String,Object>> uploadPic(@RequestParam(value="files") MultipartFile[] filse) throws IOException {
+    public ResponseEntity<Map<String,Object>> uploadPic(@RequestParam(value="files") MultipartFile filse) throws IOException {
 
-        Map<String, Object> response = new HashMap();
+       Map<String, Object> response = new HashMap();
         ObjectMapper mapper = new ObjectMapper();
         Map<String, MultipartFile> imageData = new HashMap();
         try {
-            for (MultipartFile file : filse) {
+            FileDto fileDto = FileDto.builder()
+                            .file(filse).build();
+
+
+            response.put("data",minioService.uploadFile(fileDto));
+
+           /* for (MultipartFile file : filse) {
                 String fileName = file.getOriginalFilename();
                 imageData.put(fileName, file);
             }
@@ -309,7 +339,7 @@ public class UserController {
                         response.put("error", e.getMessage());
                     }
                 }
-            });
+            });*/
         } catch(Exception ee){
             ee.printStackTrace();
             response.put("error", ee.getMessage());
@@ -395,7 +425,7 @@ public class UserController {
             location.setCode(code);
             location.setDescription(desc);
             location.setAddress(address);
-            location.setGeoCdoe(geoCode);
+            location.setGeoCode(geoCode);
             LocationType locationType = locationTypeMap.get(locationTypeCoe);
             location.setLocationType(locationType);
             location = locationService.save(location);
@@ -543,7 +573,7 @@ public class UserController {
                 employeModel.setGender(gender);
                 employeModel.setDepartments(departmentsMap.get(departmentCode));
                 employeModel.setEmployeType(employeTypeMap.get(employeTypeCode));
-                employeModel.setIndigenousFlag(false);
+                employeModel.setIndigenousFlag(0);
 
 
 
@@ -620,6 +650,25 @@ public class UserController {
 
     }
 
+    @DeleteMapping(value = "/{emailId}")
+    public ResponseEntity<?> delete( @PathVariable("emailId") String emailId) {
+        Map<String, Object> response = new HashMap<>();
+        ArrayList obj = new ArrayList();
+        try {
+            EmployeePayLoad paylod =  EmployeePayLoad.builder().
+                    email(emailId).build();
+
+            response.put("data",userService.deleteTemporary(paylod));
+        } catch (Exception e){
+            logger.error("An error occurred! {}", e.getMessage());
+            response.put("status","error");
+            response.put("error",e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+
     @GetMapping(value = "/loadPendingUsers")
     public ResponseEntity<?> loadLeaveType() {
         Map<String, Object> response = new HashMap<>();
@@ -634,6 +683,20 @@ public class UserController {
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    public  String getSmsContent(String fName, String userName, String password){
+        StringBuilder sb = new StringBuilder();
+        sb.append("Hi ");
+        sb.append(fName);
+        sb.append(",");
+        sb.append("Welcome to the new RTL ROMS app.");
+        sb.append("\nYou can access the app either using the Cloud site or the Android app");
+        sb.append("\nYour account details");
+        sb.append("\nUsername : ");sb.append(userName);
+        sb.append("\nPassword : ");sb.append(password);
+        sb.append("\nYou can revisit the Registration page to access login link.Regards,ROMS teamp.s. please do not reply to this message. contact RTL for further support.");
+        return sb.toString();
     }
 
 }

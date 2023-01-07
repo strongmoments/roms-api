@@ -24,6 +24,12 @@ public class ProjectSubteamController {
     @Autowired
     private ClientProjectSubteamMemberService clientProjectSubteamMemberService;
 
+    @GetMapping(value = "/search/{projectId}")
+    public ResponseEntity<?> searchProjectSubTeam(@PathVariable("projectId") String projectId, @RequestParam(value ="name", defaultValue = "") String searchText) throws ChangeSetPersister.NotFoundException {
+        List<ClientProjectSubteam> requestedPage =  clientProjectSubteamService.searChBySubTeamName(projectId,searchText);
+        return new ResponseEntity<>(requestedPage, HttpStatus.OK);
+    }
+
     @GetMapping(value = "/search")
     public ResponseEntity<?> searchProjectSubTeam(@RequestParam(value ="name", defaultValue = "") String searchText) throws ChangeSetPersister.NotFoundException {
         List<ClientProjectSubteam> requestedPage =  clientProjectSubteamService.searChBySubTeamName(searchText);

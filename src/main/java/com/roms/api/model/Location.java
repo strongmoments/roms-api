@@ -12,18 +12,15 @@ import java.io.Serializable;
 public class Location extends CommonFields implements Serializable {
     @Serial
     private static final long serialVersionUID = -4590696208175081666L;
-
-    @Column(name="code",nullable=false)
+    @Column(name="code")
     private String code;
 
-    @Column(name="description",nullable=false)
+    @Column(name="description")
     private String description;
-
     @Column(name="address")
     private String address;
-
     @Column(name="geocode")
-    private String geoCdoe;
+    private String geoCode;
 
     @OneToOne()
     @JoinColumn(name = "location_type_idx",referencedColumnName = "id")
@@ -54,19 +51,19 @@ public class Location extends CommonFields implements Serializable {
         this.address = address;
     }
 
-    public String getGeoCdoe() {
-        return geoCdoe;
-    }
-
-    public void setGeoCdoe(String geoCdoe) {
-        this.geoCdoe = geoCdoe;
-    }
-
     public LocationType getLocationType() {
         return locationType;
     }
 
     public void setLocationType(LocationType locationType) {
         this.locationType = locationType;
+    }
+
+    public String getGeoCode() {
+        return geoCode;
+    }
+
+    public void setGeoCode(String geoCode) {
+        this.geoCode = geoCode;
     }
 }

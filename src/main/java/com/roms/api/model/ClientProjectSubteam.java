@@ -25,6 +25,19 @@ public class ClientProjectSubteam extends CommonFields implements  Serializable{
     @Column(name="code",nullable=false)
     private String code;
 
+    @Column(name="wage_classification")
+    private String wageClassification;
+
+    @Column(name="wage_role")
+    private String wageRole;
+
+    @Column(name="award_type")
+    private String awardType;
+
+    @Column(name="rate")
+    private String rate;
+
+
     @OneToOne()
     @JoinColumn(name = "project_idx",referencedColumnName = "id")
     @Fetch(FetchMode.SELECT)
@@ -34,6 +47,8 @@ public class ClientProjectSubteam extends CommonFields implements  Serializable{
     @JoinColumn(name = "location_idx",referencedColumnName = "id")
     @Fetch(FetchMode.SELECT)
     private Location location;
+
+
 
     public ClientProjectSubteam() {
     }
@@ -73,5 +88,37 @@ public class ClientProjectSubteam extends CommonFields implements  Serializable{
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public String getWageClassification() {
+        return wageClassification;
+    }
+
+    public void setWageClassification(String wageClassification) {
+        this.wageClassification = wageClassification;
+    }
+
+    public String getRate() {
+        return rate;
+    }
+
+    public void setRate(String rate) {
+        this.rate = rate;
+    }
+
+    public String getWageRole() {
+        return wageRole;
+    }
+
+    public void setWageRole(String wageRole) {
+        this.wageRole = wageRole;
+    }
+
+    public String getAwardType() {
+        return awardType;
+    }
+
+    public void setAwardType(String awardType) {
+        this.awardType = awardType;
     }
 }

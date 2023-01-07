@@ -9,8 +9,8 @@ import java.io.Serializable;
 import java.time.Instant;
 
 @Entity
-@Table(name="Client_project_subteam_transfer")
-public class ClientProjectSubteamTransfer extends CommonFields implements Serializable {
+@Table(name="employment_recommendation")
+public class EmploymentRecommendation extends CommonFields implements Serializable {
     @Serial
     private static final long serialVersionUID = -8004799331285331949L;
 
@@ -19,26 +19,32 @@ public class ClientProjectSubteamTransfer extends CommonFields implements Serial
     @Fetch(FetchMode.SELECT)
     private ClientProjectSubteam fromSubteamIdx;
 
+
     @OneToOne()
     @JoinColumn(name = "to_subteam_idx",referencedColumnName = "id")
     @Fetch(FetchMode.SELECT)
     private ClientProjectSubteam toSubteamIdx;
 
     @OneToOne()
+    @JoinColumn(name = "demand_idx",referencedColumnName = "id")
+    @Fetch(FetchMode.SELECT)
+    private EmployeeResourcedemand demandIdx;
+
+    @OneToOne()
     @JoinColumn(name = "employee_idx",referencedColumnName = "id")
     @Fetch(FetchMode.SELECT)
     private Employe employeeIdx;
 
-    @Column(name="from_rate",nullable=false)
+    @Column(name="from_rate")
     private Double fromRate;
 
-    @Column(name="to_rate",nullable=false)
+    @Column(name="to_rate")
     private Double toRate;
 
-    @Column(name="requested_date",nullable=false)
+    @Column(name="requested_date")
     private Instant requestedDate;
 
-    @Column(name="subteam_join_date",nullable=false)
+    @Column(name="subteam_join_date")
     private Instant subteamJoinDate;
 
     @Column(name="status")
@@ -46,6 +52,10 @@ public class ClientProjectSubteamTransfer extends CommonFields implements Serial
 
     @Column(name="jobFlag")
     private Integer jobFlag;
+
+    @Column(name="external_system_entry_flag")
+    private boolean externalSystemEntry ;
+
 
     @OneToOne()
     @JoinColumn(name = "initiatedby",referencedColumnName = "id")
@@ -143,5 +153,21 @@ public class ClientProjectSubteamTransfer extends CommonFields implements Serial
 
     public void setAcceptedBy(Employe acceptedBy) {
         this.acceptedBy = acceptedBy;
+    }
+
+    public EmployeeResourcedemand getDemandIdx() {
+        return demandIdx;
+    }
+
+    public void setDemandIdx(EmployeeResourcedemand demandIdx) {
+        this.demandIdx = demandIdx;
+    }
+
+    public boolean isExternalSystemEntry() {
+        return externalSystemEntry;
+    }
+
+    public void setExternalSystemEntry(boolean externalSystemEntry) {
+        this.externalSystemEntry = externalSystemEntry;
     }
 }

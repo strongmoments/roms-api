@@ -1,5 +1,6 @@
 package com.roms.api.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.GenericGenerator;
@@ -8,6 +9,7 @@ import javax.persistence.*;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.Set;
 import java.util.UUID;
 
 @JsonIgnoreProperties("hibernatelazyinitializer")
@@ -43,6 +45,9 @@ public class Employe extends CommonFields implements Serializable {
     @Column(name = "pronoun")
     private String pronoun;
 
+    @Column(name = "salut")
+    private String salut;
+
     @Column(name = "phone")
     private String  phone;
 
@@ -62,10 +67,19 @@ public class Employe extends CommonFields implements Serializable {
     private Instant endDate;
 
     @Column(name = "indigenous_flag", nullable = false)
-    private boolean indigenousFlag;
+    private int indigenousFlag;
 
     @Column(name="manager_flag")
     private boolean managerFlag;
+
+    @Column(name="tnc_flag")
+    private boolean tncFlag;
+
+    @Column(name="onboarding_flag")
+    public int onboardingFlag;
+
+    @Column(name="payment_frequency")
+    public char paymentFrequency;
 
     @OneToOne()
     @JoinColumn(name = "employee_typeIdx",referencedColumnName = "id")
@@ -80,13 +94,13 @@ public class Employe extends CommonFields implements Serializable {
 
     @Transient
     private String orgId;
+    @OneToMany(mappedBy="employe", fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private Set<EmployeeProfileImage> profileImage;
 
-
-    @Column(name = "profile_image")
-    private byte[] profileImage;
 
     public  Employe(){
-        
+
     }
 
     public Employe(String id) {
@@ -197,21 +211,14 @@ public class Employe extends CommonFields implements Serializable {
         this.endDate = endDate;
     }
 
-    public boolean isIndigenousFlag() {
+    public int getIndigenousFlag() {
         return indigenousFlag;
     }
 
-    public void setIndigenousFlag(boolean indigenousFlag) {
+    public void setIndigenousFlag(int indigenousFlag) {
         this.indigenousFlag = indigenousFlag;
     }
 
-    public byte[] getProfileImage() {
-        return profileImage;
-    }
-
-    public void setProfileImage(byte[] profileImage) {
-        this.profileImage = profileImage;
-    }
     public Instant getCreateDate() {
         return createDate;
     }
@@ -258,6 +265,46 @@ public class Employe extends CommonFields implements Serializable {
 
     public void setManagerFlag(boolean managerFlag) {
         this.managerFlag = managerFlag;
+    }
+
+    public String getSalut() {
+        return salut;
+    }
+
+    public void setSalut(String salut) {
+        this.salut = salut;
+    }
+
+    public Set<EmployeeProfileImage> getProfileImage() {
+        return profileImage;
+    }
+
+    public void setProfileImage(Set<EmployeeProfileImage> profileImage) {
+        this.profileImage = profileImage;
+    }
+
+    public int getOnboardingFlag() {
+        return onboardingFlag;
+    }
+
+    public void setOnboardingFlag(int onboardingFlag) {
+        this.onboardingFlag = onboardingFlag;
+    }
+
+    public boolean isTncFlag() {
+        return tncFlag;
+    }
+
+    public void setTncFlag(boolean tncFlag) {
+        this.tncFlag = tncFlag;
+    }
+
+    public char getPaymentFrequency() {
+        return paymentFrequency;
+    }
+
+    public void setPaymentFrequency(char paymentFrequency) {
+        this.paymentFrequency = paymentFrequency;
     }
 }
 

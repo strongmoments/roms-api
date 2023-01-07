@@ -22,7 +22,10 @@ public class AddUserInput {
     public String employTypeId;
     public String employType;
     public String gender;
+    public char paymentFrequency;
     public boolean isManager;
+    public boolean notifyBySms;
+    public boolean onboardingRequired;
 
 
 

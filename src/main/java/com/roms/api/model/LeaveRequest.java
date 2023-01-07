@@ -1,4 +1,6 @@
 package com.roms.api.model;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.roms.api.utils.InstantConverter;
 import org.hibernate.annotations.Fetch;
@@ -8,6 +10,7 @@ import javax.persistence.*;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.Set;
 
 
 @Entity
@@ -27,6 +30,9 @@ public class LeaveRequest extends CommonFields implements Serializable {
 
     @Column(name="leave_status")
     private int leaveStatus;
+
+    @Column(name="salary_process_status")
+    private int salaryProcessStatus;
 
     @Column(name="start_date_time",nullable=false)
     private Instant startDateTime;
@@ -64,6 +70,10 @@ public class LeaveRequest extends CommonFields implements Serializable {
     @JoinColumn(name="approver_idx",referencedColumnName="id")
     @Fetch(FetchMode.SELECT)
     private Employe approver;
+
+    @OneToMany(mappedBy="leaveRequestId", fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private Set<LeaveAttachments> attachments;
 
 
     public Instant getApplyDate() {
@@ -177,5 +187,21 @@ public class LeaveRequest extends CommonFields implements Serializable {
 
     public void setTotalDay(Integer totalDay) {
         this.totalDay = totalDay;
+    }
+
+    public Set<LeaveAttachments> getAttachments() {
+        return attachments;
+    }
+
+    public void setAttachments(Set<LeaveAttachments> attachments) {
+        this.attachments = attachments;
+    }
+
+    public int getSalaryProcessStatus() {
+        return salaryProcessStatus;
+    }
+
+    public void setSalaryProcessStatus(int salaryProcessStatus) {
+        this.salaryProcessStatus = salaryProcessStatus;
     }
 }
