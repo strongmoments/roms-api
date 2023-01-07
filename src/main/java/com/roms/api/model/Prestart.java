@@ -11,6 +11,7 @@ import org.hibernate.annotations.FetchMode;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -55,7 +56,7 @@ public class Prestart extends CommonFields implements Serializable {
 
     @OneToMany(mappedBy="prestart", fetch = FetchType.LAZY)
     @JsonManagedReference
-    private Set<PrestartDetails> prestartDetails;
+    private List<PrestartDetails> prestartDetails;
 
 
 }
