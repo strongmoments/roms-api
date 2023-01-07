@@ -11,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.List;
 
 @Service
 public class PrestartService {
@@ -33,5 +34,8 @@ public class PrestartService {
         return prestartRepository.findAll(spesification,pageble);
     }
 
+    public List<Prestart> findAll(){
+        return prestartRepository.findAll();
+    }
 
 }

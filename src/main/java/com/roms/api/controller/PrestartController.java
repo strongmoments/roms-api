@@ -133,4 +133,20 @@ public class PrestartController {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @GetMapping(value = "")
+    public ResponseEntity<?> loadAllPrestart() {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            List<Prestart> dataList = prestartService.findAll();
+
+            response.put("data",dataList);
+        } catch (Exception e) {
+            //   logger.error("An error occurred! {}", e.getMessage());
+            response.put("status", "error");
+            response.put("error", e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }
