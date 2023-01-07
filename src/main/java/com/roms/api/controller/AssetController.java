@@ -144,8 +144,8 @@ public class AssetController {
     }
 
     @GetMapping(value = "/{assetId}")
-    public ResponseEntity<?> loadApliedLeaveByLeaveStatus(
-            @RequestParam(value = "assetId", defaultValue = "") String assetId) {
+    public ResponseEntity<?> loadAssetDetails(
+            @PathVariable("assetId") String  assetId) {
         Map<String, Object> response = new HashMap<>();
         try {
 
