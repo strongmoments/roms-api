@@ -29,4 +29,7 @@ public class InspectionListMapping extends CommonFields implements Serializable 
     @Fetch(FetchMode.SELECT)
     private InspectionItems inspectionItems;
 
+    @Column(name="inspection_order")
+    private int inspectionOrder;
+
 }
