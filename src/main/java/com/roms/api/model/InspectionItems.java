@@ -47,6 +47,9 @@ public class InspectionItems extends CommonFields implements Serializable {
     @JsonManagedReference
     private Set<InspectionItemAttachment> media;
 
+    @Transient
+    private  int inspectionOrder;
+
 
 
 }

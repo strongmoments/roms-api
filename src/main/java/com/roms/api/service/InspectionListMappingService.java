@@ -35,8 +35,10 @@ public class InspectionListMappingService {
         assetType.setId(assetTypeId);
         List<InspectionItems> itemList = new ArrayList<>();
 
-        List<InspectionListMapping> resultList = inspectionListMappingRepository.findAllByInspectionListMakeAndInspectionListModelAndInspectionList_AssetClassAndInspectionList_AssetType(make,model,assetClass, assetType);
+        List<InspectionListMapping> resultList = inspectionListMappingRepository.findAllByInspectionListMakeAndInspectionListModelAndInspectionList_AssetClassAndInspectionList_AssetTypeOrderByInspectionOrderAsc(make,model,assetClass, assetType);
         for( InspectionListMapping obj :resultList ){
+            obj.getInspectionOrder();
+            obj.getInspectionItems().setInspectionOrder(obj.getInspectionOrder());
             itemList.add(obj.getInspectionItems());
         }
      return  itemList;
