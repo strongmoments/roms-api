@@ -11,5 +11,5 @@ import java.util.List;
 @Repository
 public interface InspectionListMappingRepository extends JpaRepository<InspectionListMapping, String> {
 
-    List<InspectionListMapping> findAllByInspectionListMakeAndInspectionListModelAndInspectionList_AssetClassAndInspectionList_AssetType(String make, String model, AssetClass assetclass, AssetType assetType);
+    List<InspectionListMapping> findAllByInspectionListMakeAndInspectionListModelAndInspectionList_AssetClassAndInspectionList_AssetTypeOrderByInspectionOrderAsc(String make, String model, AssetClass assetclass, AssetType assetType);
 }
