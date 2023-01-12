@@ -29,7 +29,6 @@ public class Assets  extends CommonFields implements Serializable {
     @Column(name = "description")
     private String description;
 
-
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "asset_class_idx",referencedColumnName = "id")
     private AssetClass assetClass ;
@@ -99,6 +98,9 @@ public class Assets  extends CommonFields implements Serializable {
 
     @Transient
     private List<InspectionItems> itemList ;
+    @Transient
+    private boolean syncFlag;
+
 
 
 
