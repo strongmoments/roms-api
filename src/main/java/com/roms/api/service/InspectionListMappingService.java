@@ -45,5 +45,15 @@ public class InspectionListMappingService {
      return  itemList;
     }
 
+    public List<InspectionListMapping> findAllMappedItemsByInspection(String make, String model, String assetClassId, String assetTypeId){
+        AssetClass assetClass = new AssetClass();
+        assetClass.setId(assetClassId);
+        AssetType assetType = new AssetType();
+        assetType.setId(assetTypeId);
+        List<InspectionItems> itemList = new ArrayList<>();
+
+        List<InspectionListMapping> resultList = inspectionListMappingRepository.findAllByInspectionListMakeAndInspectionListModelAndInspectionList_AssetClassAndInspectionList_AssetTypeOrderByInspectionOrderAsc(make,model,assetClass, assetType);
+        return  resultList;
+    }
 
 }

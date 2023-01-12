@@ -1,10 +1,8 @@
 package com.roms.api.controller;
 
-import com.roms.api.model.InspectionItems;
-import com.roms.api.model.InspectionListMapping;
-import com.roms.api.model.InspectionLists;
-import com.roms.api.model.ItemCategory;
+import com.roms.api.model.*;
 import com.roms.api.requestInput.InspectionListInput;
+import com.roms.api.service.AssetsService;
 import com.roms.api.service.InspectionListMappingService;
 import com.roms.api.service.InspectionListService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +26,9 @@ public class InspectionListController {
 
     @Autowired
     private InspectionListMappingService inspectionListMappingService;
+    @Autowired
+    private AssetsService assetsService;
+
 
 
     @PostMapping()
@@ -77,6 +78,27 @@ public class InspectionListController {
         Map<String,Object> response = new HashMap();
         List<InspectionLists> requestedPage =  inspectionListService.findAll();
         response.put("data",requestedPage);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/mappeditems")
+    public ResponseEntity<?> loadAllmappedItems() throws ChangeSetPersister.NotFoundException {
+        Map<String,Object> response = new HashMap();
+        List<Assets> assetList =assetsService.findAll();
+        List<InspectionListMapping> finalList = new ArrayList<>();
+
+        for (Assets obj : assetList){
+            String assetClass = obj.getAssetClass() == null ? null : obj.getAssetClass().getId();
+            String assetType = obj.getAssetType() == null ? null : obj.getAssetType().getId();
+            if(obj.getMake() != null && obj.getModel() != null && assetClass != null &&  assetType != null  ){
+                List<InspectionListMapping> model = inspectionListMappingService.findAllMappedItemsByInspection(obj.getMake(),obj.getModel(),obj.getAssetClass().getId(),obj.getAssetType().getId());
+                if(!model.isEmpty()){
+                    finalList.addAll(model);
+                }
+
+            }
+        }
+        response.put("data",finalList);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
