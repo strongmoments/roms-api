@@ -60,6 +60,7 @@ public class InspectionListController {
                 InspectionListMapping mapping = new InspectionListMapping();
                 mapping.setInspectionList(inspectionLists);
                 mapping.setInspectionItems(obj);
+                mapping.setInspectionOrder(obj.getInspectionOrder());
                 inspectionListMappingService.save(mapping);
             }
             response.put("status","success");
