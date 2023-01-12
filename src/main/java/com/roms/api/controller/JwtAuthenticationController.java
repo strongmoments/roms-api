@@ -117,6 +117,7 @@ public class JwtAuthenticationController {
     @RequestMapping(value = "/addUserRequest", method = RequestMethod.POST)
     public ResponseEntity<?> requestUser(@RequestBody EmployeePayLoad employe) throws Exception {
 
+
         Map<String,Object> response = new HashMap<>();
         if(userService.doesUserExist(employe.getEmail(),employe.getOrgId())){
             response.put("status","error");
