@@ -39,6 +39,7 @@ public class InspectionListMappingService {
         for( InspectionListMapping obj :resultList ){
             obj.getInspectionOrder();
             obj.getInspectionItems().setInspectionOrder(obj.getInspectionOrder());
+            obj.getInspectionItems().setInspectionOrder(obj.getInspectionOrder());
             itemList.add(obj.getInspectionItems());
         }
      return  itemList;
